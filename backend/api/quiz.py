@@ -11,6 +11,15 @@ class QuizAnswer(BaseModel):
     content_id: str
     selected: str  # "1" | "2" | "3" | "4"
 
+@router.get("/by-content/{content_id}")
+async def get_quizzes_by_content(content_id: str):
+    """특정 브리핑 콘텐츠의 퀴즈 반환"""
+    res = supabase.table("quizzes").select("*").eq("content_id", content_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="이 콘텐츠의 퀴즈가 아직 없어요.")
+    return res.data
+
+
 @router.get("/today/{user_id}")
 async def get_today_quizzes(user_id: str):
     """오늘의 퀴즈 2문제 반환"""

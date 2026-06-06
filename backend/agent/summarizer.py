@@ -1,55 +1,47 @@
-import anthropic
+"""
+STEP 2 — 요약 생성
+소스 본문 기반으로만 요약 → 할루시네이션 최소화
+GPT-4o-mini 사용 (비용 최적화)
+"""
+
+from openai import OpenAI
 import os
+import json
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-async def summarize_and_generate_quiz(title: str, raw_text: str, category: str) -> dict:
-    """
-    소스 텍스트 → 요약 + 퀴즈 2문제 생성
-    소스 기반으로만 생성 → 할루시네이션 최소화
-    """
-    prompt = f"""
-당신은 {category} 분야 학습 콘텐츠를 만드는 전문가입니다.
+SUMMARY_PROMPT = """
+당신은 {category} 분야 학습 콘텐츠 전문가입니다.
+아래 [원문]을 바탕으로, 원문에 있는 내용만 사용해서 핵심 요약을 작성하세요.
 
-아래 원문을 바탕으로 (원문 내용에서만 근거를 찾아서):
-1. 핵심 요약 (3~5문장, 한국어)
-2. 퀴즈 2문제 (4지선다, 한국어)
+규칙:
+- 원문에 없는 내용 절대 추가 금지
+- 3~5문장, 한국어
+- 전문 용어는 영어 그대로 사용 (RAG, LLM 등)
+- 마지막 문장은 "핵심 포인트: ~" 형식으로 마무리
 
 [원문 제목]
 {title}
 
 [원문 내용]
-{raw_text}
+{text}
 
-반드시 아래 JSON 형식으로만 응답하세요:
-{{
-  "summary": "요약 내용",
-  "quizzes": [
-    {{
-      "question": "질문",
-      "options": {{"1": "보기1", "2": "보기2", "3": "보기3", "4": "보기4"}},
-      "answer": "1",
-      "explanation": "해설 (원문 근거 포함)",
-      "concept": "핵심 개념명 (영어 또는 한국어 단어 하나)",
-      "difficulty": 1
-    }}
-  ]
-}}
+요약문만 반환하세요. JSON 불필요.
 """
 
-    message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=1500,
-        messages=[{"role": "user", "content": prompt}]
+
+async def summarize(title: str, text: str, category: str) -> str:
+    """소스 기반 요약 생성"""
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        max_tokens=600,
+        messages=[{
+            "role": "user",
+            "content": SUMMARY_PROMPT.format(
+                category=category,
+                title=title,
+                text=text[:3000]
+            )
+        }]
     )
-
-    import json
-    text = message.content[0].text.strip()
-
-    # JSON 파싱
-    if "```json" in text:
-        text = text.split("```json")[1].split("```")[0].strip()
-    elif "```" in text:
-        text = text.split("```")[1].split("```")[0].strip()
-
-    return json.loads(text)
+    return response.choices[0].message.content.strip()

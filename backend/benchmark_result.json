@@ -1,0 +1,33 @@
+{
+  "collected": 5,
+  "quizzes_generated": 6,
+  "quizzes_passed": 6,
+  "quizzes_failed": 0,
+  "errors": 0,
+  "samples": [
+    {
+      "source_title": "HANDOFF: Humanoid Agentic Task-Space Whole-Body Control via Distilled Complementary Teachers",
+      "question": "HANDOFF의 주요 목적은 무엇인가요?",
+      "answer": "1",
+      "concept": "명령 공간",
+      "difficulty": 1,
+      "verified": true
+    },
+    {
+      "source_title": "Code2LoRA: Hypernetwork-Generated Adapters for Code Language Models under Software Evolution",
+      "question": "Code2LoRA의 주요 목적은 무엇인가요?",
+      "answer": "1",
+      "concept": "Code2LoRA 목적",
+      "difficulty": 1,
+      "verified": true
+    },
+    {
+      "source_title": "HANDOFF: Humanoid Agentic Task-Space Whole-Body Control via Distilled Complementary Teachers",
+      "question": "HANDOFF는 어떤 종류의 로봇에게 사용되는 제어 시스템인가요?",
+      "answer": "1",
+      "concept": "휴머노이드 로봇 제어",
+      "difficulty": 1,
+      "verified": true
+    }
+  ]
+}
