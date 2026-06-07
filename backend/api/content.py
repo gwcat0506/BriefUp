@@ -5,9 +5,56 @@ from datetime import date
 router = APIRouter()
 
 
+@router.get("/today/for-user/{user_id}")
+async def get_today_content_for_user(user_id: str):
+    """유저 활성 토픽 기반 오늘의 브리핑 (토픽별로 최대 3개씩)"""
+    today = date.today().isoformat()
+
+    topics_res = (
+        supabase.table("topics")
+        .select("name, category")
+        .eq("user_id", user_id)
+        .eq("is_active", True)
+        .execute()
+    )
+    topics = topics_res.data or []
+
+    if not topics:
+        return []
+
+    all_contents = []
+    seen_ids: set[str] = set()
+
+    # 조회할 키 수집: topic.name과 topic.category 모두 시도 (기존 데이터 호환)
+    lookup_keys: list[str] = []
+    seen_keys: set[str] = set()
+    for topic in topics:
+        for key in (topic["name"], topic["category"]):
+            if key and key not in seen_keys:
+                seen_keys.add(key)
+                lookup_keys.append(key)
+
+    for key in lookup_keys:
+        res = (
+            supabase.table("contents")
+            .select("*")
+            .eq("topic_category", key)
+            .eq("collected_at", today)
+            .order("created_at", desc=True)
+            .limit(3)
+            .execute()
+        )
+        for item in (res.data or []):
+            if item["id"] not in seen_ids:
+                seen_ids.add(item["id"])
+                all_contents.append(item)
+
+    return all_contents
+
+
 @router.get("/today/{category}")
 async def get_today_content(category: str):
-    """오늘의 브리핑 콘텐츠"""
+    """오늘의 브리핑 — 토픽명 또는 카테고리로 조회"""
     today = date.today().isoformat()
     res = (
         supabase.table("contents")
