@@ -34,10 +34,13 @@ async def update_chapter_progress(body: ProgressUpdate):
     if body.status == "completed":
         data["completed_at"] = datetime.utcnow().isoformat()
 
-    res = supabase.table("chapter_progress").upsert(
-        data, on_conflict="user_id,chapter_id"
-    ).execute()
-    return res.data[0] if res.data else {}
+    try:
+        res = supabase.table("chapter_progress").upsert(
+            data, on_conflict="user_id,chapter_id"
+        ).execute()
+        return res.data[0] if res.data else {}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"chapter_progress 테이블 미생성: {e}")
 
 
 @router.get("/chapter/{user_id}")
@@ -59,13 +62,16 @@ async def get_next_chapter(user_id: str):
     """
     from api.chapter import CHAPTERS
 
-    # 완료된 챕터 목록
-    completed = supabase.table("chapter_progress")\
-        .select("chapter_id")\
-        .eq("user_id", user_id)\
-        .eq("status", "completed")\
-        .execute()
-    completed_ids = {row["chapter_id"] for row in completed.data}
+    # 완료된 챕터 목록 (테이블 없으면 빈 셋으로 처리)
+    try:
+        completed = supabase.table("chapter_progress")\
+            .select("chapter_id")\
+            .eq("user_id", user_id)\
+            .eq("status", "completed")\
+            .execute()
+        completed_ids = {row["chapter_id"] for row in completed.data}
+    except Exception:
+        completed_ids = set()
 
     # 트랙 순서대로 완료 안 된 첫 번째 챕터 찾기
     for track_key, track in CHAPTERS.items():
