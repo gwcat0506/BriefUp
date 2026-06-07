@@ -70,16 +70,16 @@ async def get_review_quizzes(user_id: str):
 @router.get("/today/{user_id}")
 async def get_today_quizzes(user_id: str):
     """오늘의 퀴즈 2문제 반환 (복습 우선)"""
-    # 유저 관심사 카테고리 가져오기
-    topics = supabase.table("topics").select("category").eq("user_id", user_id).eq("is_active", True).execute()
+    # 유저 관심사 토픽명 가져오기 (contents.topic_category = topic_name으로 저장됨)
+    topics = supabase.table("topics").select("name").eq("user_id", user_id).eq("is_active", True).execute()
     if not topics.data:
         raise HTTPException(status_code=404, detail="관심사 없음. 마이페이지에서 관심사를 설정해주세요.")
 
-    categories = [t["category"] for t in topics.data]
+    topic_names = [t["name"] for t in topics.data]
 
     # 오늘 날짜 콘텐츠 가져오기
     today = date.today().isoformat()
-    contents = supabase.table("contents").select("id").in_("topic_category", categories).eq("collected_at", today).execute()
+    contents = supabase.table("contents").select("id").in_("topic_category", topic_names).eq("collected_at", today).execute()
 
     if not contents.data:
         raise HTTPException(status_code=404, detail="오늘의 콘텐츠가 아직 없어요.")
@@ -101,8 +101,8 @@ async def get_today_quizzes(user_id: str):
 @router.post("/answer")
 async def submit_answer(body: QuizAnswer):
     """퀴즈 답 제출 + 레벨 업데이트"""
-    # 정답 확인
-    quiz = supabase.table("quizzes").select("*").eq("id", body.quiz_id).single().execute()
+    # 정답 확인 (contents 조인으로 topic_category 가져오기)
+    quiz = supabase.table("quizzes").select("*, contents(topic_category)").eq("id", body.quiz_id).single().execute()
     if not quiz.data:
         raise HTTPException(status_code=404, detail="퀴즈 없음")
 
@@ -119,7 +119,7 @@ async def submit_answer(body: QuizAnswer):
 
     # 개념 레벨 업데이트
     concept = quiz.data["concept"]
-    category = quiz.data.get("category", "")
+    category = (quiz.data.get("contents") or {}).get("topic_category", "")
     _update_concept_level(body.user_id, concept, category, is_correct)
 
     # 스트릭 업데이트
