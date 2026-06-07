@@ -230,7 +230,7 @@ async def run_pipeline_for_topic(
         # STEP 5: 저장
         t = time.monotonic()
         try:
-            content_id = _save_content(raw, summary, category)
+            content_id = _save_content(raw, summary, topic_name, category)
             quiz_count = _save_quizzes(verified, content_id)
             logger.log_step(
                 tool_name="save",
@@ -259,9 +259,9 @@ async def run_pipeline_for_topic(
 
 # ── DB 저장 헬퍼 ──────────────────────────────────────────────
 
-def _save_content(raw: dict, summary: str, category: str) -> str:
+def _save_content(raw: dict, summary: str, topic_name: str, category: str) -> str:
     res = supabase.table("contents").insert({
-        "topic_category": category,
+        "topic_category": topic_name,  # 구체적 관심사명으로 저장 (유저 토픽별 조회용)
         "source": raw.get("source", "unknown"),
         "title": raw["title"],
         "original_url": raw.get("url", ""),
