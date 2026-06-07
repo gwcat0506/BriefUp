@@ -22,7 +22,11 @@ async function fetcher<T>(path: string, options?: RequestInit): Promise<T> {
 
 // ── 콘텐츠 ──────────────────────────────────────────
 export const api = {
-  // 오늘의 브리핑
+  // 오늘의 브리핑 — 유저 토픽 기반
+  getTodayContentForUser: (userId: string) =>
+    fetcher<Content[]>(`/api/content/today/for-user/${userId}`),
+
+  // 특정 토픽/카테고리로 조회 (레거시)
   getTodayContent: (category: string) =>
     fetcher<Content[]>(`/api/content/today/${category}`),
 
@@ -76,7 +80,7 @@ export const api = {
   getTopics: (userId: string) =>
     fetcher<Topic[]>(`/api/user/${userId}/topics`),
 
-  addTopic: (userId: string, name: string, category: string) =>
+  addTopic: (userId: string, name: string, category?: string) =>
     fetcher(`/api/user/topic`, {
       method: "POST",
       body: JSON.stringify({ user_id: userId, name, category }),
