@@ -4,11 +4,11 @@ STEP 2 — 요약 생성
 GPT-4o-mini 사용 (비용 최적화)
 """
 
-from openai import OpenAI
+from openai import AsyncOpenAI
 import os
 import json
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SUMMARY_PROMPT = """
 당신은 {category} 분야 학습 콘텐츠 전문가입니다.
@@ -32,7 +32,7 @@ SUMMARY_PROMPT = """
 
 async def summarize(title: str, text: str, category: str) -> str:
     """소스 기반 요약 생성"""
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         model="gpt-4o-mini",
         max_tokens=600,
         messages=[{

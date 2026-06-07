@@ -4,11 +4,11 @@ STEP 3 — 퀴즈 생성
 GPT-4o-mini 사용
 """
 
-from openai import OpenAI
+from openai import AsyncOpenAI
 import os
 import json
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 QUIZ_PROMPT = """
 당신은 {category} 분야를 쉽고 재미있게 가르치는 선생님입니다.
@@ -62,7 +62,7 @@ QUIZ_PROMPT = """
 
 async def generate_quizzes(title: str, text: str, category: str) -> list[dict]:
     """소스 기반 퀴즈 생성"""
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         model="gpt-4o-mini",
         max_tokens=1200,
         messages=[{

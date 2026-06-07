@@ -20,9 +20,56 @@ async def get_quizzes_by_content(content_id: str):
     return res.data
 
 
+@router.get("/review/{user_id}")
+async def get_review_quizzes(user_id: str):
+    """
+    틀린 개념 자동 재출제 (말해보카 핵심 기능)
+    오답 개념 중 아직 마스터 안 된 것 우선 출제
+    """
+    # 틀린 개념 찾기 (정답률 50% 미만)
+    weak = supabase.table("concept_levels")\
+        .select("concept, level, total_attempts, correct_attempts")\
+        .eq("user_id", user_id)\
+        .lt("level", 50)\
+        .gt("total_attempts", 0)\
+        .order("level")\
+        .limit(5)\
+        .execute()
+
+    if not weak.data:
+        return []
+
+    weak_concepts = [row["concept"] for row in weak.data]
+
+    # 해당 개념의 퀴즈 가져오기 (오늘 이미 푼 것 제외)
+    answered_today = supabase.table("quiz_results")\
+        .select("quiz_id")\
+        .eq("user_id", user_id)\
+        .gte("answered_at", date.today().isoformat())\
+        .execute()
+    answered_ids = [r["quiz_id"] for r in answered_today.data]
+
+    quizzes_q = supabase.table("quizzes")\
+        .select("*, contents(title, source)")\
+        .in_("concept", weak_concepts)\
+        .limit(2)
+
+    if answered_ids:
+        quizzes_q = quizzes_q.not_.in_("id", answered_ids)
+
+    quizzes = quizzes_q.execute()
+
+    # 복습 퀴즈임을 표시
+    for q in quizzes.data:
+        q["is_review"] = True
+        q["review_reason"] = f"'{q['concept']}' 개념을 다시 연습해봐요 💪"
+
+    return quizzes.data
+
+
 @router.get("/today/{user_id}")
 async def get_today_quizzes(user_id: str):
-    """오늘의 퀴즈 2문제 반환"""
+    """오늘의 퀴즈 2문제 반환 (복습 우선)"""
     # 유저 관심사 카테고리 가져오기
     topics = supabase.table("topics").select("category").eq("user_id", user_id).eq("is_active", True).execute()
     if not topics.data:

@@ -1,86 +1,92 @@
 """
 STEP 1 — 콘텐츠 수집
-신뢰도 높은 공식 API/RSS만 사용
-수집 후 품질 필터 적용 (길이, 키워드, 중복)
+topics.name을 실제 수집 키워드로 사용 (동적 관심사 기반)
+arxiv: topic_name을 쿼리로 직접 사용
+RSS: 카테고리별 소스에서 수집 후 topic_name 키워드로 필터
 """
 
+import re
 import httpx
 import feedparser
 from datetime import date
 from core.supabase import supabase
 
-# ── 관심사별 소스 매핑 ──────────────────────────────────────────
-SOURCES = {
+# RSS 소스만 관리 (arxiv 쿼리는 topic_name에서 동적 생성)
+RSS_SOURCES: dict[str, list[dict]] = {
     "AI/ML": [
-        {"type": "arxiv",  "query": "RAG retrieval augmented generation agent LLM"},
-        {"type": "arxiv",  "query": "agentic AI multi-agent framework"},
-        {"type": "rss",    "url": "https://huggingface.co/blog/feed.xml", "name": "HuggingFace"},
-        {"type": "rss",    "url": "https://tldr.tech/ai/rss",             "name": "TLDR AI"},
+        {"url": "https://huggingface.co/blog/feed.xml", "name": "HuggingFace"},
+        {"url": "https://tldr.tech/ai/rss",             "name": "TLDR AI"},
     ],
     "철학": [
-        {"type": "rss", "url": "https://philosophybites.com/atom.xml",        "name": "Philosophy Bites"},
-        {"type": "rss", "url": "https://www.philosophersmag.com/feed",        "name": "Philosophers Mag"},
+        {"url": "https://philosophybites.com/atom.xml",  "name": "Philosophy Bites"},
+        {"url": "https://www.philosophersmag.com/feed",  "name": "Philosophers Mag"},
     ],
     "경제": [
-        {"type": "rss", "url": "https://feeds.feedburner.com/typepad/krMN",  "name": "Freakonomics"},
-        {"type": "rss", "url": "https://www.economist.com/finance-and-economics/rss.xml", "name": "Economist"},
+        {"url": "https://feeds.feedburner.com/typepad/krMN",                         "name": "Freakonomics"},
+        {"url": "https://www.economist.com/finance-and-economics/rss.xml",           "name": "Economist"},
     ],
     "심리학": [
-        {"type": "rss", "url": "https://www.psychologytoday.com/intl/front-page/feed", "name": "Psychology Today"},
+        {"url": "https://www.psychologytoday.com/intl/front-page/feed", "name": "Psychology Today"},
     ],
 }
 
-# 카테고리별 품질 키워드 (관련성 검증)
-QUALITY_KEYWORDS = {
-    "AI/ML":  ["RAG", "agent", "LLM", "embedding", "transformer", "inference", "fine-tuning", "retrieval"],
-    "철학":   ["philosophy", "ethics", "logic", "epistemology", "consciousness", "존재", "윤리", "철학"],
-    "경제":   ["economy", "market", "GDP", "inflation", "investment", "경제", "시장", "금리"],
-    "심리학": ["psychology", "behavior", "cognitive", "mental", "emotion", "심리", "인지", "행동"],
-}
 
+async def collect_for_topic(topic_name: str, category: str) -> list[dict]:
+    """
+    topic_name을 실제 수집 키워드로 사용.
 
-async def collect_for_category(category: str) -> list[dict]:
-    """카테고리 콘텐츠 수집 + 품질 필터"""
-    sources = SOURCES.get(category, [])
+    - arxiv: topic_name을 쿼리로 직접 검색
+    - RSS: 카테고리 소스에서 수집 후 topic_name 키워드 필터
+    """
+    rss_sources = RSS_SOURCES.get(category, [])
     raw_items = []
 
     async with httpx.AsyncClient(timeout=20) as client:
-        for source in sources:
-            try:
-                if source["type"] == "arxiv":
-                    items = await _fetch_arxiv(client, source["query"])
-                elif source["type"] == "rss":
-                    items = await _fetch_rss(source["url"])
-                else:
-                    continue
+        # arxiv — topic_name을 쿼리로 사용
+        try:
+            items = await _fetch_arxiv(client, topic_name)
+            for item in items:
+                item["source"] = "arxiv"
+                item["topic_category"] = category
+            raw_items.extend(items)
+        except Exception as e:
+            print(f"  [arxiv 오류] '{topic_name}': {e}")
 
+        # RSS — 카테고리 소스 전체 수집
+        for source in rss_sources:
+            try:
+                items = await _fetch_rss(source["url"])
                 for item in items:
-                    item["source"] = source.get("name", source["type"])
+                    item["source"] = source["name"]
                     item["topic_category"] = category
                 raw_items.extend(items)
-
             except Exception as e:
-                print(f"  [수집 오류] {source}: {e}")
+                print(f"  [RSS 오류] {source['name']}: {e}")
 
-    # 품질 필터 적용
-    filtered = [item for item in raw_items if _is_quality_content(item, category)]
-    print(f"  [{category}] 수집 {len(raw_items)}개 → 필터 후 {len(filtered)}개")
-    return filtered[:5]  # 카테고리당 최대 5개
+    filtered = [item for item in raw_items if _is_quality_content(item, topic_name)]
+    print(f"  [{category}/{topic_name}] 수집 {len(raw_items)}개 → 필터 후 {len(filtered)}개")
+    return filtered[:5]
 
 
-def _is_quality_content(item: dict, category: str) -> bool:
+async def collect_for_category(category: str) -> list[dict]:
+    """하위 호환용 — category를 topic_name으로 위임."""
+    return await collect_for_topic(category, category)
+
+
+def _is_quality_content(item: dict, topic_name: str) -> bool:
     """품질 필터 3단계"""
     text = item.get("text", "")
     title = item.get("title", "")
 
-    # 1. 길이 체크 — 너무 짧으면 요약/퀴즈 생성 불가
+    # 1. 길이 체크
     if len(text) < 150:
         return False
 
-    # 2. 관련성 체크 — 카테고리 키워드 포함 여부
-    keywords = QUALITY_KEYWORDS.get(category, [])
+    # 2. 관련성 체크 — topic_name을 단어 단위로 분리해 검증
+    #    "AI/ML" → ["ai", "ml"], "LangGraph" → ["langgraph"]
+    keywords = [kw.lower() for kw in re.split(r"[\s/,]+", topic_name) if len(kw) > 1]
     combined = (title + " " + text).lower()
-    if not any(kw.lower() in combined for kw in keywords):
+    if keywords and not any(kw in combined for kw in keywords):
         return False
 
     # 3. 중복 체크 — 오늘 이미 수집된 URL

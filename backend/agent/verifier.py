@@ -5,11 +5,11 @@ FAIL 시 재생성 (최대 2회 시도)
 목표 정확도: 95%+
 """
 
-from openai import OpenAI
+from openai import AsyncOpenAI
 import os
 import json
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 VERIFY_PROMPT = """
 당신은 퀴즈 품질 검증 전문가입니다.
@@ -37,7 +37,7 @@ JSON으로만 응답:
 
 async def verify_quiz(quiz: dict, source_text: str) -> dict:
     """퀴즈 단건 검증"""
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         model="gpt-4o-mini",
         max_tokens=200,
         messages=[{
