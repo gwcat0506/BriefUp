@@ -24,7 +24,16 @@ export default function RoadmapPage() {
         setCurricula(data);
         if (data.length > 0) setSelected(data[0].id);
       })
-      .catch(() => {})
+      .catch(() => {
+        // API 실패 시 기본 3트랙 폴백 (Render 배포 중 등)
+        const fallback = [
+          { id: "rag",   title: "RAG (검색 증강 생성)", emoji: "🔍", color: "#10B981", description: "AI가 외부 지식을 검색해서 답하는 기술", totalChapters: 5, chapters: [] },
+          { id: "agent", title: "Agentic AI",          emoji: "🤖", color: "#8B5CF6", description: "스스로 생각하고 도구를 사용하는 AI",     totalChapters: 5, chapters: [] },
+          { id: "llm",   title: "LLM 기초",            emoji: "🧠", color: "#F59E0B", description: "대형 언어 모델의 작동 원리",              totalChapters: 4, chapters: [] },
+        ] as any[];
+        setCurricula(fallback);
+        setSelected("rag");
+      })
       .finally(() => setLoading(false));
   }, []);
 

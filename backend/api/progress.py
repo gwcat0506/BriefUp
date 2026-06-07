@@ -63,7 +63,7 @@ async def get_user_curricula(user_id: str):
     from agent.curriculum_catalog import CURRICULUM_CATALOG
 
     # 유저 토픽 조회
-    topics_res = supabase.table("topics").select("name").eq("user_id", user_id).eq("is_active", True).execute()
+    topics_res = supabase.table("topics").select("name").eq("user_id", user_id).execute()
     topic_names_lower = {t["name"].lower() for t in (topics_res.data or [])}
 
     # 유저 챕터 진행 상태 조회
