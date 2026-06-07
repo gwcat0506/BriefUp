@@ -21,7 +21,7 @@ class UserCreate(BaseModel):
 class TopicCreate(BaseModel):
     user_id: str
     name: str
-    category: str
+    category: str | None = None
 
 
 @router.post("/")
@@ -50,11 +50,15 @@ async def get_user(user_id: str):
 
 @router.post("/topic")
 async def add_topic(body: TopicCreate):
+    category = body.category
+    if not category:
+        from agent.classifier import classify_topic
+        category = await classify_topic(body.name)
     try:
         res = supabase.table("topics").insert({
             "user_id": body.user_id,
             "name": body.name,
-            "category": body.category
+            "category": category,
         }).execute()
         return res.data[0]
     except Exception:
