@@ -5,11 +5,17 @@ import { api, Topic, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import { useRouter } from "next/navigation";
 
-const CATEGORIES = [
-  { label: "AI / ML", value: "AI/ML" },
-  { label: "철학", value: "철학" },
-  { label: "경제", value: "경제" },
-  { label: "심리학", value: "심리학" },
+const SUGGESTED_TOPICS = [
+  { id: "rag",        label: "RAG",         category: "AI/ML",  emoji: "🔍" },
+  { id: "agent",      label: "Agentic AI",  category: "AI/ML",  emoji: "🤖" },
+  { id: "llm",        label: "LLM 기초",    category: "AI/ML",  emoji: "🧠" },
+  { id: "quantum",    label: "양자컴퓨팅",  category: "IT",     emoji: "⚛️" },
+  { id: "invest",     label: "주식/투자",   category: "경제",   emoji: "📈" },
+  { id: "psych",      label: "심리학",      category: "심리학", emoji: "🧬" },
+  { id: "philosophy", label: "철학",        category: "철학",   emoji: "💭" },
+  { id: "startup",    label: "스타트업",    category: "경제",   emoji: "🚀" },
+  { id: "health",     label: "헬스/운동",   category: "건강",   emoji: "💪" },
+  { id: "history",    label: "역사",        category: "인문",   emoji: "📜" },
 ];
 
 type Tab = "settings" | "bookmarks";
@@ -17,9 +23,8 @@ type Tab = "settings" | "bookmarks";
 export default function MyPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [bookmarks, setBookmarks] = useState<any[]>([]);
-  const [adding, setAdding] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newCategory, setNewCategory] = useState("AI/ML");
+  const [adding, setAdding] = useState<string | null>(null);
+  const [customInput, setCustomInput] = useState("");
   const [tab, setTab] = useState<Tab>("settings");
   const router = useRouter();
 
@@ -28,16 +33,29 @@ export default function MyPage() {
     api.getBookmarks(TEMP_USER_ID).then(setBookmarks);
   }, []);
 
-  async function handleAdd() {
-    if (!newName.trim()) return;
-    setAdding(true);
+  async function handleAddSuggested(id: string, label: string, category: string) {
+    if (adding || topics.some(t => t.name === label)) return;
+    setAdding(id);
     try {
-      await api.addTopic(TEMP_USER_ID, newName.trim(), newCategory);
+      await api.addTopic(TEMP_USER_ID, label, category);
       const updated = await api.getTopics(TEMP_USER_ID);
       setTopics(updated);
-      setNewName("");
     } finally {
-      setAdding(false);
+      setAdding(null);
+    }
+  }
+
+  async function handleAddCustom() {
+    const trimmed = customInput.trim();
+    if (!trimmed || adding) return;
+    setAdding("custom");
+    try {
+      await api.addTopic(TEMP_USER_ID, trimmed);
+      const updated = await api.getTopics(TEMP_USER_ID);
+      setTopics(updated);
+      setCustomInput("");
+    } finally {
+      setAdding(null);
     }
   }
 
@@ -78,46 +96,78 @@ export default function MyPage() {
         {tab === "settings" && (
           <>
             <div className="mt-4">
-              <h2 className="text-[#1C1C1E] font-bold text-sm mb-3">관심사 설정</h2>
-              <div className="bg-white rounded-3xl p-4 card-shadow mb-3">
-                {topics.length === 0 ? (
-                  <p className="text-[#9CA3AF] text-sm text-center py-2">관심사를 추가해주세요</p>
-                ) : (
+              <h2 className="text-[#1C1C1E] font-bold text-sm mb-1">관심사 설정</h2>
+              <p className="text-[#9CA3AF] text-xs mb-3">추가한 관심사가 로드맵 커리큘럼에 반영돼요</p>
+
+              {/* 현재 관심사 */}
+              {topics.length > 0 && (
+                <div className="bg-white rounded-3xl p-4 card-shadow mb-3">
+                  <p className="text-[#6B7280] text-xs mb-2 font-medium">현재 관심사</p>
                   <div className="flex flex-wrap gap-2">
                     {topics.map((t) => (
-                      <span key={t.id} className="bg-[#ECFDF5] text-[#10B981] text-sm px-3 py-1 rounded-full font-medium">
+                      <span key={t.id} className="bg-[#ECFDF5] text-[#10B981] text-sm px-3 py-1.5 rounded-full font-medium">
                         {t.name}
                       </span>
                     ))}
                   </div>
-                )}
+                </div>
+              )}
+
+              {/* 추천 토픽 칩 */}
+              <div className="bg-white rounded-3xl p-4 card-shadow mb-3">
+                <p className="text-[#6B7280] text-xs mb-3 font-medium">커리큘럼 있는 주제</p>
+                <div className="flex flex-wrap gap-2">
+                  {SUGGESTED_TOPICS.map((item) => {
+                    const already = topics.some(t => t.name === item.label);
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleAddSuggested(item.id, item.label, item.category)}
+                        disabled={already || adding !== null}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all active:scale-95 disabled:cursor-default ${
+                          already
+                            ? "border-[#10B981] bg-[#ECFDF5] text-[#065F46]"
+                            : "border-[#F3F4F6] bg-[#F9FAFB] text-[#374151]"
+                        }`}
+                      >
+                        <span>{item.emoji}</span>
+                        <span>{item.label}</span>
+                        {already && <span className="text-[#10B981]">✓</span>}
+                        {adding === item.id && <span className="text-[#9CA3AF]">...</span>}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-4 card-shadow flex flex-col gap-3">
+              {/* 직접 입력 */}
+              <div className="bg-white rounded-3xl p-4 card-shadow flex gap-2">
                 <input
                   type="text"
-                  placeholder="관심사 입력 (예: Agentic AI)"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  className="bg-[#F9FAFB] text-[#1C1C1E] placeholder-[#9CA3AF] text-sm px-4 py-3 rounded-xl outline-none border border-[#F3F4F6] focus:border-[#10B981]"
+                  placeholder="직접 입력 (예: 블록체인)"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddCustom()}
+                  maxLength={20}
+                  className="flex-1 bg-[#F9FAFB] text-[#1C1C1E] placeholder-[#9CA3AF] text-sm px-4 py-3 rounded-xl outline-none border border-[#F3F4F6] focus:border-[#10B981]"
                 />
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="bg-[#F9FAFB] text-[#1C1C1E] text-sm px-4 py-3 rounded-xl outline-none border border-[#F3F4F6]"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
-                </select>
                 <button
-                  onClick={handleAdd}
-                  disabled={adding}
-                  className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all disabled:opacity-50"
+                  onClick={handleAddCustom}
+                  disabled={!customInput.trim() || adding !== null}
+                  className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold px-4 py-3 rounded-xl text-sm active:scale-95 transition-all disabled:opacity-40"
                 >
-                  {adding ? "추가 중..." : "관심사 추가"}
+                  {adding === "custom" ? "..." : "추가"}
                 </button>
               </div>
+
+              {topics.length > 0 && (
+                <button
+                  onClick={() => router.push("/roadmap")}
+                  className="mt-3 w-full bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] text-white font-bold py-3 rounded-2xl text-sm active:scale-95 transition-all"
+                >
+                  📚 내 로드맵 보러 가기 →
+                </button>
+              )}
             </div>
 
             <div className="mt-4">

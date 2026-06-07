@@ -100,6 +100,10 @@ export const api = {
   getNextChapter: (userId: string) =>
     fetcher<NextChapter | null>(`/api/progress/chapter/${userId}/next`),
 
+  // 유저 커리큘럼 (관심사 기반 동적 로드맵)
+  getCurricula: (userId: string) =>
+    fetcher<CurriculumTrack[]>(`/api/progress/curricula/${userId}`),
+
   // 북마크
   toggleBookmark: (userId: string, contentId: string) =>
     fetcher<{ bookmarked: boolean }>(`/api/progress/bookmark`, {
@@ -186,6 +190,26 @@ export interface Topic {
   id: string;
   name: string;
   category: string;
+}
+
+export interface CurriculumChapter {
+  id: number;
+  chapter_id: string;
+  title: string;
+  description: string;
+  level: string;
+  duration: string;
+  status: "available" | "locked" | "started" | "completed";
+}
+
+export interface CurriculumTrack {
+  id: string;
+  title: string;
+  emoji: string;
+  color: string;
+  description: string;
+  totalChapters: number;
+  chapters: CurriculumChapter[];
 }
 
 export interface NextChapter {

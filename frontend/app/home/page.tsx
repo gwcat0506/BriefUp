@@ -15,6 +15,7 @@ export default function HomePage() {
   const [levels, setLevels] = useState<ConceptLevel[]>([]);
   const [nextChapter, setNextChapter] = useState<NextChapter | null>(null);
   const [reviewCount, setReviewCount] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [expandedNews, setExpandedNews] = useState<string | null>(null);
   const [milestoneShown, setMilestoneShown] = useState(false);
@@ -23,26 +24,34 @@ export default function HomePage() {
 
   const loadData = () => {
     setLoading(true);
-    // allSettled: 하나 실패해도 나머지 데이터는 표시
+    setStatsLoading(true);
+
+    // 통계 카드 — 빠르게 먼저 표시 (streak/levels/status)
     Promise.allSettled([
-      api.getTodayContentForUser(TEMP_USER_ID),
       api.getStreak(TEMP_USER_ID),
       api.getLevels(TEMP_USER_ID),
-      api.getNextChapter(TEMP_USER_ID),
       api.getStreakStatus(TEMP_USER_ID),
-      api.getReviewQuizzes(TEMP_USER_ID),
-    ]).then(([c, s, l, next, status, reviews]) => {
-      if (c.status === "fulfilled") setContents(c.value);
-      if (s.status === "fulfilled") setStreak(s.value);
-      if (l.status === "fulfilled") setLevels(l.value);
-      if (next.status === "fulfilled") setNextChapter(next.value);
-      if (status.status === "fulfilled") setStreakStatus(status.value);
-      if (reviews.status === "fulfilled") setReviewCount(reviews.value.length);
-      // 마일스톤 달성 시 토스트
-      if (s.status === "fulfilled" && s.value?.milestone && !milestoneShown) {
-        showToast(`${s.value.milestone.badge} ${s.value.milestone.reward}`, "success");
-        setMilestoneShown(true);
+    ]).then(([s, l, status]) => {
+      if (s.status === "fulfilled") {
+        setStreak(s.value);
+        if (s.value?.milestone && !milestoneShown) {
+          showToast(`${s.value.milestone.badge} ${s.value.milestone.reward}`, "success");
+          setMilestoneShown(true);
+        }
       }
+      if (l.status === "fulfilled") setLevels(l.value);
+      if (status.status === "fulfilled") setStreakStatus(status.value);
+    }).finally(() => setStatsLoading(false));
+
+    // 콘텐츠 — 느려도 괜찮은 항목
+    Promise.allSettled([
+      api.getTodayContentForUser(TEMP_USER_ID),
+      api.getNextChapter(TEMP_USER_ID),
+      api.getReviewQuizzes(TEMP_USER_ID),
+    ]).then(([c, next, reviews]) => {
+      if (c.status === "fulfilled") setContents(c.value);
+      if (next.status === "fulfilled") setNextChapter(next.value);
+      if (reviews.status === "fulfilled") setReviewCount(reviews.value.length);
     }).finally(() => setLoading(false));
   };
 
@@ -89,8 +98,8 @@ export default function HomePage() {
       </div>
 
       {/* 학습 현황 카드 */}
-      {loading ? <div className="mx-5 mt-4"><SkeletonStat /></div> : null}
-      <div className={`mx-5 mt-4 bg-white rounded-3xl p-5 card-shadow ${loading ? "hidden" : ""}`}>
+      {statsLoading ? <div className="mx-5 mt-4"><SkeletonStat /></div> : null}
+      <div className={`mx-5 mt-4 bg-white rounded-3xl p-5 card-shadow ${statsLoading ? "hidden" : ""}`}>
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-[#6B7280] text-xs mb-1">전체 학습 레벨</p>

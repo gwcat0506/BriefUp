@@ -13,52 +13,7 @@ import json
 router = APIRouter()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# ── 챕터 정의 (로드맵과 동일하게 유지) ──────────────────────
-CHAPTERS = {
-    "rag": {
-        "title": "RAG (검색 증강 생성)",
-        "chapters": [
-            {"id": "rag-1", "title": "검색이란 무엇인가?", "level": "입문",
-             "concepts": ["키워드 검색", "의미 검색", "TF-IDF"]},
-            {"id": "rag-2", "title": "임베딩과 벡터 DB", "level": "기본",
-             "concepts": ["임베딩", "벡터 DB", "코사인 유사도"]},
-            {"id": "rag-3", "title": "Chunking 전략", "level": "기본",
-             "concepts": ["Chunking", "Overlap", "토큰 길이"]},
-            {"id": "rag-4", "title": "고급 RAG 기법", "level": "심화",
-             "concepts": ["HyDE", "Re-ranking", "Self-RAG"]},
-            {"id": "rag-5", "title": "실전 RAG 파이프라인", "level": "심화",
-             "concepts": ["파이프라인", "평가 지표", "레이턴시"]},
-        ]
-    },
-    "agent": {
-        "title": "Agentic AI",
-        "chapters": [
-            {"id": "agent-1", "title": "Agent란 무엇인가?", "level": "입문",
-             "concepts": ["Agent", "ReAct", "Tool Use"]},
-            {"id": "agent-2", "title": "도구 사용 (Tool Use)", "level": "기본",
-             "concepts": ["Function Calling", "Tool", "API 연동"]},
-            {"id": "agent-3", "title": "멀티 에이전트 시스템", "level": "기본",
-             "concepts": ["Multi-Agent", "오케스트레이터", "서브에이전트"]},
-            {"id": "agent-4", "title": "메모리와 상태 관리", "level": "심화",
-             "concepts": ["단기 기억", "장기 기억", "벡터 메모리"]},
-            {"id": "agent-5", "title": "실전 Agent 배포", "level": "심화",
-             "concepts": ["배포", "모니터링", "비용 최적화"]},
-        ]
-    },
-    "llm": {
-        "title": "LLM 기초",
-        "chapters": [
-            {"id": "llm-1", "title": "Transformer 쉽게 이해하기", "level": "입문",
-             "concepts": ["Transformer", "Attention", "Self-Attention"]},
-            {"id": "llm-2", "title": "프롬프트 엔지니어링", "level": "기본",
-             "concepts": ["프롬프트", "Chain-of-Thought", "Few-shot"]},
-            {"id": "llm-3", "title": "Fine-tuning vs RAG", "level": "심화",
-             "concepts": ["Fine-tuning", "RAG", "LoRA"]},
-            {"id": "llm-4", "title": "LLM 평가와 벤치마크", "level": "심화",
-             "concepts": ["MMLU", "HumanEval", "평가 지표"]},
-        ]
-    }
-}
+from agent.curriculum_catalog import CHAPTERS
 
 LEARN_PROMPT = """
 당신은 {track} 분야를 처음 배우는 사람에게 설명하는 재미있는 선생님입니다.

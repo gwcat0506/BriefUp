@@ -225,9 +225,15 @@ function QuizContent() {
           {optionKeys.map((key) => {
             let cls = "bg-white border-2 border-transparent text-[#1C1C1E] card-shadow";
             if (selected) {
-              if (key === result?.answer) cls = "bg-[#ECFDF5] border-2 border-[#10B981] text-[#065F46]";
-              else if (key === selected && !result?.is_correct) cls = "bg-[#FEF2F2] border-2 border-[#EF4444] text-[#991B1B]";
-              else cls = "bg-[#F9FAFB] border-2 border-transparent text-[#9CA3AF]";
+              if (result) {
+                if (key === result.answer) cls = "bg-[#ECFDF5] border-2 border-[#10B981] text-[#065F46]";
+                else if (key === selected && !result.is_correct) cls = "bg-[#FEF2F2] border-2 border-[#EF4444] text-[#991B1B]";
+                else cls = "bg-[#F9FAFB] border-2 border-transparent text-[#9CA3AF]";
+              } else {
+                // API 응답 대기 중 — 선택한 항목만 연한 강조
+                if (key === selected) cls = "bg-[#F0FDF4] border-2 border-[#10B981]/40 text-[#1C1C1E] card-shadow";
+                else cls = "bg-[#F9FAFB] border-2 border-transparent text-[#9CA3AF]";
+              }
             }
             return (
               <button
