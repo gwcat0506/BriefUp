@@ -53,6 +53,25 @@ export const api = {
   getStreak: (userId: string) =>
     fetcher<Streak>(`/api/user/${userId}/streak`),
 
+  getStreakStatus: (userId: string) =>
+    fetcher<StreakStatus>(`/api/user/${userId}/streak/status`),
+
+  useStreakFreeze: (userId: string) =>
+    fetcher<{ success: boolean; freeze_remaining: number; message: string }>(
+      `/api/user/${userId}/streak/freeze`, { method: "POST" }
+    ),
+
+  // 복습 퀴즈 (틀린 개념 재출제)
+  getReviewQuizzes: (userId: string) =>
+    fetcher<Quiz[]>(`/api/quiz/review/${userId}`),
+
+  // 유저 생성
+  createUser: (userId: string, nickname: string) =>
+    fetcher(`/api/user/`, {
+      method: "POST",
+      body: JSON.stringify({ id: userId, email: `${userId}@briefup.app`, nickname }),
+    }),
+
   // 관심사
   getTopics: (userId: string) =>
     fetcher<Topic[]>(`/api/user/${userId}/topics`),
@@ -146,6 +165,17 @@ export interface Streak {
   current_streak: number;
   longest_streak: number;
   last_active_date: string;
+  freeze_available?: number;
+  milestone?: { days: number; badge: string; reward: string } | null;
+  next_milestone?: number | null;
+  days_to_next?: number | null;
+}
+
+export interface StreakStatus {
+  status: "done" | "pending" | "broken" | "new" | "freezeable";
+  message: string;
+  current_streak?: number;
+  freeze_available?: number;
 }
 
 export interface Topic {

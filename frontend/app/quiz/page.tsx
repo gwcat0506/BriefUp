@@ -14,6 +14,7 @@ const DIFFICULTY_COLOR = ["", "#10B981", "#F59E0B", "#EF4444"];
 function QuizContent() {
   const searchParams = useSearchParams();
   const contentId = searchParams.get("content_id");
+  const mode = searchParams.get("mode"); // "review" 모드
   const router = useRouter();
 
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -23,9 +24,13 @@ function QuizContent() {
   const [step, setStep] = useState<Step>("loading");
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [error, setError] = useState("");
+  // content_id에서 chapter_id 추출 (챕터 퀴즈인 경우)
+  const chapterSource = quizzes[0]?.content_id || "";
 
   useEffect(() => {
-    const load = contentId
+    const load = mode === "review"
+      ? api.getReviewQuizzes(TEMP_USER_ID)
+      : contentId
       ? api.getQuizzesByContent(contentId)
       : api.getTodayQuizzes(TEMP_USER_ID);
 
@@ -68,8 +73,22 @@ function QuizContent() {
     } catch (e: any) { setError(e.message); setStep("error"); }
   }
 
-  function handleNext() {
+  async function handleNext() {
     if (currentIdx + 1 >= quizzes.length) {
+      // 퀴즈 완료 → chapter_progress 업데이트
+      if (contentId) {
+        // content의 source에서 chapter_id 추출 시도
+        try {
+          await api.updateProgress({
+            user_id: TEMP_USER_ID,
+            chapter_id: contentId, // content_id를 임시로 사용
+            track: "rag",
+            status: "completed",
+            quiz_score: score.correct + (result?.is_correct ? 1 : 0),
+            quiz_total: score.total + 1,
+          });
+        } catch (e) { /* 무시 */ }
+      }
       setStep("done");
     } else {
       setCurrentIdx(i => i + 1);
@@ -170,6 +189,11 @@ function QuizContent() {
       <div className="px-5 pt-14 pb-4 bg-white border-b border-[#F9FAFB]">
         <div className="flex items-center justify-between mb-3">
           <button onClick={() => router.back()} className="text-[#9CA3AF] text-sm">← 돌아가기</button>
+        {mode === "review" && (
+          <span className="text-xs bg-[#FDF4FF] text-[#7E22CE] px-3 py-1 rounded-full font-medium">
+            💪 복습 모드
+          </span>
+        )}
           <span
             className="text-xs px-3 py-1 rounded-full font-medium"
             style={{

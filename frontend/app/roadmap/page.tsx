@@ -201,6 +201,12 @@ export default function RoadmapPage() {
       <div className="px-5 mt-2">
 
         {/* 커리큘럼 소개 */}
+        {(() => {
+          const completedCount = curriculum.chapters.filter(
+            ch => progress[`${curriculum.id}-${ch.id}`]?.status === "completed"
+          ).length;
+          const pct = Math.round((completedCount / curriculum.totalChapters) * 100);
+          return (
         <div
           className="rounded-3xl p-4 mb-4 text-white"
           style={{ backgroundColor: curriculum.color }}
@@ -210,10 +216,19 @@ export default function RoadmapPage() {
           <p className="text-white/80 text-sm mt-1">{curriculum.description}</p>
           <div className="flex items-center gap-3 mt-3">
             <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
-              총 {curriculum.totalChapters}챕터
+              {completedCount}/{curriculum.totalChapters} 완료
+            </span>
+            <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
+              {pct}%
             </span>
           </div>
+          <div className="mt-3 w-full bg-white/20 rounded-full h-1.5 overflow-hidden">
+            <div className="h-1.5 bg-white rounded-full transition-all duration-700"
+              style={{ width: `${pct}%` }} />
+          </div>
         </div>
+          );
+        })()}
 
         {/* 챕터 목록 */}
         <div className="flex flex-col gap-3">

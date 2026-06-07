@@ -1,33 +1,71 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, Content, Streak, ConceptLevel, NextChapter, TEMP_USER_ID } from "@/lib/api";
+import { api, Content, Streak, ConceptLevel, NextChapter, StreakStatus, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { SkeletonCard, SkeletonStat } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
 
 export default function HomePage() {
   const [contents, setContents] = useState<Content[]>([]);
   const [streak, setStreak] = useState<Streak | null>(null);
+  const [streakStatus, setStreakStatus] = useState<StreakStatus | null>(null);
   const [levels, setLevels] = useState<ConceptLevel[]>([]);
   const [nextChapter, setNextChapter] = useState<NextChapter | null>(null);
+  const [reviewCount, setReviewCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [expandedNews, setExpandedNews] = useState<string | null>(null);
+  const [milestoneShown, setMilestoneShown] = useState(false);
   const router = useRouter();
+  const { show: showToast, ToastComponent } = useToast();
 
-  useEffect(() => {
+  const loadData = () => {
+    setLoading(true);
     Promise.all([
       api.getTodayContent("AI/ML"),
       api.getStreak(TEMP_USER_ID),
       api.getLevels(TEMP_USER_ID),
       api.getNextChapter(TEMP_USER_ID),
-    ]).then(([c, s, l, next]) => {
+      api.getStreakStatus(TEMP_USER_ID),
+      api.getReviewQuizzes(TEMP_USER_ID),
+    ]).then(([c, s, l, next, status, reviews]) => {
       setContents(c);
       setStreak(s);
       setLevels(l);
       setNextChapter(next);
-    }).finally(() => setLoading(false));
+      setStreakStatus(status);
+      setReviewCount(reviews.length);
+      // 마일스톤 달성 시 토스트
+      if (s?.milestone && !milestoneShown) {
+        showToast(`${s.milestone.badge} ${s.milestone.reward}`, "success");
+        setMilestoneShown(true);
+      }
+    }).catch(() => showToast("데이터를 불러오는 데 실패했어요", "error"))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  // 페이지 포커스 시 데이터 갱신 (퀴즈 완료 후 돌아올 때)
+  useEffect(() => {
+    const handleFocus = () => loadData();
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
+
+  async function handleStreakFreeze() {
+    try {
+      const res = await api.useStreakFreeze(TEMP_USER_ID);
+      showToast(res.message, "success");
+      loadData();
+    } catch (e: any) {
+      showToast(e.message || "프리즈 사용 실패", "error");
+    }
+  }
 
   const avgLevel = levels.length
     ? Math.round(levels.reduce((a, b) => a + b.level, 0) / levels.length)
@@ -42,6 +80,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen pb-24 bg-[#FAFAF8]">
+      {ToastComponent}
 
       {/* 헤더 */}
       <div className="px-5 pt-14 pb-2">
@@ -50,7 +89,8 @@ export default function HomePage() {
       </div>
 
       {/* 학습 현황 카드 */}
-      <div className="mx-5 mt-4 bg-white rounded-3xl p-5 card-shadow">
+      {loading ? <div className="mx-5 mt-4"><SkeletonStat /></div> : null}
+      <div className={`mx-5 mt-4 bg-white rounded-3xl p-5 card-shadow ${loading ? "hidden" : ""}`}>
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-[#6B7280] text-xs mb-1">전체 학습 레벨</p>
@@ -81,6 +121,72 @@ export default function HomePage() {
            avgLevel < 90 ? "거의 다 왔어요! 조금만 더 💎" : "마스터에 가까워요 🏆"}
         </p>
       </div>
+
+      {/* 스트릭 상태 배너 */}
+      {streakStatus && streakStatus.status !== "done" && streakStatus.status !== "new" && (
+        <div className={`mx-5 mt-3 rounded-2xl p-4 flex items-center justify-between ${
+          streakStatus.status === "pending" || streakStatus.status === "freezeable"
+            ? "bg-[#FFF7ED] border border-[#FED7AA]"
+            : "bg-[#FEF2F2] border border-[#FCA5A5]"
+        }`}>
+          <div>
+            <p className={`font-bold text-sm ${
+              streakStatus.status === "broken" ? "text-[#DC2626]" : "text-[#C2410C]"
+            }`}>
+              {streakStatus.message}
+            </p>
+            {streakStatus.freeze_available && streakStatus.freeze_available > 0 && (
+              <p className="text-[#9CA3AF] text-xs mt-0.5">
+                프리즈 {streakStatus.freeze_available}개 보유 중
+              </p>
+            )}
+          </div>
+          {(streakStatus.status === "freezeable") && (
+            <button
+              onClick={handleStreakFreeze}
+              className="bg-[#F59E0B] text-white text-xs font-bold px-3 py-2 rounded-xl active:scale-95 transition-all"
+            >
+              🧊 프리즈 사용
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* 마일스톤 달성 배너 */}
+      {streak?.milestone && (
+        <div className="mx-5 mt-3 bg-gradient-to-r from-[#F59E0B] to-[#EF4444] rounded-2xl p-4 text-white">
+          <p className="font-bold text-base">{streak.milestone.badge}</p>
+          <p className="text-yellow-100 text-sm mt-0.5">{streak.milestone.reward}</p>
+        </div>
+      )}
+
+      {/* 다음 마일스톤까지 */}
+      {streak && !streak.milestone && streak.days_to_next && streak.current_streak > 0 && (
+        <div className="mx-5 mt-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl px-4 py-3 flex items-center justify-between">
+          <p className="text-[#92400E] text-xs">
+            🔥 {streak.next_milestone}일 달성까지 <span className="font-bold">{streak.days_to_next}일</span> 남았어요
+          </p>
+          <div className="flex">
+            {Array.from({ length: Math.min(streak.days_to_next, 7) }).map((_, i) => (
+              <div key={i} className="w-2 h-2 rounded-full bg-[#FDE68A] ml-1" />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 복습 퀴즈 배너 (틀린 개념 있을 때) */}
+      {reviewCount > 0 && (
+        <div
+          className="mx-5 mt-3 bg-[#FDF4FF] border border-[#E9D5FF] rounded-2xl p-4 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all"
+          onClick={() => router.push(`/quiz?mode=review`)}
+        >
+          <div>
+            <p className="text-[#7E22CE] font-bold text-sm">💪 복습할 개념이 있어요</p>
+            <p className="text-[#9CA3AF] text-xs mt-0.5">틀린 {reviewCount}개 개념 다시 도전</p>
+          </div>
+          <span className="text-[#7E22CE] font-bold">→</span>
+        </div>
+      )}
 
       {/* 오늘 학습할 챕터 — 동적 추천 */}
       {nextChapter && (
@@ -131,9 +237,8 @@ export default function HomePage() {
 
         {loading && (
           <div className="flex flex-col gap-3">
-            {[1, 2].map((i) => (
-              <div key={i} className="bg-white rounded-3xl p-4 h-32 animate-pulse card-shadow" />
-            ))}
+            <SkeletonCard className="h-32" />
+            <SkeletonCard className="h-32" />
           </div>
         )}
 
