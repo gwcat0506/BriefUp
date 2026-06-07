@@ -69,6 +69,7 @@ npm run lint
 ```
 SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SECRET_KEY
 OPENAI_API_KEY
+TAVILY_API_KEY
 FRONTEND_URL
 ```
 
@@ -79,5 +80,15 @@ NEXT_PUBLIC_API_URL
 ```
 
 ### 배포
-- Frontend: Vercel (`frontend/` root directory)
-- Backend: Railway (`backend/Procfile` + `railway.toml`)
+- Frontend: Vercel — `brief-up` 프로젝트, Root Directory: `frontend`
+  - 프로덕션 URL: https://brief-up.vercel.app
+  - 배포: `cd frontend && vercel --prod`
+- Backend: Render — `briefup` 서비스, Root Directory: `backend`, Free 티어
+  - 프로덕션 URL: https://briefup.onrender.com
+  - 배포: `git push` (GitHub 연동 자동 배포)
+  - **주의:** Free 티어는 15분 비활성 시 슬립, 첫 요청 시 30~60초 콜드 스타트
+
+### 의존성 주의사항
+- `httpx`는 `fastmcp`(>=0.28.1)와 `openai`(>=1.52.0) 요구사항에 맞게 고정
+- `supabase` 2.x 최신은 2.9.1 (2.12.0은 존재하지 않음)
+- `pydantic-settings`는 `mcp` 때문에 >=2.5.2 필요
