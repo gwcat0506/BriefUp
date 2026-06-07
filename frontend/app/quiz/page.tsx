@@ -75,20 +75,6 @@ function QuizContent() {
 
   async function handleNext() {
     if (currentIdx + 1 >= quizzes.length) {
-      // 퀴즈 완료 → chapter_progress 업데이트
-      if (contentId) {
-        // content의 source에서 chapter_id 추출 시도
-        try {
-          await api.updateProgress({
-            user_id: TEMP_USER_ID,
-            chapter_id: contentId, // content_id를 임시로 사용
-            track: "rag",
-            status: "completed",
-            quiz_score: score.correct + (result?.is_correct ? 1 : 0),
-            quiz_total: score.total + 1,
-          });
-        } catch (e) { /* 무시 */ }
-      }
       setStep("done");
     } else {
       setCurrentIdx(i => i + 1);

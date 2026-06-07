@@ -81,7 +81,7 @@ function LearnContent() {
   }, [chapterId]);
 
   const currentCard = cards[cardIdx];
-  const progress = cards.length > 0 ? ((cardIdx + 1) / (cards.length + 1)) * 100 : 0;
+  const progress = cards.length > 0 ? ((cardIdx + 1) / cards.length) * 100 : 0;
   const style = currentCard ? CARD_STYLES[currentCard.type] : CARD_STYLES.hook;
 
   async function handleNext() {

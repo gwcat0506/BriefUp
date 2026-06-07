@@ -23,27 +23,27 @@ export default function HomePage() {
 
   const loadData = () => {
     setLoading(true);
-    Promise.all([
-      api.getTodayContent("AI/ML"),
+    // allSettled: 하나 실패해도 나머지 데이터는 표시
+    Promise.allSettled([
+      api.getTodayContentForUser(TEMP_USER_ID),
       api.getStreak(TEMP_USER_ID),
       api.getLevels(TEMP_USER_ID),
       api.getNextChapter(TEMP_USER_ID),
       api.getStreakStatus(TEMP_USER_ID),
       api.getReviewQuizzes(TEMP_USER_ID),
     ]).then(([c, s, l, next, status, reviews]) => {
-      setContents(c);
-      setStreak(s);
-      setLevels(l);
-      setNextChapter(next);
-      setStreakStatus(status);
-      setReviewCount(reviews.length);
+      if (c.status === "fulfilled") setContents(c.value);
+      if (s.status === "fulfilled") setStreak(s.value);
+      if (l.status === "fulfilled") setLevels(l.value);
+      if (next.status === "fulfilled") setNextChapter(next.value);
+      if (status.status === "fulfilled") setStreakStatus(status.value);
+      if (reviews.status === "fulfilled") setReviewCount(reviews.value.length);
       // 마일스톤 달성 시 토스트
-      if (s?.milestone && !milestoneShown) {
-        showToast(`${s.milestone.badge} ${s.milestone.reward}`, "success");
+      if (s.status === "fulfilled" && s.value?.milestone && !milestoneShown) {
+        showToast(`${s.value.milestone.badge} ${s.value.milestone.reward}`, "success");
         setMilestoneShown(true);
       }
-    }).catch(() => showToast("데이터를 불러오는 데 실패했어요", "error"))
-      .finally(() => setLoading(false));
+    }).finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -300,45 +300,6 @@ export default function HomePage() {
           ))}
         </div>
       </div>
-
-      {/* 오늘의 AI 뉴스 */}
-      {!loading && contents.length > 0 && (
-        <div className="mx-5 mt-4">
-          <p className="text-[#1C1C1E] font-bold text-base mb-1">오늘의 AI 뉴스 📰</p>
-          <p className="text-[#9CA3AF] text-xs mb-3">최신 트렌드를 가볍게 확인해요</p>
-          <div className="flex flex-col gap-3">
-            {contents.map((c) => (
-              <div key={c.id} className="bg-white rounded-3xl card-shadow overflow-hidden">
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-[#EFF6FF] text-[#3B82F6] text-xs px-2.5 py-1 rounded-full font-medium">
-                      {c.source}
-                    </span>
-                  </div>
-                  <h3 className="text-[#1C1C1E] font-bold text-sm leading-snug mb-2 line-clamp-2">
-                    {c.title}
-                  </h3>
-                  <p className="text-[#6B7280] text-xs leading-relaxed line-clamp-2">{c.summary}</p>
-                </div>
-                <div className="border-t border-[#F9FAFB] flex">
-                  {c.original_url && (
-                    <a href={c.original_url} target="_blank" rel="noreferrer"
-                      className="flex-1 py-3 text-center text-[#6B7280] text-xs font-medium">
-                      원문 보기 →
-                    </a>
-                  )}
-                  <button
-                    onClick={() => router.push(`/quiz?content_id=${c.id}`)}
-                    className="flex-1 py-3 text-center bg-[#EFF6FF] text-[#3B82F6] text-xs font-bold rounded-br-3xl"
-                  >
-                    ✏️ 퀴즈 풀기
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* 개념별 레벨 */}
       {levels.length > 0 && (

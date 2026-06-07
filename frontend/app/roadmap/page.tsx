@@ -311,7 +311,7 @@ export default function RoadmapPage() {
         </div>
       </div>
 
-      <BottomNav active="home" />
+      <BottomNav active="roadmap" />
     </div>
   );
 }
