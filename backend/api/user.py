@@ -142,6 +142,12 @@ async def add_topic(body: TopicCreate):
     return topic_row
 
 
+@router.delete("/topic/{topic_id}")
+async def remove_topic(topic_id: str):
+    supabase.table("topics").update({"is_active": False}).eq("id", topic_id).execute()
+    return {"removed": topic_id}
+
+
 @router.get("/{user_id}/topics")
 async def get_topics(user_id: str):
     res = supabase.table("topics").select("*").eq("user_id", user_id).eq("is_active", True).execute()
@@ -173,12 +179,14 @@ async def get_streak(user_id: str):
 
     # 다음 마일스톤
     next_milestone = next((d for d in sorted(MILESTONES.keys()) if d > current), None)
+    next_milestone_reward = MILESTONES[next_milestone]["reward"] if next_milestone else None
 
     return {
         **streak,
         "milestone": milestone,
         "next_milestone": next_milestone,
         "days_to_next": (next_milestone - current) if next_milestone else None,
+        "next_milestone_reward": next_milestone_reward,
     }
 
 

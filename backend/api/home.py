@@ -36,8 +36,10 @@ def _q_streak_and_status(user_id: str):
             milestone = {"days": days, **info}
             break
     next_ms = next((d for d in sorted(MILESTONES.keys()) if d > current), None)
+    next_ms_reward = MILESTONES[next_ms]["reward"] if next_ms else None
     streak = {**row, "milestone": milestone, "next_milestone": next_ms,
-              "days_to_next": (next_ms - current) if next_ms else None}
+              "days_to_next": (next_ms - current) if next_ms else None,
+              "next_milestone_reward": next_ms_reward}
 
     if str(last) == today:
         status = {"status": "done", "message": f"오늘 학습 완료! 🔥 {current}일 연속", "current_streak": current}

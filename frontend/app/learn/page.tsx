@@ -27,17 +27,27 @@ interface ContentRow {
 }
 
 const LOADING_STEPS = [
-  { label: "챕터 내용 확인 중", pct: 15 },
-  { label: "AI가 설명 카드 생성 중", pct: 35 },
-  { label: "개념 정리하는 중", pct: 55 },
-  { label: "예시와 인사이트 추가 중", pct: 75 },
-  { label: "마무리 중", pct: 90 },
+  { label: "챕터 내용 읽는 중", pct: 15 },
+  { label: "핵심 개념 추출 중", pct: 35 },
+  { label: "쉽게 풀어 쓰는 중", pct: 55 },
+  { label: "예시와 인사이트 넣는 중", pct: 75 },
+  { label: "거의 다 됐어요!", pct: 90 },
+];
+
+const LEARNING_TIPS = [
+  { emoji: "🧠", text: "퀴즈를 풀면 단순히 읽는 것보다 기억에 2배 오래 남아요" },
+  { emoji: "⚡", text: "능동적 회상(Active Recall)은 밑줄 긋기보다 6배 효과적이에요" },
+  { emoji: "📊", text: "매일 5분씩 꾸준히 하면 1년에 30시간이 쌓여요" },
+  { emoji: "🌙", text: "배운 내용은 잠들기 전 짧게 복습하면 장기 기억으로 넘어가요" },
+  { emoji: "🎯", text: "남에게 설명할 수 있으면 진짜 이해한 거예요 — 파인만 기법" },
 ];
 
 function LoadingScreen() {
   const [pct, setPct] = useState(0);
   const [stepIdx, setStepIdx] = useState(0);
+  const [tipIdx, setTipIdx] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const tipRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     let elapsed = 0;
@@ -51,15 +61,25 @@ function LoadingScreen() {
       const resolvedIdx = idx === -1 ? 0 : LOADING_STEPS.length - 1 - idx;
       setStepIdx(resolvedIdx);
     }, 200);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+
+    // 4초마다 팁 순환
+    tipRef.current = setInterval(() => {
+      setTipIdx(prev => (prev + 1) % LEARNING_TIPS.length);
+    }, 4000);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (tipRef.current) clearInterval(tipRef.current);
+    };
   }, []);
 
   const step = LOADING_STEPS[stepIdx];
+  const tip = LEARNING_TIPS[tipIdx];
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAFAF8] px-8">
-      <div className="text-6xl mb-6">📖</div>
-      <p className="text-[#1C1C1E] font-bold text-lg mb-1">설명 카드 준비 중</p>
+      <div className="text-6xl mb-5">📖</div>
+      <p className="text-[#1C1C1E] font-bold text-lg mb-1">지식 카드 만드는 중이에요 ✨</p>
       <p className="text-[#9CA3AF] text-sm mb-8">{step.label}...</p>
 
       {/* 진행 바 */}
@@ -69,9 +89,15 @@ function LoadingScreen() {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-[#10B981] text-xs font-bold">{Math.round(pct)}%</p>
+      <p className="text-[#10B981] text-xs font-bold mb-8">{Math.round(pct)}%</p>
 
-      <p className="text-[#D1D5DB] text-xs mt-6">AI가 실시간으로 만들어요 — 처음엔 15초 정도</p>
+      {/* 학습 팁 */}
+      <div className="w-full max-w-xs bg-white rounded-2xl px-4 py-3.5 card-shadow">
+        <p className="text-[#9CA3AF] text-xs font-medium mb-1.5">알고 계셨나요?</p>
+        <p className="text-[#1C1C1E] text-sm leading-relaxed">
+          {tip.emoji} {tip.text}
+        </p>
+      </div>
     </div>
   );
 }
@@ -284,7 +310,7 @@ function LearnContent() {
 
             {/* 내용 */}
             {currentCard.content && (
-              <p className="text-[#374151] text-base leading-relaxed">
+              <p className="text-[#374151] text-base leading-relaxed whitespace-pre-line">
                 {currentCard.content}
               </p>
             )}

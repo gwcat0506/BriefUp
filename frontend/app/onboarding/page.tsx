@@ -94,15 +94,43 @@ export default function OnboardingPage() {
         {/* Step 1 — 환영 */}
         {step === 1 && (
           <div className="flex-1 flex flex-col">
-            <div className="flex-1 flex flex-col items-center justify-center text-center">
-              <p className="text-6xl mb-6">👋</p>
-              <h1 className="text-2xl font-bold text-[#1C1C1E] mb-3">
-                BrefUp에 오신 걸 환영해요!
-              </h1>
-              <p className="text-[#6B7280] text-base leading-relaxed mb-8">
-                매일 10분, 카드 형식으로<br />AI를 쉽고 재미있게 배워요
-              </p>
-              <div className="w-full bg-white rounded-3xl p-5 card-shadow text-left">
+            <div className="flex-1 flex flex-col justify-center">
+              <div className="text-center mb-8">
+                <p className="text-6xl mb-5">📖</p>
+                <h1 className="text-2xl font-bold text-[#1C1C1E] mb-3">
+                  매일 아침, 딱 맞는 지식이 온다
+                </h1>
+                <p className="text-[#6B7280] text-base leading-relaxed">
+                  관심사를 알려주면 AI가 오늘 읽을<br />학습 카드를 자동으로 만들어줘요
+                </p>
+              </div>
+
+              {/* 기능 소개 3개 */}
+              <div className="flex flex-col gap-3 mb-7">
+                <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 card-shadow">
+                  <span className="text-2xl">🎯</span>
+                  <div>
+                    <p className="text-[#1C1C1E] font-semibold text-sm">관심사 맞춤 학습 카드</p>
+                    <p className="text-[#9CA3AF] text-xs mt-0.5">AI가 어려운 개념을 5분 분량으로 요약해줘요</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 card-shadow">
+                  <span className="text-2xl">💡</span>
+                  <div>
+                    <p className="text-[#1C1C1E] font-semibold text-sm">퀴즈로 제대로 기억하기</p>
+                    <p className="text-[#9CA3AF] text-xs mt-0.5">읽고 끝이 아니라 퀴즈까지 풀어야 진짜 내 것</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 card-shadow">
+                  <span className="text-2xl">🔥</span>
+                  <div>
+                    <p className="text-[#1C1C1E] font-semibold text-sm">스트릭으로 꾸준히</p>
+                    <p className="text-[#9CA3AF] text-xs mt-0.5">하루도 빠지지 않는 습관, 레벨업으로 보람 있게</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl p-5 card-shadow">
                 <p className="text-[#6B7280] text-sm mb-2">이름이 뭐예요? (선택)</p>
                 <input
                   type="text"

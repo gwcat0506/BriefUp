@@ -82,6 +82,9 @@ export const api = {
       body: JSON.stringify({ user_id: userId, name, category }),
     }),
 
+  removeTopic: (topicId: string) =>
+    fetcher(`/api/user/topic/${topicId}`, { method: "DELETE" }),
+
   // XP / 레벨
   getUserXp: (userId: string) =>
     fetcher<XpInfo>(`/api/user/${userId}/xp`),
@@ -197,6 +200,7 @@ export interface Streak {
   milestone?: { days: number; badge: string; reward: string } | null;
   next_milestone?: number | null;
   days_to_next?: number | null;
+  next_milestone_reward?: string | null;
 }
 
 export interface StreakStatus {

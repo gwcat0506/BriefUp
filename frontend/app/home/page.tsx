@@ -37,7 +37,6 @@ export default function HomePage() {
   const [levels, setLevels] = useState<ConceptLevel[]>([]);
   const [xpInfo, setXpInfo] = useState<XpInfo | null>(null);
   const [curricula, setCurricula] = useState<CurriculumTrack[]>([]);
-  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
   const [reviewCount, setReviewCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [milestoneShown, setMilestoneShown] = useState(false);
@@ -69,7 +68,6 @@ export default function HomePage() {
         return score(b) - score(a);
       });
       setCurricula(sorted);
-      setSelectedTrackId(prev => prev ?? sorted[0]?.id ?? null);
     }
   };
 
@@ -122,8 +120,6 @@ export default function HomePage() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "좋은 아침이에요 ☀️" : hour < 18 ? "오늘도 화이팅! 💪" : "오늘 하루 수고했어요 🌙";
   const today = new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "long" });
-
-  const selectedTrack = curricula.find((t) => t.id === selectedTrackId) ?? null;
 
   return (
     <div className="flex flex-col min-h-screen pb-24 bg-[#FAFAF8]">
@@ -221,15 +217,22 @@ export default function HomePage() {
             </div>
           )}
           {streak && !streak.milestone && streak.days_to_next && streak.current_streak > 0 && (
-            <div className="mx-5 mt-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl px-4 py-3 flex items-center justify-between">
-              <p className="text-[#92400E] text-xs">
-                🔥 {streak.next_milestone}일 달성까지 <span className="font-bold">{streak.days_to_next}일</span> 남았어요
-              </p>
-              <div className="flex">
-                {Array.from({ length: Math.min(streak.days_to_next, 7) }).map((_, i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-[#FDE68A] ml-1" />
-                ))}
+            <div className="mx-5 mt-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl px-4 py-3.5">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[#92400E] text-xs font-bold">
+                  🔥 {streak.days_to_next}일만 더 하면 보상이 와요!
+                </p>
+                <div className="flex gap-1">
+                  {Array.from({ length: Math.min(streak.days_to_next, 7) }).map((_, i) => (
+                    <div key={i} className="w-2 h-2 rounded-full bg-[#FDE68A]" />
+                  ))}
+                </div>
               </div>
+              {streak.next_milestone_reward && (
+                <p className="text-[#B45309] text-xs">
+                  🎁 {streak.next_milestone}일 달성 시 → <span className="font-semibold">{streak.next_milestone_reward}</span>
+                </p>
+              )}
             </div>
           )}
 
@@ -247,10 +250,10 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* 커리큘럼 — 가로 탭 + 챕터 목록 */}
+          {/* 오늘의 챕터 */}
           <div className="mt-4">
             <div className="flex items-center justify-between px-5 mb-3">
-              <p className="text-[#1C1C1E] font-bold text-base">내 커리큘럼 📚</p>
+              <p className="text-[#1C1C1E] font-bold text-base">오늘의 챕터 📖</p>
               <Link href="/roadmap" className="text-[#10B981] text-sm font-medium">전체 보기</Link>
             </div>
 
@@ -270,113 +273,64 @@ export default function HomePage() {
             )}
 
             {curricula.length > 0 && (
-              <>
-                {/* 가로 스크롤 트랙 탭 */}
-                <div className="flex gap-2 overflow-x-auto px-5 pb-2 scrollbar-hide">
-                  {curricula.map((track) => {
-                    const isSelected = track.id === selectedTrackId;
-                    const completedCount = track.chapters.filter(c => c.status === "completed").length;
-                    return (
-                      <button
-                        key={track.id}
-                        onClick={() => setSelectedTrackId(track.id)}
-                        className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-medium transition-all ${
-                          isSelected
-                            ? "text-white shadow-sm"
-                            : "bg-white text-[#6B7280] card-shadow"
-                        }`}
-                        style={isSelected ? { background: track.color } : undefined}
-                      >
-                        <span>{track.emoji}</span>
-                        <span className="whitespace-nowrap">{track.title}</span>
-                        <span className={`text-xs ${isSelected ? "text-white/70" : "text-[#9CA3AF]"}`}>
-                          {completedCount}/{track.totalChapters}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="px-5 flex flex-col gap-3">
+                {curricula.map((track) => {
+                  const nextCh = track.chapters.find(c => c.status === "started" || c.status === "available");
+                  const completedCount = track.chapters.filter(c => c.status === "completed").length;
+                  const pct = track.totalChapters > 0 ? Math.round((completedCount / track.totalChapters) * 100) : 0;
+                  const chapterNum = nextCh
+                    ? track.chapters.findIndex(c => c.chapter_id === nextCh.chapter_id) + 1
+                    : null;
 
-                {/* 선택된 트랙 챕터 목록 */}
-                {selectedTrack && (() => {
-                  const nextCh = selectedTrack.chapters.find(c => c.status === "started" || c.status === "available");
-                  const completedCount = selectedTrack.chapters.filter(c => c.status === "completed").length;
                   return (
-                  <div className="mx-5 mt-2 bg-white rounded-3xl card-shadow overflow-hidden">
-                    {/* 트랙 진행률 + 학습 시작 CTA */}
-                    <div className="px-4 pt-4 pb-3 border-b border-[#F3F4F6]">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <p className="text-[#6B7280] text-xs">{selectedTrack.description}</p>
-                        <span className="text-[#9CA3AF] text-xs">
-                          {completedCount}/{selectedTrack.totalChapters} 완료
-                        </span>
+                    <div key={track.id} className="bg-white rounded-3xl card-shadow overflow-hidden">
+                      {/* 트랙 헤더 */}
+                      <div className="px-4 pt-4 pb-3 border-b border-[#F3F4F6]">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-base">{track.emoji}</span>
+                          <span className="text-sm font-semibold text-[#1C1C1E] truncate">{track.title}</span>
+                          <span className="ml-auto text-xs text-[#9CA3AF] flex-shrink-0">{completedCount}/{track.totalChapters} 완료</span>
+                        </div>
+                        <div className="w-full bg-[#F3F4F6] rounded-full h-1.5 overflow-hidden">
+                          <div
+                            className="h-1.5 rounded-full transition-all duration-700"
+                            style={{ width: `${pct}%`, background: track.color }}
+                          />
+                        </div>
                       </div>
-                      <div className="w-full bg-[#F3F4F6] rounded-full h-1.5 overflow-hidden">
-                        <div
-                          className="h-1.5 rounded-full transition-all duration-700"
-                          style={{
-                            width: `${selectedTrack.totalChapters > 0
-                              ? (completedCount / selectedTrack.totalChapters) * 100
-                              : 0}%`,
-                            background: selectedTrack.color,
-                          }}
-                        />
-                      </div>
-                      {nextCh && (
-                        <div className="flex items-center justify-between mt-3">
-                          <div className="flex-1 min-w-0 pr-3">
-                            <p className="text-[#9CA3AF] text-xs mb-0.5">다음 학습</p>
-                            <p className="text-[#1C1C1E] text-sm font-semibold truncate">{nextCh.title}</p>
-                            <p className="text-[#9CA3AF] text-xs mt-0.5">{nextCh.level} · {nextCh.duration}</p>
+
+                      {/* 다음 챕터 */}
+                      {nextCh ? (
+                        <div className="px-4 py-4 flex items-center gap-3">
+                          <div
+                            className="w-10 h-10 rounded-2xl flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                            style={{ background: track.color }}
+                          >
+                            {nextCh.status === "started" ? "▶" : `CH.${chapterNum}`}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[#1C1C1E] font-semibold text-sm leading-tight">{nextCh.title}</p>
+                            <p className="text-[#9CA3AF] text-xs mt-0.5">
+                              {nextCh.status === "started" && chapterNum ? `CH.${chapterNum} · ` : ""}{nextCh.level} · {nextCh.duration}
+                            </p>
                           </div>
                           <button
                             onClick={() => router.push(`/learn?id=${nextCh.chapter_id}`)}
                             className="flex-shrink-0 px-4 py-2 rounded-2xl text-white text-xs font-bold active:scale-95 transition-all"
-                            style={{ background: selectedTrack.color }}
+                            style={{ background: track.color }}
                           >
-                            ▶ 학습 시작
+                            {nextCh.status === "started" ? "계속하기" : "시작"}
                           </button>
                         </div>
-                      )}
-                      {!nextCh && completedCount === selectedTrack.totalChapters && selectedTrack.totalChapters > 0 && (
-                        <p className="text-[#10B981] text-xs font-bold mt-3 text-center">✅ 트랙 완료!</p>
+                      ) : (
+                        <div className="px-4 py-4 text-center">
+                          <p className="text-[#10B981] text-sm font-bold">✅ 완료</p>
+                        </div>
                       )}
                     </div>
-
-                    {/* 챕터 목록 */}
-                    {selectedTrack.chapters.map((ch, idx) => {
-                      const isCompleted = ch.status === "completed";
-                      const isLocked = ch.status === "locked";
-                      return (
-                        <div
-                          key={ch.chapter_id}
-                          className={`flex items-center gap-3 px-4 py-3 border-b border-[#F9FAFB] last:border-0 ${
-                            isLocked ? "opacity-40" : "cursor-pointer active:bg-[#FAFAF8]"
-                          }`}
-                          onClick={() => !isLocked && router.push(`/learn?id=${ch.chapter_id}`)}
-                        >
-                          <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                              isCompleted ? "bg-[#10B981] text-white" : isLocked ? "bg-[#F3F4F6] text-[#9CA3AF]" : "text-white"
-                            }`}
-                            style={!isCompleted && !isLocked ? { background: selectedTrack.color } : undefined}
-                          >
-                            {isCompleted ? "✓" : idx + 1}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-sm font-medium leading-tight ${isLocked ? "text-[#9CA3AF]" : "text-[#1C1C1E]"}`}>
-                              {ch.title}
-                            </p>
-                            <p className="text-[#9CA3AF] text-xs mt-0.5">{ch.level} · {ch.duration}</p>
-                          </div>
-                          <span className="text-[#9CA3AF] text-sm">{isLocked ? "🔒" : "→"}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
                   );
-                })()}
-              </>
+                })}
+              </div>
             )}
           </div>
 
