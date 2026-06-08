@@ -57,27 +57,3 @@ async def root():
 async def health():
     return {"status": "healthy"}
 
-@app.post("/api/admin/reseed")
-async def admin_reseed():
-    """커리큘럼 카탈로그를 DB에 upsert. 배포 후 1회 실행용."""
-    import asyncio
-    from agent.curriculum_catalog import CURRICULUM_CATALOG
-    from core.supabase import supabase
-
-    results = []
-    for track_id, track in CURRICULUM_CATALOG.items():
-        await asyncio.to_thread(
-            lambda t_id=track_id, t=track: supabase.table("topic_curricula").upsert({
-                "topic_key":     t_id,
-                "topic_name":    t["title"],
-                "category":      t.get("topic_names", [t["title"]])[0],
-                "topic_aliases": t.get("topic_names", []),
-                "emoji":         t.get("emoji", "📚"),
-                "color":         t.get("color", "#6366F1"),
-                "description":   t.get("description", ""),
-                "chapters":      t["chapters"],
-            }, on_conflict="topic_key").execute()
-        )
-        results.append({"track": track_id, "chapters": len(track["chapters"])})
-
-    return {"status": "ok", "upserted": results}
