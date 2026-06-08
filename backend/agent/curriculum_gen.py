@@ -58,14 +58,39 @@ def _slugify(name: str) -> str:
     return slug
 
 
+def _catalog_to_row(topic_key: str, track: dict, category: str) -> dict:
+    return {
+        "topic_key":     topic_key,
+        "topic_name":    track["title"],
+        "category":      category,
+        "topic_aliases": track.get("topic_names", []),
+        "emoji":         track.get("emoji", "📚"),
+        "color":         track.get("color", "#6366F1"),
+        "description":   track.get("description", ""),
+        "chapters":      track["chapters"],
+    }
+
+
 async def get_or_create_curriculum(topic_name: str, category: str) -> dict:
     """
     topic_name에 대한 커리큘럼을 반환.
-    DB에 있으면 즉시 반환, 없으면 Claude로 생성 후 저장.
+    CURRICULUM_CATALOG에 있는 토픽은 항상 카탈로그(최신) 우선 반환.
+    없으면 DB 캐시 → Claude 생성 순으로 진행.
     """
+    from agent.curriculum_catalog import CURRICULUM_CATALOG
+
     topic_key = _slugify(topic_name)
 
-    # 1. DB 캐시 확인
+    # 1. CURRICULUM_CATALOG 직접 매칭 (항상 최신 데이터)
+    if topic_key in CURRICULUM_CATALOG:
+        return _catalog_to_row(topic_key, CURRICULUM_CATALOG[topic_key], category)
+
+    # 2. CURRICULUM_CATALOG alias 매칭 (예: "주식" → "invest")
+    for cat_key, cat_data in CURRICULUM_CATALOG.items():
+        if topic_name in cat_data.get("topic_names", []):
+            return _catalog_to_row(cat_key, cat_data, category)
+
+    # 3. DB 캐시 확인 (동적 생성된 커리큘럼)
     existing = await asyncio.to_thread(
         lambda: supabase.table("topic_curricula")
             .select("*")
@@ -75,7 +100,7 @@ async def get_or_create_curriculum(topic_name: str, category: str) -> dict:
     if existing.data:
         return existing.data[0]
 
-    # 2. alias로도 검색 (예: "주식" → "주식/투자" 커리큘럼)
+    # 4. DB alias 검색
     alias_match = await asyncio.to_thread(
         lambda: supabase.table("topic_curricula")
             .select("*")
@@ -85,10 +110,10 @@ async def get_or_create_curriculum(topic_name: str, category: str) -> dict:
     if alias_match.data:
         return alias_match.data[0]
 
-    # 3. Claude로 신규 생성
+    # 5. Claude로 신규 생성
     curriculum = await _generate_curriculum(topic_name, category, topic_key)
 
-    # 4. DB 저장
+    # 6. DB 저장
     saved = await asyncio.to_thread(
         lambda: supabase.table("topic_curricula").insert({
             "topic_key":    topic_key,

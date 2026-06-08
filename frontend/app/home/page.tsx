@@ -1,13 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { api, Content, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID } from "@/lib/api";
+import { useEffect, useRef, useState } from "react";
+import { api, HomeSummary, Content, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SkeletonCard, SkeletonStat } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 
+// ── localStorage SWR 캐시 ────────────────────────────────────────
+const CACHE_KEY = `home_summary_v1_${TEMP_USER_ID}`;
+const CACHE_TTL = 5 * 60 * 1000; // 5분
+
+function getCached(): HomeSummary | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data as HomeSummary;
+  } catch {
+    return null;
+  }
+}
+
+function setCached(data: HomeSummary) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+  } catch {}
+}
+
+// ── 컴포넌트 ────────────────────────────────────────────────────
 export default function HomePage() {
   const [contents, setContents] = useState<Content[]>([]);
   const [streak, setStreak] = useState<Streak | null>(null);
@@ -22,47 +45,61 @@ export default function HomePage() {
   const [milestoneShown, setMilestoneShown] = useState(false);
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
+  const lastFetchRef = useRef(0);
+  const milestoneShownRef = useRef(false);
 
-  const loadData = () => {
-    setLoading(true);
-
-    Promise.allSettled([
-      api.getStreak(TEMP_USER_ID),
-      api.getLevels(TEMP_USER_ID),
-      api.getStreakStatus(TEMP_USER_ID),
-      api.getUserXp(TEMP_USER_ID),
-      api.getTodayContentForUser(TEMP_USER_ID),
-      api.getReviewQuizzes(TEMP_USER_ID),
-      api.getCurricula(TEMP_USER_ID),
-    ]).then(([s, l, status, xp, c, reviews, curricRes]) => {
-      if (s.status === "fulfilled") {
-        setStreak(s.value);
-        if (s.value?.milestone && !milestoneShown) {
-          showToast(`${s.value.milestone.badge} ${s.value.milestone.reward}`, "success");
-          setMilestoneShown(true);
-        }
+  const applyData = (data: HomeSummary) => {
+    if (data.streak) {
+      setStreak(data.streak);
+      if (data.streak.milestone && !milestoneShownRef.current) {
+        showToast(`${data.streak.milestone.badge} ${data.streak.milestone.reward}`, "success");
+        milestoneShownRef.current = true;
+        setMilestoneShown(true);
       }
-      if (l.status === "fulfilled") setLevels(l.value);
-      if (status.status === "fulfilled") setStreakStatus(status.value);
-      if (xp.status === "fulfilled") setXpInfo(xp.value);
-      if (c.status === "fulfilled") setContents(c.value);
-      if (reviews.status === "fulfilled") setReviewCount(reviews.value.length);
-      if (curricRes.status === "fulfilled" && curricRes.value) {
-        const sorted = [...curricRes.value].sort((a, b) => {
-          const score = (t: CurriculumTrack) => {
-            if (t.chapters.some(ch => ch.status === "started")) return 2;
-            if (t.chapters.some(ch => ch.status === "available")) return 1;
-            return 0;
-          };
-          return score(b) - score(a);
-        });
-        setCurricula(sorted);
-        setSelectedTrackId((prev) => prev ?? sorted[0]?.id ?? null);
-      }
-    }).finally(() => setLoading(false));
+    }
+    if (data.streak_status) setStreakStatus(data.streak_status);
+    if (data.xp_info) setXpInfo(data.xp_info);
+    setLevels(data.levels ?? []);
+    setContents(data.contents ?? []);
+    setReviewCount(data.review_count ?? 0);
+    if (data.curricula?.length) {
+      const sorted = [...data.curricula].sort((a, b) => {
+        const score = (t: CurriculumTrack) => {
+          if (t.chapters.some(ch => ch.status === "started")) return 2;
+          if (t.chapters.some(ch => ch.status === "available")) return 1;
+          return 0;
+        };
+        return score(b) - score(a);
+      });
+      setCurricula(sorted);
+      setSelectedTrackId(prev => prev ?? sorted[0]?.id ?? null);
+    }
   };
 
-  useEffect(() => { loadData(); }, []);
+  const loadData = (force = false) => {
+    const now = Date.now();
+    // 5분 내 재호출은 무시 (window focus 반복 방지). force=true면 항상 실행
+    if (!force && now - lastFetchRef.current < CACHE_TTL) return;
+    lastFetchRef.current = now;
+
+    // 캐시가 있으면 즉시 렌더링 (체감 0초)
+    const cached = getCached();
+    if (cached) {
+      applyData(cached);
+      setLoading(false);
+    }
+
+    // 백그라운드에서 최신 데이터 페치
+    api.getHomeSummary(TEMP_USER_ID)
+      .then(data => {
+        setCached(data);
+        applyData(data);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { loadData(true); }, []);
 
   useEffect(() => {
     const handleFocus = () => loadData();
@@ -74,7 +111,8 @@ export default function HomePage() {
     try {
       const res = await api.useStreakFreeze(TEMP_USER_ID);
       showToast(res.message, "success");
-      loadData();
+      lastFetchRef.current = 0; // 강제 재로드
+      loadData(true);
     } catch (e: any) {
       showToast(e.message || "프리즈 사용 실패", "error");
     }
@@ -100,7 +138,7 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold text-[#1C1C1E]">{greeting}</h1>
       </div>
 
-      {/* 전체 로딩 중 skeleton */}
+      {/* 전체 로딩 중 skeleton (캐시 없을 때만) */}
       {loading && (
         <div className="mx-5 mt-4 flex flex-col gap-4">
           <SkeletonStat />
@@ -109,7 +147,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 데이터 로드 완료 후 전체 표시 */}
+      {/* 데이터 있으면 표시 */}
       {!loading && (
         <>
           {/* 캐릭터 + 레벨 카드 */}
@@ -345,7 +383,7 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* 오늘의 브리핑 — 콘텐츠 있을 때만 */}
+          {/* 오늘의 브리핑 */}
           {contents.length > 0 && (
             <div className="mx-5 mt-4">
               <p className="text-[#1C1C1E] font-bold text-base mb-3">오늘의 브리핑</p>

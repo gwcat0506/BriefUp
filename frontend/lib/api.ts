@@ -104,6 +104,10 @@ export const api = {
   getCurricula: (userId: string) =>
     fetcher<CurriculumTrack[]>(`/api/progress/curricula/${userId}`),
 
+  // 홈 화면 집계 (7개 쿼리를 1회 왕복으로)
+  getHomeSummary: (userId: string) =>
+    fetcher<HomeSummary>(`/api/home/summary/${userId}`),
+
   // 북마크
   toggleBookmark: (userId: string, contentId: string) =>
     fetcher<{ bookmarked: boolean }>(`/api/progress/bookmark`, {
@@ -226,6 +230,16 @@ export interface CurriculumTrack {
   description: string;
   totalChapters: number;
   chapters: CurriculumChapter[];
+}
+
+export interface HomeSummary {
+  streak: Streak | null;
+  streak_status: StreakStatus | null;
+  xp_info: XpInfo | null;
+  levels: ConceptLevel[];
+  contents: Content[];
+  review_count: number;
+  curricula: CurriculumTrack[];
 }
 
 export interface NextChapter {

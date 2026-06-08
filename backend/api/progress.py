@@ -60,14 +60,21 @@ async def get_user_curricula(user_id: str):
     유저 관심사 토픽의 커리큘럼 목록 + 챕터별 진행 상태 반환.
     DB에 없는 토픽은 Claude가 자동 생성 후 저장.
     매칭 토픽 없으면 기본 3트랙(rag/agent/llm) 반환.
+    토픽·진행 상태 조회를 병렬 실행, 토픽별 커리큘럼도 병렬 조회.
     """
+    import asyncio
     from agent.curriculum_gen import get_or_create_curriculum
 
-    # 유저 토픽 조회
-    topics_res = supabase.table("topics").select("name, category").eq("user_id", user_id).execute()
-    topics = topics_res.data or []
+    # 토픽 + 챕터 진행 상태를 병렬 조회
+    topics_task = asyncio.to_thread(
+        lambda: supabase.table("topics").select("name, category").eq("user_id", user_id).execute()
+    )
+    progress_task = asyncio.to_thread(
+        lambda: supabase.table("chapter_progress").select("chapter_id,status").eq("user_id", user_id).execute()
+    )
+    topics_res, progress_res = await asyncio.gather(topics_task, progress_task, return_exceptions=True)
 
-    # 매칭 없으면 기본 3트랙
+    topics = (topics_res.data if not isinstance(topics_res, Exception) else None) or []
     if not topics:
         topics = [
             {"name": "RAG", "category": "AI/ML"},
@@ -75,23 +82,24 @@ async def get_user_curricula(user_id: str):
             {"name": "LLM 기초", "category": "AI/ML"},
         ]
 
-    # 유저 챕터 진행 상태 조회
-    try:
-        progress_res = supabase.table("chapter_progress").select("chapter_id,status").eq("user_id", user_id).execute()
+    completed_ids: set[str] = set()
+    progress_map: dict[str, str] = {}
+    if not isinstance(progress_res, Exception):
         completed_ids = {r["chapter_id"] for r in progress_res.data if r.get("status") == "completed"}
         progress_map = {r["chapter_id"]: r["status"] for r in progress_res.data}
-    except Exception:
-        completed_ids = set()
-        progress_map = {}
+
+    # 모든 토픽 커리큘럼을 병렬 조회
+    curriculum_results = await asyncio.gather(
+        *[get_or_create_curriculum(t["name"], t.get("category", "기타")) for t in topics],
+        return_exceptions=True
+    )
 
     result = []
     seen_keys: set[str] = set()
 
-    for topic in topics:
-        try:
-            curriculum_row = await get_or_create_curriculum(topic["name"], topic.get("category", "기타"))
-        except Exception as e:
-            print(f"[curricula] 커리큘럼 조회 실패 '{topic['name']}': {e}")
+    for curriculum_row in curriculum_results:
+        if isinstance(curriculum_row, Exception):
+            print(f"[curricula] 커리큘럼 조회 실패: {curriculum_row}")
             continue
 
         topic_key = curriculum_row["topic_key"]

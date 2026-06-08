@@ -7,7 +7,7 @@ import os
 
 load_dotenv()
 
-from api import quiz, user, content, chapter, progress, logs
+from api import quiz, user, content, chapter, progress, logs, home
 from agent.scheduler import run_daily_pipeline
 
 scheduler = AsyncIOScheduler()
@@ -47,6 +47,7 @@ app.include_router(content.router, prefix="/api/content", tags=["content"])
 app.include_router(chapter.router, prefix="/api/chapter", tags=["chapter"])
 app.include_router(progress.router, prefix="/api/progress", tags=["progress"])
 app.include_router(logs.router, prefix="/api/logs", tags=["logs"])
+app.include_router(home.router, prefix="/api/home", tags=["home"])
 
 @app.get("/")
 async def root():
