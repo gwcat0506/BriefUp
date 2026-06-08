@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const TABS = [
   { key: "home",    label: "홈",   icon: "🏠", href: "/home" },
-  { key: "quiz",    label: "퀴즈", icon: "✏️", href: "/quiz" },
+  { key: "quiz",    label: "복습", icon: "💪", href: "/quiz" },
   { key: "history", label: "기록", icon: "📋", href: "/history" },
   { key: "map",     label: "맵",   icon: "🗺️", href: "/map" },
   { key: "mypage",  label: "마이", icon: "👤", href: "/mypage" },

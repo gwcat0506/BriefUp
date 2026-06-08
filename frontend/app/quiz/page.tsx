@@ -15,7 +15,6 @@ const DIFFICULTY_COLOR = ["", "#10B981", "#F59E0B", "#EF4444"];
 function QuizContent() {
   const searchParams = useSearchParams();
   const contentId = searchParams.get("content_id");
-  const mode = searchParams.get("mode"); // "review" 모드
   const router = useRouter();
 
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -33,31 +32,16 @@ function QuizContent() {
   const chapterSource = quizzes[0]?.content_id || "";
 
   useEffect(() => {
-    const load = mode === "review"
-      ? api.getReviewQuizzes(TEMP_USER_ID)
-      : contentId
+    const load = contentId
       ? api.getQuizzesByContent(contentId)
-      : api.getTodayQuizzes(TEMP_USER_ID);
+      : api.getReviewQuizzes(TEMP_USER_ID);
 
     load
       .then((q) => {
         if (q.length === 0) setStep("empty");
         else { setQuizzes(q); setStep("quiz"); }
       })
-      .catch((e) => {
-        // content_id 퀴즈가 없으면 오늘 전체 퀴즈로 폴백
-        if (contentId) {
-          api.getTodayQuizzes(TEMP_USER_ID)
-            .then((q) => {
-              if (q.length === 0) setStep("empty");
-              else { setQuizzes(q); setStep("quiz"); }
-            })
-            .catch((e2) => { setError(e2.message); setStep("error"); });
-        } else {
-          setError(e.message);
-          setStep("error");
-        }
-      });
+      .catch((e) => { setError(e.message); setStep("error"); });
   }, [contentId]);
 
   const quiz = quizzes[currentIdx];
@@ -120,9 +104,9 @@ function QuizContent() {
   // ── 빈 상태 ──
   if (step === "empty") return (
     <div className="flex flex-col items-center justify-center min-h-screen px-5 text-center pb-20 bg-[#FAFAF8]">
-      <p className="text-6xl mb-4">📭</p>
-      <p className="text-[#1C1C1E] text-xl font-bold mb-2">퀴즈가 없어요</p>
-      <p className="text-[#9CA3AF] text-sm mb-6">브리핑을 먼저 읽어보세요</p>
+      <p className="text-6xl mb-4">🎉</p>
+      <p className="text-[#1C1C1E] text-xl font-bold mb-2">복습할 개념이 없어요</p>
+      <p className="text-[#9CA3AF] text-sm mb-6">커리큘럼 학습을 계속해보세요</p>
       <Link href="/home" className="bg-[#10B981] text-white px-6 py-3 rounded-2xl font-bold text-sm">
         홈으로 가기
       </Link>
@@ -167,7 +151,7 @@ function QuizContent() {
             <p className="text-[#9CA3AF] text-xs">
               {pct >= 80 ? "오늘 정말 잘했어요! 내일도 이 기세로 🔥" :
                pct >= 50 ? "잘 하고 있어요! 조금씩 늘고 있어요 📈" :
-               "틀린 문제는 내일 다시 나올 거예요. 파이팅! 💪"}
+               "틀린 개념은 하단 복습 탭에서 다시 도전해보세요 💪"}
             </p>
           </div>
 
@@ -215,7 +199,7 @@ function QuizContent() {
       <div className="px-5 pt-14 pb-4 bg-white border-b border-[#F9FAFB]">
         <div className="flex items-center justify-between mb-3">
           <button onClick={() => router.back()} className="text-[#9CA3AF] text-sm">← 돌아가기</button>
-        {mode === "review" && (
+        {!contentId && (
           <span className="text-xs bg-[#FDF4FF] text-[#7E22CE] px-3 py-1 rounded-full font-medium">
             💪 복습 모드
           </span>

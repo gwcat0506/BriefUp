@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api, HomeSummary, Content, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID } from "@/lib/api";
+import { api, HomeSummary, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -32,7 +32,6 @@ function setCached(data: HomeSummary) {
 
 // ── 컴포넌트 ────────────────────────────────────────────────────
 export default function HomePage() {
-  const [contents, setContents] = useState<Content[]>([]);
   const [streak, setStreak] = useState<Streak | null>(null);
   const [streakStatus, setStreakStatus] = useState<StreakStatus | null>(null);
   const [levels, setLevels] = useState<ConceptLevel[]>([]);
@@ -41,7 +40,6 @@ export default function HomePage() {
   const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
   const [reviewCount, setReviewCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [expandedNews, setExpandedNews] = useState<string | null>(null);
   const [milestoneShown, setMilestoneShown] = useState(false);
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
@@ -60,7 +58,6 @@ export default function HomePage() {
     if (data.streak_status) setStreakStatus(data.streak_status);
     if (data.xp_info) setXpInfo(data.xp_info);
     setLevels(data.levels ?? []);
-    setContents(data.contents ?? []);
     setReviewCount(data.review_count ?? 0);
     if (data.curricula?.length) {
       const sorted = [...data.curricula].sort((a, b) => {
@@ -383,67 +380,6 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* 오늘의 브리핑 */}
-          {contents.length > 0 && (
-            <div className="mx-5 mt-4">
-              <p className="text-[#1C1C1E] font-bold text-base mb-3">오늘의 브리핑</p>
-              <div className="flex flex-col gap-4">
-                {contents.map((c) => (
-                  <div key={c.id} className="bg-white rounded-3xl card-shadow overflow-hidden">
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="bg-[#ECFDF5] text-[#10B981] text-xs px-2.5 py-1 rounded-full font-medium">{c.source}</span>
-                        <span className="text-[#9CA3AF] text-xs">{c.topic_category}</span>
-                      </div>
-                      <h3 className="text-[#1C1C1E] font-bold text-sm leading-snug mb-2">{c.title}</h3>
-                      <p className={`text-[#6B7280] text-xs leading-relaxed ${expandedNews === c.id ? "" : "line-clamp-2"}`}>
-                        {c.summary}
-                      </p>
-                      <button onClick={() => setExpandedNews(expandedNews === c.id ? null : c.id)} className="text-[#10B981] text-xs mt-1 font-medium">
-                        {expandedNews === c.id ? "접기 ↑" : "더 읽기 ↓"}
-                      </button>
-                    </div>
-                    <div className="border-t border-[#F9FAFB] flex">
-                      {c.original_url && (
-                        <a href={c.original_url} target="_blank" rel="noreferrer" className="flex-1 py-3 text-center text-[#6B7280] text-xs font-medium">
-                          원문 읽기 →
-                        </a>
-                      )}
-                      <button onClick={() => router.push(`/quiz?content_id=${c.id}`)} className="flex-1 py-3 text-center bg-[#ECFDF5] text-[#10B981] text-xs font-bold rounded-br-3xl">
-                        ✏️ 이 내용으로 퀴즈 풀기
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 개념별 레벨 */}
-          {levels.length > 0 && (
-            <div className="mx-5 mt-4">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-[#1C1C1E] font-bold text-base">내 지식 레벨</p>
-                <Link href="/map" className="text-[#10B981] text-sm font-medium">전체 보기</Link>
-              </div>
-              <div className="bg-white rounded-3xl p-4 card-shadow flex flex-col gap-3">
-                {levels.slice(0, 3).map((l) => (
-                  <div key={l.concept}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-[#1C1C1E] text-sm font-medium">{l.concept}</span>
-                      <span className="text-[#10B981] text-sm font-bold">{l.level}%</span>
-                    </div>
-                    <div className="w-full bg-[#F3F4F6] rounded-full h-2 overflow-hidden">
-                      <div
-                        className="h-2 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-700"
-                        style={{ width: `${l.level}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </>
       )}
 
