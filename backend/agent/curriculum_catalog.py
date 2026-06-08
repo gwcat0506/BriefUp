@@ -1,6 +1,7 @@
 """
 커리큘럼 카탈로그 — 단일 소스 오브 트루스
 chapter.py (학습 콘텐츠 생성) + progress.py (로드맵 API) 모두 여기서 import
+각 챕터에 search_hints(arxiv_query, web_query)가 직접 내장되어 파이프라인이 챕터별 정밀 수집 가능.
 """
 
 CURRICULUM_CATALOG: dict[str, dict] = {
@@ -8,490 +9,595 @@ CURRICULUM_CATALOG: dict[str, dict] = {
         "title": "RAG (검색 증강 생성)",
         "emoji": "🔍",
         "color": "#10B981",
-        "description": "AI가 외부 지식을 검색해서 답하는 기술",
-        "topic_names": ["RAG"],
+        "description": "AI가 외부 지식을 검색해서 답하는 기술 — Naive부터 Graph RAG까지",
+        "topic_names": ["RAG", "검색 증강 생성", "Retrieval Augmented Generation"],
         "chapters": [
-            {"id": "rag-1", "title": "검색이란 무엇인가?",
-             "description": "정보를 찾는 방법 — 키워드 검색부터 의미 검색까지",
-             "level": "입문", "duration": "5분",
-             "concepts": ["키워드 검색", "의미 검색", "TF-IDF"]},
-            {"id": "rag-2", "title": "임베딩과 벡터 DB",
-             "description": "텍스트를 숫자로 바꾸면 뭐가 달라질까?",
-             "level": "기본", "duration": "7분",
-             "concepts": ["임베딩", "벡터 DB", "코사인 유사도"]},
-            {"id": "rag-3", "title": "Chunking 전략",
-             "description": "긴 문서를 어떻게 잘라야 AI가 잘 이해할까?",
-             "level": "기본", "duration": "6분",
-             "concepts": ["Chunking", "Overlap", "토큰 길이"]},
-            {"id": "rag-4", "title": "고급 RAG 기법 (HyDE, Re-ranking)",
-             "description": "검색 정확도를 더 높이는 방법들",
-             "level": "심화", "duration": "10분",
-             "concepts": ["HyDE", "Re-ranking", "Self-RAG"]},
-            {"id": "rag-5", "title": "실전 RAG 파이프라인 구축",
-             "description": "처음부터 끝까지 직접 만들어보기",
-             "level": "심화", "duration": "15분",
-             "concepts": ["파이프라인", "평가 지표", "레이턴시"]},
-            {"id": "rag-6", "title": "Hybrid Search",
-             "description": "키워드 검색과 벡터 검색을 합치면 어떻게 될까?",
-             "level": "심화", "duration": "8분",
-             "concepts": ["BM25", "하이브리드 검색", "RRF(Reciprocal Rank Fusion)"]},
-            {"id": "rag-7", "title": "멀티모달 RAG",
-             "description": "이미지·표·PDF까지 검색하는 RAG",
-             "level": "심화", "duration": "10분",
-             "concepts": ["이미지 임베딩", "표 파싱", "멀티모달 모델"]},
-            {"id": "rag-8", "title": "Graph RAG",
-             "description": "지식 그래프로 관계 기반 검색하기",
-             "level": "심화", "duration": "10분",
-             "concepts": ["지식 그래프", "엔티티", "그래프 DB"]},
-            {"id": "rag-9", "title": "RAG 평가 프레임워크",
-             "description": "내 RAG가 잘 작동하는지 어떻게 알까?",
-             "level": "심화", "duration": "9분",
-             "concepts": ["RAGAS", "정밀도", "재현율", "충실도"]},
-            {"id": "rag-10", "title": "프로덕션 RAG 운영",
-             "description": "실서비스에서 비용·속도·품질 균형 잡기",
-             "level": "심화", "duration": "12분",
-             "concepts": ["캐싱", "모니터링", "비용 최적화", "A/B 테스트"]},
+            {
+                "id": "rag-1",
+                "title": "RAG는 왜 필요한가? — LLM의 한계와 검색의 결합",
+                "description": "환각(Hallucination)·지식 단절 문제를 검색으로 해결하는 핵심 아이디어",
+                "level": "입문", "duration": "7분",
+                "concepts": ["Hallucination", "Knowledge Cutoff", "Open-Domain QA", "Retrieval-then-Read"],
+                "search_hints": {
+                    "arxiv_query": "retrieval augmented generation knowledge intensive NLP Lewis 2020",
+                    "web_query": "RAG retrieval augmented generation why needed LLM hallucination 2024"
+                }
+            },
+            {
+                "id": "rag-2",
+                "title": "Dense Retrieval의 원리 — Bi-Encoder vs Cross-Encoder",
+                "description": "SBERT와 Cross-Encoder의 구조 차이, Trade-off, FAISS 인덱싱",
+                "level": "기본", "duration": "9분",
+                "concepts": ["Bi-Encoder", "Cross-Encoder", "SBERT", "FAISS", "HNSW", "IVF-PQ"],
+                "search_hints": {
+                    "arxiv_query": "dense passage retrieval bi-encoder cross-encoder reranker DPR Karpukhin 2020",
+                    "web_query": "bi-encoder vs cross-encoder dense retrieval FAISS HNSW explained"
+                }
+            },
+            {
+                "id": "rag-3",
+                "title": "Chunking이 검색 품질을 결정한다",
+                "description": "Fixed-size vs Semantic chunking이 임베딩 벡터 및 검색 효율에 미치는 영향",
+                "level": "기본", "duration": "8분",
+                "concepts": ["Fixed-size Chunking", "Semantic Chunking", "Overlap", "Sentence-window", "Parent-child Retrieval"],
+                "search_hints": {
+                    "arxiv_query": "document chunking strategies retrieval augmented generation chunk size overlap 2024",
+                    "web_query": "RAG chunking strategy semantic fixed size comparison best practices 2024"
+                }
+            },
+            {
+                "id": "rag-4",
+                "title": "Query가 애매할 때 — HyDE와 Query Expansion",
+                "description": "가상 문서 생성으로 Zero-shot 검색 성능을 높이는 HyDE, Query2Doc 기법",
+                "level": "심화", "duration": "9분",
+                "concepts": ["HyDE", "Query2Doc", "Query Expansion", "Pseudo Relevance Feedback", "Zero-shot Retrieval"],
+                "search_hints": {
+                    "arxiv_query": "HyDE hypothetical document embeddings zero-shot dense retrieval Gao 2022",
+                    "web_query": "HyDE hypothetical document embeddings query expansion RAG 2024"
+                }
+            },
+            {
+                "id": "rag-5",
+                "title": "Reranking으로 Top-K 정제하기",
+                "description": "1차 검색 결과를 Cross-Encoder로 재정렬 — BGE-Reranker, Cohere Reranker 비교",
+                "level": "심화", "duration": "9분",
+                "concepts": ["Reranking", "BGE-Reranker", "Cohere Reranker", "MRR", "NDCG", "Reciprocal Rank Fusion"],
+                "search_hints": {
+                    "arxiv_query": "reranking cross-encoder retrieval augmented generation BGE reranker 2024",
+                    "web_query": "RAG reranking cross-encoder BGE Cohere reranker comparison 2024"
+                }
+            },
+            {
+                "id": "rag-6",
+                "title": "컨텍스트 노이즈 제거 — Lost in the Middle과 Context Compression",
+                "description": "LLM이 컨텍스트 중간 정보를 무시하는 현상과 LLMLingua 압축 기법",
+                "level": "심화", "duration": "9분",
+                "concepts": ["Lost in the Middle", "Context Compression", "LLMLingua", "Selective Context", "Token Budget"],
+                "search_hints": {
+                    "arxiv_query": "lost in the middle long context LLM compression LLMLingua 2023 2024",
+                    "web_query": "lost in the middle problem LLM context window RAG compression LLMLingua"
+                }
+            },
+            {
+                "id": "rag-7",
+                "title": "Hybrid Search — BM25 + 벡터 검색의 결합",
+                "description": "키워드 검색과 Dense Retrieval을 RRF로 합치면 왜 더 강력한가",
+                "level": "심화", "duration": "8분",
+                "concepts": ["BM25", "Hybrid Search", "RRF (Reciprocal Rank Fusion)", "Sparse-Dense Fusion", "Lexical Match"],
+                "search_hints": {
+                    "arxiv_query": "hybrid retrieval BM25 dense vector search reciprocal rank fusion 2024",
+                    "web_query": "hybrid search BM25 vector retrieval RRF reciprocal rank fusion RAG"
+                }
+            },
+            {
+                "id": "rag-8",
+                "title": "Self-RAG — 언제 검색하고 언제 멈출까?",
+                "description": "Adaptive Retrieval의 대표 주자 Self-RAG: reflection 토큰으로 검색 필요성 판단",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Self-RAG", "Adaptive Retrieval", "FLARE", "Reflection Token", "Critique Token"],
+                "search_hints": {
+                    "arxiv_query": "Self-RAG learning retrieve generate critique self-reflection Asai 2023",
+                    "web_query": "Self-RAG adaptive retrieval FLARE iterative retrieval 2024"
+                }
+            },
+            {
+                "id": "rag-9",
+                "title": "Graph RAG — 관계 기반 글로벌 검색",
+                "description": "지식 그래프로 단순 유사도 검색이 놓치는 전역적 맥락을 추론하는 Microsoft GraphRAG",
+                "level": "심화", "duration": "11분",
+                "concepts": ["GraphRAG", "Knowledge Graph", "Entity Extraction", "Community Detection", "Global vs Local Query"],
+                "search_hints": {
+                    "arxiv_query": "Graph RAG knowledge graph query-focused summarization Microsoft Edge 2024",
+                    "web_query": "Microsoft GraphRAG global local query knowledge graph vs vector RAG 2024"
+                }
+            },
+            {
+                "id": "rag-10",
+                "title": "RAG 평가 — RAGAS로 환각·관련성 정량화",
+                "description": "Faithfulness, Answer Relevance, Context Precision을 LLM-as-a-judge로 자동 측정",
+                "level": "심화", "duration": "10분",
+                "concepts": ["RAGAS", "Faithfulness", "Answer Relevance", "Context Precision", "LLM-as-a-judge", "TruLens"],
+                "search_hints": {
+                    "arxiv_query": "RAGAS retrieval augmented generation assessment evaluation framework 2023 2024",
+                    "web_query": "RAGAS RAG evaluation faithfulness answer relevance context precision 2024"
+                }
+            },
         ],
     },
     "agent": {
         "title": "Agentic AI",
         "emoji": "🤖",
         "color": "#8B5CF6",
-        "description": "스스로 생각하고 도구를 사용하는 AI",
-        "topic_names": ["Agentic AI"],
+        "description": "스스로 계획하고, 도구를 쓰고, 협력하는 AI 에이전트 설계",
+        "topic_names": ["Agentic AI", "AI Agent", "에이전트"],
         "chapters": [
-            {"id": "agent-1", "title": "Agent란 무엇인가?",
-             "description": "단순 AI와 Agent의 차이, ReAct 패턴 이해",
-             "level": "입문", "duration": "5분",
-             "concepts": ["Agent", "ReAct", "Tool Use"]},
-            {"id": "agent-2", "title": "도구 사용 (Tool Use)",
-             "description": "AI가 계산기, 검색, 코드를 직접 실행한다면?",
-             "level": "기본", "duration": "7분",
-             "concepts": ["Function Calling", "Tool", "API 연동"]},
-            {"id": "agent-3", "title": "멀티 에이전트 시스템",
-             "description": "여러 AI가 협력해서 문제를 푸는 방법",
-             "level": "기본", "duration": "8분",
-             "concepts": ["Multi-Agent", "오케스트레이터", "서브에이전트"]},
-            {"id": "agent-4", "title": "메모리와 상태 관리",
-             "description": "Agent가 대화를 기억하고 학습하는 방법",
-             "level": "심화", "duration": "10분",
-             "concepts": ["단기 기억", "장기 기억", "벡터 메모리"]},
-            {"id": "agent-5", "title": "실전 Agent 배포",
-             "description": "내 Agent를 실제 서비스로 만들기",
-             "level": "심화", "duration": "15분",
-             "concepts": ["배포", "모니터링", "비용 최적화"]},
-            {"id": "agent-6", "title": "계획 수립 — Tree of Thought",
-             "description": "AI가 여러 경로를 탐색해 최선을 고르는 방법",
-             "level": "심화", "duration": "9분",
-             "concepts": ["Tree of Thought", "Chain of Thought", "MCTS"]},
-            {"id": "agent-7", "title": "코드 실행 Agent",
-             "description": "Code Interpreter — AI가 직접 코드를 짜고 실행한다면?",
-             "level": "심화", "duration": "10분",
-             "concepts": ["Code Interpreter", "샌드박스", "자동 디버깅"]},
-            {"id": "agent-8", "title": "Web/Browser Agent",
-             "description": "AI가 인터넷을 직접 탐색하는 방법",
-             "level": "심화", "duration": "9분",
-             "concepts": ["Browser Use", "스크래핑", "DOM 조작"]},
-            {"id": "agent-9", "title": "Agent 오케스트레이션 패턴",
-             "description": "Supervisor, Swarm — 에이전트 팀을 어떻게 짤까?",
-             "level": "심화", "duration": "11분",
-             "concepts": ["Supervisor", "Swarm", "핸드오프", "워크플로우"]},
-            {"id": "agent-10", "title": "Agent 평가와 안전성",
-             "description": "Agent가 잘못된 행동을 하면? 평가·제어 방법",
-             "level": "심화", "duration": "10분",
-             "concepts": ["할루시네이션", "가드레일", "평가 프레임워크"]},
+            {
+                "id": "agent-1",
+                "title": "Agent란 무엇인가? — ReAct와 Plan-and-Execute의 차이",
+                "description": "단순 Chat과 Agent의 구조적 차이, ReAct 패턴의 작동 원리",
+                "level": "입문", "duration": "7분",
+                "concepts": ["ReAct", "Plan-and-Execute", "Tool Use", "Observation-Action Loop", "Scratchpad"],
+                "search_hints": {
+                    "arxiv_query": "ReAct reasoning acting language model agent Yao 2022",
+                    "web_query": "ReAct agent framework vs plan-and-execute LLM agent 2024"
+                }
+            },
+            {
+                "id": "agent-2",
+                "title": "Function Calling의 내부 — Tool Spec 설계가 성능을 결정한다",
+                "description": "Tool description 품질이 에이전트 정확도에 미치는 영향, JSON Schema 설계 원칙",
+                "level": "기본", "duration": "8분",
+                "concepts": ["Function Calling", "Tool Schema", "JSON Schema", "Tool Description Quality", "Parallel Tool Use"],
+                "search_hints": {
+                    "arxiv_query": "LLM function calling tool use API specification quality 2024",
+                    "web_query": "LLM function calling tool schema design best practices parallel tool use"
+                }
+            },
+            {
+                "id": "agent-3",
+                "title": "Agent 메모리 아키텍처 — 단기·장기·에피소딕 메모리",
+                "description": "In-context, External Store, Episodic Memory 설계 패턴과 MemGPT 접근법",
+                "level": "기본", "duration": "9분",
+                "concepts": ["In-context Memory", "External Memory", "MemGPT", "Episodic Memory", "Memory Consolidation"],
+                "search_hints": {
+                    "arxiv_query": "MemGPT LLM long-term memory operating system agents 2023 2024",
+                    "web_query": "LLM agent memory architecture short-term long-term episodic MemGPT 2024"
+                }
+            },
+            {
+                "id": "agent-4",
+                "title": "Tree of Thought — AI가 여러 경로를 탐색하는 방법",
+                "description": "Chain-of-Thought를 넘어 탐색 트리로 복잡한 추론 문제 해결하기",
+                "level": "심화", "duration": "9분",
+                "concepts": ["Tree of Thought", "Chain of Thought", "MCTS", "BFS/DFS on Thought", "Self-Evaluation"],
+                "search_hints": {
+                    "arxiv_query": "Tree of Thoughts deliberate problem solving language model Yao 2023",
+                    "web_query": "Tree of Thought vs Chain of Thought LLM reasoning planning 2024"
+                }
+            },
+            {
+                "id": "agent-5",
+                "title": "Multi-Agent 시스템 — Supervisor 패턴과 Swarm",
+                "description": "에이전트 팀을 어떻게 조직할까? 중앙집중형 vs 분산형 오케스트레이션",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Supervisor Pattern", "Swarm", "Handoff", "AutoGen", "LangGraph", "Agent Specialization"],
+                "search_hints": {
+                    "arxiv_query": "multi-agent system LLM collaboration AutoGen orchestration 2024",
+                    "web_query": "multi-agent LLM supervisor swarm pattern AutoGen LangGraph 2024"
+                }
+            },
+            {
+                "id": "agent-6",
+                "title": "Computer Use — AI가 마우스·키보드를 직접 조작한다면",
+                "description": "Anthropic Computer Use, Browser Use — GUI 조작 에이전트의 구조와 한계",
+                "level": "심화", "duration": "9분",
+                "concepts": ["Computer Use", "Browser Use", "Vision-Language Agent", "GUI Grounding", "Screen Parsing"],
+                "search_hints": {
+                    "arxiv_query": "GUI agent computer use vision language model screen grounding 2024",
+                    "web_query": "Anthropic computer use browser automation GUI agent 2024"
+                }
+            },
+            {
+                "id": "agent-7",
+                "title": "Code Agent — 코드 작성부터 자동 디버깅까지",
+                "description": "SWE-bench로 측정하는 코드 에이전트 성능, 샌드박스 실행과 피드백 루프",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Code Agent", "SWE-bench", "Sandbox Execution", "Devin", "OpenHands", "Test-driven Agent"],
+                "search_hints": {
+                    "arxiv_query": "code agent SWE-bench software engineering LLM autonomous debugging 2024",
+                    "web_query": "SWE-bench code agent Devin OpenHands software engineering AI 2024"
+                }
+            },
+            {
+                "id": "agent-8",
+                "title": "에이전트 평가와 가드레일 — 어떻게 믿고 배포할까?",
+                "description": "Prompt Injection 방어, Tool 권한 최소화, 에이전트 신뢰도 평가 방법",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Prompt Injection", "Guardrails", "Tool Permission", "AgentBench", "Red-teaming", "Sandboxing"],
+                "search_hints": {
+                    "arxiv_query": "LLM agent safety prompt injection guardrails evaluation benchmark 2024",
+                    "web_query": "AI agent security prompt injection guardrails deployment safety 2024"
+                }
+            },
+            {
+                "id": "agent-9",
+                "title": "MCP (Model Context Protocol) — 에이전트 도구 표준화",
+                "description": "Anthropic MCP 아키텍처, Tool 서버 생태계, Claude Desktop 연동 방식",
+                "level": "심화", "duration": "9분",
+                "concepts": ["MCP", "Model Context Protocol", "MCP Server", "Tool Discovery", "FastMCP"],
+                "search_hints": {
+                    "arxiv_query": "model context protocol MCP tool use standardization agent 2024",
+                    "web_query": "Anthropic MCP model context protocol agent tool server 2024"
+                }
+            },
+            {
+                "id": "agent-10",
+                "title": "Long-horizon Task — 프로덕션 에이전트가 실패하는 이유",
+                "description": "복잡한 멀티스텝 태스크에서 에이전트가 실패하는 패턴과 해결 전략",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Long-horizon Task", "Error Propagation", "Recovery Strategy", "Checkpointing", "Human-in-the-loop"],
+                "search_hints": {
+                    "arxiv_query": "long-horizon planning LLM agent failure mode recovery human loop 2024",
+                    "web_query": "production LLM agent failure long-horizon task reliability 2024"
+                }
+            },
         ],
     },
     "llm": {
-        "title": "LLM 기초",
+        "title": "LLM 이론과 실제",
         "emoji": "🧠",
         "color": "#F59E0B",
-        "description": "대형 언어 모델의 작동 원리",
-        "topic_names": ["LLM 기초"],
+        "description": "Transformer 구조부터 RLHF·추론 최적화까지 — 대형 언어 모델의 모든 것",
+        "topic_names": ["LLM 기초", "LLM", "Large Language Model", "언어 모델"],
         "chapters": [
-            {"id": "llm-1", "title": "Transformer 쉽게 이해하기",
-             "description": "GPT, Claude는 어떻게 글을 쓸까?",
-             "level": "입문", "duration": "8분",
-             "concepts": ["Transformer", "Attention", "Self-Attention"]},
-            {"id": "llm-2", "title": "프롬프트 엔지니어링",
-             "description": "AI에게 잘 부탁하는 방법",
-             "level": "기본", "duration": "6분",
-             "concepts": ["프롬프트", "Chain-of-Thought", "Few-shot"]},
-            {"id": "llm-3", "title": "Fine-tuning vs RAG",
-             "description": "언제 학습시키고 언제 검색시킬까?",
-             "level": "심화", "duration": "10분",
-             "concepts": ["Fine-tuning", "RAG", "LoRA"]},
-            {"id": "llm-4", "title": "LLM 평가와 벤치마크",
-             "description": "AI 성능을 어떻게 측정할까?",
-             "level": "심화", "duration": "8분",
-             "concepts": ["MMLU", "HumanEval", "평가 지표"]},
-            {"id": "llm-5", "title": "토크나이저와 컨텍스트 윈도우",
-             "description": "AI는 글자를 어떻게 쪼개서 읽을까?",
-             "level": "기본", "duration": "7분",
-             "concepts": ["토큰", "BPE", "컨텍스트 윈도우", "토큰 비용"]},
-            {"id": "llm-6", "title": "추론 최적화",
-             "description": "LLM을 더 빠르고 저렴하게 쓰는 기술들",
-             "level": "심화", "duration": "9분",
-             "concepts": ["양자화", "KV 캐시", "스펙큘레이티브 디코딩"]},
-            {"id": "llm-7", "title": "LLM 정렬 (RLHF)",
-             "description": "AI가 사람의 의도를 따르도록 훈련하는 방법",
-             "level": "심화", "duration": "10분",
-             "concepts": ["RLHF", "RLAIF", "보상 모델", "Constitutional AI"]},
-            {"id": "llm-8", "title": "멀티모달 LLM",
-             "description": "이미지·음성·영상을 함께 이해하는 AI",
-             "level": "심화", "duration": "9분",
-             "concepts": ["멀티모달", "비전 인코더", "크로스 어텐션"]},
-            {"id": "llm-9", "title": "오픈소스 LLM 생태계",
-             "description": "Llama, Mistral — GPT 없이도 강력한 AI를 쓸 수 있다",
-             "level": "심화", "duration": "8분",
-             "concepts": ["Llama", "Mistral", "Ollama", "로컬 실행"]},
-            {"id": "llm-10", "title": "LLM 보안과 레드팀",
-             "description": "프롬프트 인젝션부터 탈옥까지 — AI 공격과 방어",
-             "level": "심화", "duration": "10분",
-             "concepts": ["프롬프트 인젝션", "탈옥", "레드팀", "안전 정렬"]},
-        ],
-    },
-    "quantum": {
-        "title": "양자컴퓨팅",
-        "emoji": "⚛️",
-        "color": "#06B6D4",
-        "description": "미래 컴퓨팅의 혁명, 양자의 세계",
-        "topic_names": ["양자컴퓨팅"],
-        "chapters": [
-            {"id": "quantum-1", "title": "양자역학 기초",
-             "description": "중첩과 얽힘 — 고전 물리와 뭐가 다를까?",
-             "level": "입문", "duration": "8분",
-             "concepts": ["중첩", "얽힘", "파동-입자 이중성"]},
-            {"id": "quantum-2", "title": "큐비트와 양자 게이트",
-             "description": "0과 1을 동시에 가지는 비트의 세계",
-             "level": "기본", "duration": "7분",
-             "concepts": ["큐비트", "양자 게이트", "양자 회로"]},
-            {"id": "quantum-3", "title": "양자 알고리즘 이해",
-             "description": "Shor, Grover — 왜 고전 컴퓨터보다 빠를까?",
-             "level": "기본", "duration": "10분",
-             "concepts": ["Shor 알고리즘", "Grover 알고리즘", "양자 병렬성"]},
-            {"id": "quantum-4", "title": "양자 컴퓨터 현황",
-             "description": "IBM, Google의 실제 기기와 한계",
-             "level": "심화", "duration": "8분",
-             "concepts": ["노이즈", "양자 오류 정정", "NISQ"]},
-            {"id": "quantum-5", "title": "양자컴퓨팅의 미래",
-             "description": "암호, 신약 개발, AI에 어떻게 쓰일까?",
-             "level": "심화", "duration": "10분",
-             "concepts": ["양자 암호", "양자 시뮬레이션", "양자 머신러닝"]},
-            {"id": "quantum-6", "title": "양자 오류 정정 심화",
-             "description": "노이즈를 이겨내는 방법 — 표면 코드란?",
-             "level": "심화", "duration": "10분",
-             "concepts": ["표면 코드", "논리 큐비트", "임계 오류율"]},
-            {"id": "quantum-7", "title": "양자 통신과 암호",
-             "description": "절대 도청할 수 없는 통신 — QKD의 원리",
-             "level": "심화", "duration": "9분",
-             "concepts": ["QKD", "양자 얽힘", "BB84 프로토콜"]},
-            {"id": "quantum-8", "title": "양자 화학 시뮬레이션",
-             "description": "신약 개발과 재료 과학에 양자가 쓰이는 방법",
-             "level": "심화", "duration": "10분",
-             "concepts": ["분자 시뮬레이션", "VQE", "해밀토니안"]},
-            {"id": "quantum-9", "title": "양자-고전 하이브리드 알고리즘",
-             "description": "현재 NISQ 기기에서 실용적으로 쓰는 방법",
-             "level": "심화", "duration": "9분",
-             "concepts": ["QAOA", "VQE", "변분 알고리즘", "NISQ"]},
-            {"id": "quantum-10", "title": "양자 프로그래밍 입문 (Qiskit)",
-             "description": "IBM Quantum으로 실제 양자 회로 짜보기",
-             "level": "심화", "duration": "12분",
-             "concepts": ["Qiskit", "양자 회로", "IBM Quantum", "측정"]},
+            {
+                "id": "llm-1",
+                "title": "Attention은 왜 강력한가? — Self-Attention 수식 뜯어보기",
+                "description": "Q, K, V 행렬 연산, Multi-head Attention, Position Encoding의 직관적 이해",
+                "level": "입문", "duration": "10분",
+                "concepts": ["Self-Attention", "Q/K/V Matrix", "Multi-head Attention", "Positional Encoding", "Softmax"],
+                "search_hints": {
+                    "arxiv_query": "attention is all you need transformer Vaswani 2017 self-attention mechanism",
+                    "web_query": "transformer self-attention Q K V matrix explained visually 2024"
+                }
+            },
+            {
+                "id": "llm-2",
+                "title": "GPT의 사전훈련 — Next Token Prediction이 왜 이렇게 강력할까?",
+                "description": "Autoregressive 언어 모델의 훈련 목표, Emergent Ability, Scaling Law",
+                "level": "기본", "duration": "9분",
+                "concepts": ["Autoregressive LM", "Next Token Prediction", "Scaling Law", "Emergent Ability", "Perplexity"],
+                "search_hints": {
+                    "arxiv_query": "scaling laws neural language models Kaplan 2020 emergent abilities GPT",
+                    "web_query": "GPT pretraining next token prediction scaling laws emergent abilities explained"
+                }
+            },
+            {
+                "id": "llm-3",
+                "title": "RLHF — AI를 사람 의도에 맞게 정렬하는 방법",
+                "description": "SFT → Reward Model → PPO 파이프라인, Constitutional AI, DPO 비교",
+                "level": "기본", "duration": "10분",
+                "concepts": ["RLHF", "SFT", "Reward Model", "PPO", "DPO", "Constitutional AI"],
+                "search_hints": {
+                    "arxiv_query": "RLHF reinforcement learning human feedback InstructGPT DPO alignment 2023 2024",
+                    "web_query": "RLHF DPO alignment LLM instruction following comparison 2024"
+                }
+            },
+            {
+                "id": "llm-4",
+                "title": "프롬프트 엔지니어링의 과학 — CoT·Few-shot·Self-Consistency",
+                "description": "Chain-of-Thought가 왜 작동하는지, 그 한계와 더 나은 기법들",
+                "level": "기본", "duration": "8분",
+                "concepts": ["Chain-of-Thought", "Few-shot Prompting", "Self-Consistency", "Step-back Prompting", "Prompt Sensitivity"],
+                "search_hints": {
+                    "arxiv_query": "chain of thought prompting reasoning language model Wei 2022 self-consistency",
+                    "web_query": "chain of thought prompting CoT few-shot self-consistency prompt engineering 2024"
+                }
+            },
+            {
+                "id": "llm-5",
+                "title": "Fine-tuning의 현실 — LoRA·QLoRA로 모델 커스터마이징",
+                "description": "Full fine-tuning vs PEFT, LoRA의 수학적 원리, RAG와의 비용-성능 비교",
+                "level": "심화", "duration": "11분",
+                "concepts": ["Fine-tuning", "LoRA", "QLoRA", "PEFT", "Adapter", "Catastrophic Forgetting"],
+                "search_hints": {
+                    "arxiv_query": "LoRA low-rank adaptation large language model fine-tuning Hu 2021 QLoRA",
+                    "web_query": "LoRA QLoRA fine-tuning vs RAG when to use LLM customization 2024"
+                }
+            },
+            {
+                "id": "llm-6",
+                "title": "양자화와 추론 최적화 — 어떻게 더 빠르고 싸게 쓸까?",
+                "description": "INT4/INT8 양자화, KV Cache, Speculative Decoding, vLLM 아키텍처",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Quantization", "INT4/INT8", "KV Cache", "Speculative Decoding", "vLLM", "PagedAttention"],
+                "search_hints": {
+                    "arxiv_query": "LLM inference optimization speculative decoding vLLM paged attention quantization 2024",
+                    "web_query": "LLM inference optimization vLLM speculative decoding quantization INT4 2024"
+                }
+            },
+            {
+                "id": "llm-7",
+                "title": "Long Context의 함정 — 컨텍스트가 길면 정말 더 잘할까?",
+                "description": "Position Encoding 한계, Lost-in-the-Middle 재방문, Needle-in-a-Haystack 평가",
+                "level": "심화", "duration": "9분",
+                "concepts": ["RoPE", "ALiBi", "Needle-in-a-Haystack", "Lost-in-the-Middle", "Context Window Scaling"],
+                "search_hints": {
+                    "arxiv_query": "long context LLM position encoding RoPE ALiBi needle haystack evaluation 2024",
+                    "web_query": "long context LLM limitations needle in haystack benchmark position encoding 2024"
+                }
+            },
+            {
+                "id": "llm-8",
+                "title": "멀티모달 LLM — 이미지·오디오·영상을 어떻게 이해할까?",
+                "description": "Vision Encoder + LLM 결합 구조, Flamingo·LLaVA·GPT-4o 비교",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Vision Encoder", "Cross-Attention", "LLaVA", "Flamingo", "GPT-4o", "Visual Grounding"],
+                "search_hints": {
+                    "arxiv_query": "multimodal large language model LLaVA vision encoder cross attention 2024",
+                    "web_query": "multimodal LLM GPT-4o LLaVA vision language model architecture 2024"
+                }
+            },
+            {
+                "id": "llm-9",
+                "title": "오픈소스 LLM 생태계 — Llama·Mistral·Qwen 비교",
+                "description": "각 오픈소스 모델의 아키텍처 차별점, Instruction Tuning 방법론, 로컬 실행 전략",
+                "level": "심화", "duration": "9분",
+                "concepts": ["Llama 3", "Mistral", "Qwen", "GQA", "Sliding Window Attention", "Ollama"],
+                "search_hints": {
+                    "arxiv_query": "Llama 3 Mistral open source LLM grouped query attention architecture 2024",
+                    "web_query": "open source LLM comparison Llama Mistral Qwen local deployment 2024"
+                }
+            },
+            {
+                "id": "llm-10",
+                "title": "LLM 벤치마크의 진실 — MMLU가 측정하지 못하는 것",
+                "description": "MMLU·HumanEval·LMSYS Arena 설계 철학, Data Contamination 문제, 평가의 한계",
+                "level": "심화", "duration": "10분",
+                "concepts": ["MMLU", "HumanEval", "LMSYS Chatbot Arena", "Data Contamination", "LLM-as-a-judge"],
+                "search_hints": {
+                    "arxiv_query": "LLM evaluation benchmark contamination MMLU HumanEval chatbot arena 2024",
+                    "web_query": "LLM benchmark evaluation problems data contamination MMLU limitations 2024"
+                }
+            },
         ],
     },
     "invest": {
         "title": "주식/투자",
         "emoji": "📈",
         "color": "#EF4444",
-        "description": "돈이 일하게 만드는 투자의 원리",
-        "topic_names": ["주식/투자", "주식", "투자"],
+        "description": "재무제표부터 매크로 경제까지 — 돈이 일하게 만드는 투자의 원리",
+        "topic_names": ["주식/투자", "주식", "투자", "재테크"],
         "chapters": [
-            {"id": "invest-1", "title": "주식이란 무엇인가?",
-             "description": "회사 조각을 사는 행위의 의미",
-             "level": "입문", "duration": "6분",
-             "concepts": ["주식", "시가총액", "주주"]},
-            {"id": "invest-2", "title": "재무제표 읽기",
-             "description": "PER, PBR, ROE — 숫자로 기업을 이해하는 법",
-             "level": "기본", "duration": "8분",
-             "concepts": ["PER", "PBR", "ROE", "영업이익"]},
-            {"id": "invest-3", "title": "가치 투자 vs 성장 투자",
-             "description": "워렌 버핏 vs 피터 린치의 철학",
-             "level": "기본", "duration": "7분",
-             "concepts": ["가치 투자", "성장 투자", "안전마진"]},
-            {"id": "invest-4", "title": "ETF와 분산 투자",
-             "description": "달걀을 한 바구니에 담지 않는 법",
-             "level": "기본", "duration": "6분",
-             "concepts": ["ETF", "분산 투자", "포트폴리오"]},
-            {"id": "invest-5", "title": "투자 심리학",
-             "description": "공포와 탐욕을 이기는 행동경제학",
-             "level": "심화", "duration": "10분",
-             "concepts": ["손실 회피", "군중 심리", "장기 투자"]},
-            {"id": "invest-6", "title": "기술적 분석 기초",
-             "description": "차트로 시장의 흐름을 읽는 법",
-             "level": "기본", "duration": "8분",
-             "concepts": ["이동평균선", "RSI", "MACD", "지지/저항선"]},
-            {"id": "invest-7", "title": "채권과 금리",
-             "description": "금리가 오르면 왜 주식이 떨어질까?",
-             "level": "기본", "duration": "7분",
-             "concepts": ["채권", "금리", "역상관관계", "듀레이션"]},
-            {"id": "invest-8", "title": "파생상품 기초",
-             "description": "선물, 옵션 — 레버리지와 헤징의 세계",
-             "level": "심화", "duration": "10분",
-             "concepts": ["선물", "옵션", "레버리지", "헤징"]},
-            {"id": "invest-9", "title": "매크로 투자",
-             "description": "경제 사이클로 큰 그림 읽기 — 레이 달리오의 원칙",
-             "level": "심화", "duration": "10분",
-             "concepts": ["경제 사이클", "올웨더 포트폴리오", "인플레이션"]},
-            {"id": "invest-10", "title": "세금과 절세 전략",
-             "description": "수익을 내도 세금을 내야 한다 — ISA, 연금 계좌 활용법",
-             "level": "심화", "duration": "9분",
-             "concepts": ["양도소득세", "ISA", "연금저축", "절세"]},
+            {
+                "id": "invest-1",
+                "title": "주식이란 무엇인가? — 회사 조각을 사는 행위의 의미",
+                "description": "소유권·의결권·배당권의 구조, 시가총액과 기업 가치의 관계",
+                "level": "입문", "duration": "6분",
+                "concepts": ["보통주", "우선주", "시가총액", "주주권", "IPO"],
+                "search_hints": {
+                    "arxiv_query": None,
+                    "web_query": "what is stock market equity ownership IPO explained beginners"
+                }
+            },
+            {
+                "id": "invest-2",
+                "title": "재무제표 읽기 — PER·PBR·ROE로 기업 가치 판단하기",
+                "description": "손익계산서·대차대조표·현금흐름표의 핵심 지표와 해석법",
+                "level": "기본", "duration": "9분",
+                "concepts": ["PER", "PBR", "ROE", "영업이익률", "FCF (잉여현금흐름)", "EV/EBITDA"],
+                "search_hints": {
+                    "arxiv_query": "financial statement analysis equity valuation PER PBR ROE fundamental",
+                    "web_query": "how to read financial statements PER PBR ROE EV EBITDA stock analysis"
+                }
+            },
+            {
+                "id": "invest-3",
+                "title": "가치 투자의 철학 — 내재 가치와 안전 마진",
+                "description": "워렌 버핏·찰리 멍거의 사고법, 미스터 마켓, 안전 마진 계산",
+                "level": "기본", "duration": "8분",
+                "concepts": ["내재 가치", "안전 마진", "미스터 마켓", "DCF 할인현금흐름", "경제적 해자"],
+                "search_hints": {
+                    "arxiv_query": "value investing intrinsic value DCF discount cash flow margin of safety",
+                    "web_query": "Warren Buffett value investing intrinsic value moat margin of safety explained"
+                }
+            },
+            {
+                "id": "invest-4",
+                "title": "ETF와 인덱스 투자 — 왜 대부분의 펀드매니저를 이기나",
+                "description": "패시브 투자의 승리 이유, ETF 구조, 섹터·국가·팩터 ETF 활용법",
+                "level": "기본", "duration": "8분",
+                "concepts": ["ETF", "인덱스 펀드", "패시브 투자", "팩터 투자", "스마트 베타", "비용률"],
+                "search_hints": {
+                    "arxiv_query": "passive investing ETF index fund vs active management factor investing",
+                    "web_query": "ETF index investing vs active fund management factor smart beta explained"
+                }
+            },
+            {
+                "id": "invest-5",
+                "title": "기술적 분석의 현실 — 이동평균·RSI·MACD가 실제로 작동하나?",
+                "description": "차트 지표의 수학적 원리, 지표가 예측력을 가지는 조건과 한계",
+                "level": "기본", "duration": "9분",
+                "concepts": ["이동평균선", "RSI", "MACD", "볼린저 밴드", "지지/저항", "역추세·추세추종"],
+                "search_hints": {
+                    "arxiv_query": "technical analysis moving average RSI MACD predictive power stock market",
+                    "web_query": "technical analysis indicators RSI MACD does it work evidence 2024"
+                }
+            },
+            {
+                "id": "invest-6",
+                "title": "채권과 금리 — 금리가 오르면 왜 주식이 떨어질까?",
+                "description": "채권 가격-금리 역관계, 수익률 곡선, 통화정책과 주식시장의 연결고리",
+                "level": "기본", "duration": "8분",
+                "concepts": ["채권 가격", "금리 역관계", "수익률 곡선", "장단기 스프레드", "연준 금리"],
+                "search_hints": {
+                    "arxiv_query": "interest rate bond price inverse relationship yield curve monetary policy",
+                    "web_query": "why rising interest rates hurt stocks bonds yield curve explained"
+                }
+            },
+            {
+                "id": "invest-7",
+                "title": "행동경제학과 투자 심리 — 손실 회피가 수익을 갉아먹는 방법",
+                "description": "전망 이론, 군중 심리, FOMO·공황 매도 패턴과 극복 전략",
+                "level": "심화", "duration": "9분",
+                "concepts": ["손실 회피", "전망 이론", "군중 심리", "FOMO", "Disposition Effect", "앵커링"],
+                "search_hints": {
+                    "arxiv_query": "behavioral finance prospect theory loss aversion investor psychology disposition effect",
+                    "web_query": "behavioral finance investing psychology loss aversion FOMO market panic"
+                }
+            },
+            {
+                "id": "invest-8",
+                "title": "포트폴리오 이론 — 분산 투자가 공짜 점심인 이유",
+                "description": "마코위츠의 효율적 프론티어, 상관관계·변동성·샤프 비율의 의미",
+                "level": "심화", "duration": "10분",
+                "concepts": ["효율적 프론티어", "샤프 비율", "상관계수", "분산 투자", "리밸런싱"],
+                "search_hints": {
+                    "arxiv_query": "modern portfolio theory Markowitz efficient frontier sharpe ratio diversification",
+                    "web_query": "Markowitz portfolio theory efficient frontier sharpe ratio diversification explained"
+                }
+            },
+            {
+                "id": "invest-9",
+                "title": "매크로 투자 — 경제 사이클로 큰 그림 읽기",
+                "description": "레이 달리오의 부채 사이클, 올웨더 포트폴리오, 인플레이션·디플레이션 대응 자산",
+                "level": "심화", "duration": "10분",
+                "concepts": ["경제 사이클", "부채 사이클", "올웨더 포트폴리오", "인플레이션 헤지", "실질 금리"],
+                "search_hints": {
+                    "arxiv_query": "macroeconomic cycle debt cycle inflation asset allocation Ray Dalio",
+                    "web_query": "Ray Dalio all weather portfolio debt cycle macro investing inflation hedge"
+                }
+            },
+            {
+                "id": "invest-10",
+                "title": "세금과 절세 전략 — 수익만큼 중요한 세후 수익률",
+                "description": "양도소득세·배당소득세·금융투자소득세, ISA·연금저축 계좌 활용 전략",
+                "level": "심화", "duration": "9분",
+                "concepts": ["양도소득세", "금융투자소득세", "ISA 계좌", "연금저축", "세후 수익률"],
+                "search_hints": {
+                    "arxiv_query": None,
+                    "web_query": "Korea stock tax capital gains ISA pension account tax optimization 2024"
+                }
+            },
         ],
     },
     "psych": {
         "title": "심리학",
         "emoji": "🧬",
         "color": "#EC4899",
-        "description": "인간의 마음과 행동을 과학으로 이해하기",
-        "topic_names": ["심리학"],
+        "description": "인간의 마음과 행동을 과학으로 이해하기 — 인지 편향부터 뇌과학까지",
+        "topic_names": ["심리학", "Psychology"],
         "chapters": [
-            {"id": "psych-1", "title": "인지 편향",
-             "description": "우리 뇌가 만들어내는 착각들",
-             "level": "입문", "duration": "7분",
-             "concepts": ["확증 편향", "가용성 편향", "앵커링"]},
-            {"id": "psych-2", "title": "행동경제학",
-             "description": "넛지, 손실 회피 — 합리적이지 않은 우리",
-             "level": "기본", "duration": "8분",
-             "concepts": ["넛지", "손실 회피", "현상 유지 편향"]},
-            {"id": "psych-3", "title": "성격 심리학",
-             "description": "MBTI를 넘어서 — Big Five 모델",
-             "level": "기본", "duration": "7분",
-             "concepts": ["Big Five", "외향성", "개방성", "성실성"]},
-            {"id": "psych-4", "title": "사회 심리학",
-             "description": "동조, 복종, 집단 사고의 무서움",
-             "level": "심화", "duration": "9분",
-             "concepts": ["동조", "복종", "집단 사고", "밀그램 실험"]},
-            {"id": "psych-5", "title": "긍정 심리학",
-             "description": "행복은 만들 수 있다 — 과학이 말하는 웰빙",
-             "level": "심화", "duration": "8분",
-             "concepts": ["PERMA", "플로우", "회복탄력성"]},
-            {"id": "psych-6", "title": "발달 심리학",
-             "description": "아이부터 노인까지 — 인간은 어떻게 성장하는가?",
-             "level": "기본", "duration": "8분",
-             "concepts": ["애착 이론", "피아제", "에릭슨 발달 단계"]},
-            {"id": "psych-7", "title": "이상 심리학",
-             "description": "불안, 우울, 강박 — 마음의 병을 과학으로 이해하기",
-             "level": "기본", "duration": "9분",
-             "concepts": ["DSM-5", "불안장애", "우울증", "인지행동치료"]},
-            {"id": "psych-8", "title": "뇌과학과 심리학",
-             "description": "마음은 뇌에서 나온다 — 신경과학 기초",
-             "level": "심화", "duration": "9분",
-             "concepts": ["뉴런", "도파민", "전전두엽", "가소성"]},
-            {"id": "psych-9", "title": "관계 심리학",
-             "description": "사랑, 우정, 갈등 — 인간 관계의 심리학",
-             "level": "심화", "duration": "8분",
-             "concepts": ["애착 유형", "갈등 해소", "공감", "비폭력대화"]},
-            {"id": "psych-10", "title": "응용 심리학",
-             "description": "직장, 마케팅, 협상에서 심리학을 쓰는 법",
-             "level": "심화", "duration": "10분",
-             "concepts": ["설득 원칙", "점화 효과", "조직 심리학"]},
-        ],
-    },
-    "philosophy": {
-        "title": "철학",
-        "emoji": "💭",
-        "color": "#7C3AED",
-        "description": "질문으로 세상을 이해하는 오래된 학문",
-        "topic_names": ["철학"],
-        "chapters": [
-            {"id": "philosophy-1", "title": "소크라테스의 방법론",
-             "description": "질문으로 진리를 찾는 법 — 산파술이란?",
-             "level": "입문", "duration": "6분",
-             "concepts": ["산파술", "무지의 지", "변증법"]},
-            {"id": "philosophy-2", "title": "윤리학의 세 갈래",
-             "description": "공리주의, 의무론, 덕 윤리학 — 무엇이 옳은가?",
-             "level": "기본", "duration": "8분",
-             "concepts": ["공리주의", "의무론", "덕 윤리학"]},
-            {"id": "philosophy-3", "title": "존재란 무엇인가?",
-             "description": "하이데거, 사르트르 — 실존주의 쉽게 이해하기",
-             "level": "기본", "duration": "9분",
-             "concepts": ["실존주의", "실존은 본질에 앞선다", "불안"]},
-            {"id": "philosophy-4", "title": "인식론",
-             "description": "우리는 무엇을 알 수 있는가? — 데카르트부터 흄까지",
-             "level": "심화", "duration": "10분",
-             "concepts": ["합리론", "경험론", "코기토"]},
-            {"id": "philosophy-5", "title": "AI 시대의 철학",
-             "description": "의식, 자유의지, 책임 — 철학이 던지는 질문들",
-             "level": "심화", "duration": "10분",
-             "concepts": ["튜링 테스트", "중국어 방 논증", "자유의지"]},
-            {"id": "philosophy-6", "title": "정치 철학",
-             "description": "민주주의, 자유, 정의 — 사회는 어떻게 구성되어야 할까?",
-             "level": "기본", "duration": "9분",
-             "concepts": ["사회계약론", "자유주의", "공동체주의", "롤스"]},
-            {"id": "philosophy-7", "title": "미학과 예술 철학",
-             "description": "아름다움이란 무엇인가? — 칸트부터 현대 미술까지",
-             "level": "기본", "duration": "8분",
-             "concepts": ["숭고", "예술의 정의", "취미 판단"]},
-            {"id": "philosophy-8", "title": "과학 철학",
-             "description": "과학은 어떻게 발전하는가? — 패러다임 전환과 반증주의",
-             "level": "심화", "duration": "9분",
-             "concepts": ["패러다임", "쿤", "포퍼의 반증주의", "과학혁명"]},
-            {"id": "philosophy-9", "title": "언어 철학",
-             "description": "언어가 사고를 결정한다? — 비트겐슈타인과 언어 게임",
-             "level": "심화", "duration": "9분",
-             "concepts": ["언어 게임", "의미 이론", "화행 이론"]},
-            {"id": "philosophy-10", "title": "현대 철학의 흐름",
-             "description": "분석 철학, 현상학, 포스트모더니즘 — 20세기 이후 철학",
-             "level": "심화", "duration": "10분",
-             "concepts": ["분석 철학", "현상학", "구조주의", "해체"]},
-        ],
-    },
-    "startup": {
-        "title": "스타트업",
-        "emoji": "🚀",
-        "color": "#F97316",
-        "description": "아이디어를 비즈니스로 만드는 창업의 원리",
-        "topic_names": ["스타트업"],
-        "chapters": [
-            {"id": "startup-1", "title": "스타트업 vs 일반 기업",
-             "description": "차이를 알면 전략이 보인다",
-             "level": "입문", "duration": "5분",
-             "concepts": ["스타트업", "확장성", "불확실성"]},
-            {"id": "startup-2", "title": "Product-Market Fit",
-             "description": "사람들이 원하는 걸 만드는 법 — PMF란?",
-             "level": "기본", "duration": "8분",
-             "concepts": ["PMF", "고객 인터뷰", "페인 포인트"]},
-            {"id": "startup-3", "title": "린 스타트업",
-             "description": "빠르게 만들고 빠르게 배우는 법 — MVP 전략",
-             "level": "기본", "duration": "7분",
-             "concepts": ["MVP", "Build-Measure-Learn", "피봇"]},
-            {"id": "startup-4", "title": "투자 유치 기초",
-             "description": "시드, 시리즈A, VC — 창업자가 알아야 할 투자 언어",
-             "level": "심화", "duration": "9분",
-             "concepts": ["VC", "엔젤 투자", "밸류에이션", "텀시트"]},
-            {"id": "startup-5", "title": "그로스 해킹",
-             "description": "적은 예산으로 폭발적 성장을 만드는 원리",
-             "level": "심화", "duration": "10분",
-             "concepts": ["그로스 해킹", "바이럴 루프", "리텐션"]},
-            {"id": "startup-6", "title": "비즈니스 모델 설계",
-             "description": "어떻게 돈을 벌까? — 구독, 광고, 마켓플레이스 모델 비교",
-             "level": "기본", "duration": "8분",
-             "concepts": ["수익 모델", "구독", "마켓플레이스", "SaaS"]},
-            {"id": "startup-7", "title": "고객 세그먼테이션과 포지셔닝",
-             "description": "누구에게 팔 것인가? — ICP와 포지셔닝 전략",
-             "level": "기본", "duration": "8분",
-             "concepts": ["ICP", "페르소나", "포지셔닝", "차별화"]},
-            {"id": "startup-8", "title": "스타트업 조직 문화",
-             "description": "사람이 전략보다 중요한 이유 — 팀 빌딩과 문화",
-             "level": "심화", "duration": "9분",
-             "concepts": ["팀 빌딩", "OKR", "심리적 안전", "온보딩"]},
-            {"id": "startup-9", "title": "글로벌 확장 전략",
-             "description": "한국을 넘어서 — 해외 진출의 현실과 전략",
-             "level": "심화", "duration": "10분",
-             "concepts": ["로컬라이제이션", "GTM 전략", "규제", "문화 차이"]},
-            {"id": "startup-10", "title": "실패 케이스 스터디",
-             "description": "잘 나가다 망한 스타트업들에서 배우는 교훈",
-             "level": "심화", "duration": "10분",
-             "concepts": ["번 레이트", "피봇 실패", "공동창업자 갈등", "시장 타이밍"]},
-        ],
-    },
-    "health": {
-        "title": "헬스/운동",
-        "emoji": "💪",
-        "color": "#84CC16",
-        "description": "몸을 과학적으로 이해하고 관리하기",
-        "topic_names": ["헬스/운동", "헬스", "운동"],
-        "chapters": [
-            {"id": "health-1", "title": "운동 과학 기초",
-             "description": "근육은 어떻게 성장하는가? — 점진적 과부하 원리",
-             "level": "입문", "duration": "6분",
-             "concepts": ["근비대", "점진적 과부하", "근섬유"]},
-            {"id": "health-2", "title": "영양학 핵심",
-             "description": "단백질, 탄수화물, 지방 — 언제 얼마나 먹어야 할까?",
-             "level": "기본", "duration": "7분",
-             "concepts": ["단백질", "탄수화물", "칼로리", "TDEE"]},
-            {"id": "health-3", "title": "유산소 vs 무산소",
-             "description": "목적에 맞는 운동 선택법",
-             "level": "기본", "duration": "6분",
-             "concepts": ["유산소 운동", "무산소 운동", "심박수 존"]},
-            {"id": "health-4", "title": "수면과 회복",
-             "description": "운동만큼 중요한 휴식의 과학",
-             "level": "기본", "duration": "7분",
-             "concepts": ["수면 주기", "코르티솔", "오버트레이닝"]},
-            {"id": "health-5", "title": "운동 습관 만들기",
-             "description": "작심삼일을 넘어서 — 행동 설계의 심리학",
-             "level": "심화", "duration": "8분",
-             "concepts": ["습관 루프", "환경 설계", "작은 시작"]},
-            {"id": "health-6", "title": "체성분과 체중 관리",
-             "description": "체중 말고 체성분을 봐야 하는 이유",
-             "level": "기본", "duration": "7분",
-             "concepts": ["체지방률", "근육량", "인바디", "기초대사량"]},
-            {"id": "health-7", "title": "스트레스와 건강",
-             "description": "만성 스트레스가 몸에 미치는 영향과 관리법",
-             "level": "기본", "duration": "7분",
-             "concepts": ["코르티솔", "자율신경계", "마음챙김", "HRV"]},
-            {"id": "health-8", "title": "스포츠 영양학",
-             "description": "운동 전후 언제 뭘 먹어야 할까?",
-             "level": "심화", "duration": "8분",
-             "concepts": ["글리코겐", "운동 전 식사", "단백질 타이밍", "수화"]},
-            {"id": "health-9", "title": "부상 예방과 회복",
-             "description": "안 다치는 것이 최고의 운동 — 워밍업과 쿨다운 과학",
-             "level": "심화", "duration": "8분",
-             "concepts": ["워밍업", "쿨다운", "RICE", "근막 이완"]},
-            {"id": "health-10", "title": "나이에 맞는 운동",
-             "description": "20대, 40대, 60대 — 각 시기에 맞는 운동 전략",
-             "level": "심화", "duration": "9분",
-             "concepts": ["근감소증", "노인 운동", "호르몬 변화", "유연성"]},
-        ],
-    },
-    "history": {
-        "title": "역사",
-        "emoji": "📜",
-        "color": "#78716C",
-        "description": "과거를 통해 현재와 미래를 읽는 법",
-        "topic_names": ["역사"],
-        "chapters": [
-            {"id": "history-1", "title": "역사를 보는 눈",
-             "description": "사료, 해석, 관점 — 역사는 어떻게 만들어지는가?",
-             "level": "입문", "duration": "6분",
-             "concepts": ["사료", "1차 사료", "역사 해석", "관점"]},
-            {"id": "history-2", "title": "문명의 흥망",
-             "description": "로마, 당나라, 오스만 — 제국은 왜 무너지는가?",
-             "level": "기본", "duration": "8분",
-             "concepts": ["제국의 붕괴", "내부 모순", "외부 충격"]},
-            {"id": "history-3", "title": "산업혁명",
-             "description": "세상을 바꾼 200년 — 기술이 사회를 어떻게 뒤집었나",
-             "level": "기본", "duration": "7분",
-             "concepts": ["증기기관", "공장제", "도시화", "노동 운동"]},
-            {"id": "history-4", "title": "20세기의 비극과 기적",
-             "description": "전쟁, 냉전, 그리고 경제 성장의 역설",
-             "level": "심화", "duration": "10분",
-             "concepts": ["세계대전", "냉전", "탈식민지화", "한강의 기적"]},
-            {"id": "history-5", "title": "한국 현대사",
-             "description": "압축 성장의 빛과 그림자 — 어떻게 여기까지 왔나?",
-             "level": "심화", "duration": "9분",
-             "concepts": ["압축 성장", "민주화", "외환위기", "디지털 전환"]},
-            {"id": "history-6", "title": "동아시아 문명과 교류",
-             "description": "한중일 3국은 어떻게 서로 영향을 주고받았나?",
-             "level": "기본", "duration": "8분",
-             "concepts": ["실크로드", "한자 문화권", "책봉 체제", "해금령"]},
-            {"id": "history-7", "title": "이슬람 황금기",
-             "description": "중세 이슬람이 과학과 철학을 어떻게 보존했나?",
-             "level": "기본", "duration": "8분",
-             "concepts": ["바그다드", "번역 운동", "대수학", "의학"]},
-            {"id": "history-8", "title": "식민지배와 독립 운동",
-             "description": "제국주의와 저항 — 아시아·아프리카의 독립 이야기",
-             "level": "심화", "duration": "9분",
-             "concepts": ["식민지배", "민족주의", "독립 운동", "탈식민주의"]},
-            {"id": "history-9", "title": "냉전과 프록시 전쟁",
-             "description": "미소 대립이 세계 곳곳에서 일으킨 전쟁들",
-             "level": "심화", "duration": "9분",
-             "concepts": ["냉전", "프록시 전쟁", "쿠바 미사일 위기", "베트남전"]},
-            {"id": "history-10", "title": "디지털 혁명과 현재",
-             "description": "인터넷, SNS, AI — 기술이 다시 역사를 쓰고 있다",
-             "level": "심화", "duration": "9분",
-             "concepts": ["닷컴 버블", "소셜 미디어", "플랫폼 경제", "AI 시대"]},
+            {
+                "id": "psych-1",
+                "title": "인지 편향 — 우리 뇌가 체계적으로 틀리는 방식",
+                "description": "확증 편향·가용성 편향·앵커링이 판단과 의사결정을 왜곡하는 메커니즘",
+                "level": "입문", "duration": "7분",
+                "concepts": ["확증 편향", "가용성 편향", "앵커링 효과", "대표성 어림법", "인지적 구두쇠"],
+                "search_hints": {
+                    "arxiv_query": "cognitive bias confirmation availability anchoring heuristic decision making Kahneman",
+                    "web_query": "cognitive biases confirmation availability anchoring how they work psychology"
+                }
+            },
+            {
+                "id": "psych-2",
+                "title": "행동경제학 — 왜 인간은 '합리적'이지 않은가",
+                "description": "Kahneman의 시스템 1·2, 전망 이론, 넛지 설계의 원리",
+                "level": "기본", "duration": "9분",
+                "concepts": ["시스템 1/2", "전망 이론", "넛지", "기본값 효과", "현상 유지 편향"],
+                "search_hints": {
+                    "arxiv_query": "behavioral economics prospect theory nudge system 1 2 Kahneman Thaler",
+                    "web_query": "behavioral economics prospect theory nudge theory system 1 2 thinking fast slow"
+                }
+            },
+            {
+                "id": "psych-3",
+                "title": "Big Five 성격 모델 — MBTI를 넘어선 과학적 성격 이론",
+                "description": "OCEAN 모델의 측정 타당성, 성격이 행동·건강·직업 성과를 예측하는 방식",
+                "level": "기본", "duration": "8분",
+                "concepts": ["Big Five", "OCEAN", "외향성", "성실성", "신경증", "성격 측정 타당도"],
+                "search_hints": {
+                    "arxiv_query": "Big Five personality traits OCEAN model validity prediction behavior outcomes",
+                    "web_query": "Big Five personality OCEAN vs MBTI scientific validity prediction career health"
+                }
+            },
+            {
+                "id": "psych-4",
+                "title": "사회 심리학 — 왜 좋은 사람도 나쁜 행동을 할까?",
+                "description": "밀그램 복종 실험, 방관자 효과, 집단 사고의 현실적 위험",
+                "level": "기본", "duration": "9분",
+                "concepts": ["복종 실험", "방관자 효과", "집단 사고", "사회적 촉진", "역할 효과"],
+                "search_hints": {
+                    "arxiv_query": "social psychology obedience Milgram bystander effect groupthink conformity",
+                    "web_query": "Milgram obedience experiment bystander effect groupthink social psychology explained"
+                }
+            },
+            {
+                "id": "psych-5",
+                "title": "애착 이론 — 유아기 경험이 성인 관계를 결정하는가?",
+                "description": "Ainsworth의 4가지 애착 유형, 성인 애착과 연애·직장 관계의 연결",
+                "level": "기본", "duration": "8분",
+                "concepts": ["안정 애착", "불안-양가 애착", "회피 애착", "무질서 애착", "성인 애착 모델"],
+                "search_hints": {
+                    "arxiv_query": "attachment theory Ainsworth adult attachment relationship outcomes Bowlby",
+                    "web_query": "attachment theory adult relationships secure anxious avoidant explained"
+                }
+            },
+            {
+                "id": "psych-6",
+                "title": "긍정 심리학 — 행복은 만들 수 있는가?",
+                "description": "Seligman의 PERMA 모델, Flow 경험, 감사 일기·강점 사용의 효과 크기",
+                "level": "심화", "duration": "8분",
+                "concepts": ["PERMA", "Flow", "강점 기반 접근", "감사 실천", "Well-being 측정"],
+                "search_hints": {
+                    "arxiv_query": "positive psychology PERMA wellbeing flow Csikszentmihalyi Seligman happiness",
+                    "web_query": "positive psychology PERMA model flow happiness science Seligman evidence"
+                }
+            },
+            {
+                "id": "psych-7",
+                "title": "신경과학과 의사결정 — 뇌는 어떻게 선택하는가?",
+                "description": "전전두엽·편도체·도파민 회로가 위험 판단과 보상 추구에 미치는 영향",
+                "level": "심화", "duration": "9분",
+                "concepts": ["전전두엽", "편도체", "도파민 회로", "보상 예측 오차", "감정과 이성"],
+                "search_hints": {
+                    "arxiv_query": "neuroscience decision making prefrontal cortex amygdala dopamine reward prediction error",
+                    "web_query": "neuroscience decision making prefrontal cortex dopamine reward risk assessment"
+                }
+            },
+            {
+                "id": "psych-8",
+                "title": "트라우마와 회복탄력성 — 역경이 사람을 강하게 만드는 조건",
+                "description": "PTSD 메커니즘, 외상 후 성장(PTG), 회복탄력성을 높이는 심리적 요인",
+                "level": "심화", "duration": "9분",
+                "concepts": ["PTSD", "외상 후 성장 (PTG)", "회복탄력성", "자기 효능감", "사회적 지지"],
+                "search_hints": {
+                    "arxiv_query": "trauma PTSD post traumatic growth resilience psychological recovery mechanisms",
+                    "web_query": "post traumatic growth PTSD resilience recovery psychology research"
+                }
+            },
+            {
+                "id": "psych-9",
+                "title": "자기결정이론 — 내적 동기를 키우고 번아웃을 막는 방법",
+                "description": "Deci & Ryan의 SDT: 자율성·유능감·관계성의 심리 욕구와 직장 동기",
+                "level": "심화", "duration": "9분",
+                "concepts": ["자기결정이론 (SDT)", "내적 동기", "외적 동기", "자율성", "유능감", "번아웃"],
+                "search_hints": {
+                    "arxiv_query": "self determination theory intrinsic motivation autonomy competence relatedness Deci Ryan",
+                    "web_query": "self determination theory intrinsic motivation burnout workplace SDT Deci Ryan"
+                }
+            },
+            {
+                "id": "psych-10",
+                "title": "설득과 영향력 — 사람들은 어떻게 의견을 바꾸는가?",
+                "description": "Cialdini의 6가지 영향력 원칙, 인지 부조화, 태도 변화의 정교화 가능성 모델",
+                "level": "심화", "duration": "10분",
+                "concepts": ["Cialdini 영향력 원칙", "사회적 증거", "희소성", "인지 부조화", "정교화 가능성 모델"],
+                "search_hints": {
+                    "arxiv_query": "persuasion influence social proof Cialdini cognitive dissonance attitude change ELM",
+                    "web_query": "Cialdini influence principles persuasion cognitive dissonance attitude change psychology"
+                }
+            },
         ],
     },
 }

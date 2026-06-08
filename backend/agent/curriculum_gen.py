@@ -14,36 +14,35 @@ from core.supabase import supabase
 
 claude = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
-CURRICULUM_PROMPT = """당신은 "{topic_name}"({category}) 분야의 교육 커리큘럼 설계자입니다.
+CURRICULUM_PROMPT = """당신은 "{topic_name}"({category}) 분야의 전문 커리큘럼 설계자입니다.
 
-처음 배우는 독자가 이 분야를 체계적으로 학습할 수 있도록
-5~7개의 챕터로 구성된 커리큘럼을 만들어주세요.
+이 분야를 체계적으로 학습할 수 있도록 8~10개의 챕터로 구성된 심층 커리큘럼을 만들어주세요.
 
 설계 원칙:
-- 각 챕터 제목은 "독자가 진짜 궁금해할 질문" 형식으로 (예: "왜 AI는 틀린 말도 자신있게 할까?")
-- 기초 → 중급 → 심화 순서 (책 목차처럼 흐름이 있어야 함)
-- concepts는 이 챕터에서 다뤄야 할 핵심 개념 2~4개
-- search_hints는 아티클 수집용 검색 쿼리 (영문, 구체적일수록 좋음)
-  - arxiv_query: 학술 논문이 있는 분야면 영문 arxiv 쿼리, 없으면 null
-  - web_query: 해당 챕터 내용을 잘 설명하는 영문 웹 검색 쿼리 (최신 자료 찾기)
+- 챕터 제목: 독자가 진짜 궁금해할 질문 또는 핵심 긴장감을 담은 제목 (예: "Bi-Encoder vs Cross-Encoder: 언제 어떤 걸 써야 할까?")
+- 진행 구조: Naive 개념 이해 → 핵심 기법 심화 → 최신 연구/응용 (3단계 흐름)
+- concepts: 챕터에서 다룰 구체적인 기법·논문명·알고리즘명 3~5개 (막연한 단어 금지, 예: "HyDE" ✓, "고급 기법" ✗)
+- search_hints: 아티클 수집용 영문 검색 쿼리
+  - arxiv_query: 학술 논문이 있는 분야면 "기법명 저자 연도" 형식 포함, 없으면 null
+  - web_query: 챕터 핵심 기법을 설명하는 영문 웹 검색 쿼리 (최신 연도 포함 권장)
 
 아래 JSON 형식으로만 응답하세요:
 {{
   "emoji": "분야를 잘 표현하는 이모지 1개",
   "color": "hex 색상코드 (예: #10B981)",
-  "description": "이 분야를 한 문장으로 — 초보자가 흥미를 가질 만하게",
+  "description": "이 분야를 한 문장으로 — 핵심 가치와 학습 범위를 담아서",
   "topic_aliases": ["동의어1", "동의어2"],
   "chapters": [
     {{
       "id": "{topic_key}-1",
-      "title": "독자가 궁금해할 질문 형식의 챕터 제목",
-      "description": "이 챕터에서 배울 것 (1문장)",
+      "title": "핵심 질문 또는 긴장감을 담은 챕터 제목",
+      "description": "이 챕터에서 배울 구체적인 내용 (1문장, 기법명 포함)",
       "level": "입문",
-      "duration": "5분",
-      "concepts": ["핵심개념1", "핵심개념2", "핵심개념3"],
+      "duration": "7분",
+      "concepts": ["구체적기법1", "논문명또는알고리즘", "핵심개념3", "실용적도구4"],
       "search_hints": {{
-        "arxiv_query": "영문 arxiv 검색 쿼리 또는 null",
-        "web_query": "영문 웹 검색 쿼리"
+        "arxiv_query": "기법명 저자 연도 키워드 또는 null",
+        "web_query": "챕터 핵심기법 영문 웹검색 쿼리 2024"
       }}
     }}
   ]
