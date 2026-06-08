@@ -5,6 +5,7 @@ arxiv: topic_name을 쿼리로 직접 사용
 RSS: 카테고리별 소스에서 수집 후 topic_name 키워드로 필터
 """
 
+import asyncio
 import re
 import httpx
 import feedparser
@@ -31,20 +32,21 @@ RSS_SOURCES: dict[str, list[dict]] = {
 }
 
 
-async def collect_for_topic(topic_name: str, category: str) -> list[dict]:
+async def collect_for_topic(topic_name: str, category: str, arxiv_query: str | None = None) -> list[dict]:
     """
     topic_name을 실제 수집 키워드로 사용.
 
-    - arxiv: topic_name을 쿼리로 직접 검색
+    - arxiv: arxiv_query 우선, 없으면 topic_name으로 검색
     - RSS: 카테고리 소스에서 수집 후 topic_name 키워드 필터
     """
     rss_sources = RSS_SOURCES.get(category, [])
-    raw_items = []
+    raw_items: list[dict] = []
 
     async with httpx.AsyncClient(timeout=20) as client:
-        # arxiv — topic_name을 쿼리로 사용
+        # arxiv — arxiv_query 우선, 없으면 topic_name
         try:
-            items = await _fetch_arxiv(client, topic_name)
+            query = arxiv_query or topic_name
+            items = await _fetch_arxiv(client, query)
             for item in items:
                 item["source"] = "arxiv"
                 item["topic_category"] = category
@@ -63,38 +65,58 @@ async def collect_for_topic(topic_name: str, category: str) -> list[dict]:
             except Exception as e:
                 print(f"  [RSS 오류] {source['name']}: {e}")
 
-    filtered = [item for item in raw_items if _is_quality_content(item, topic_name)]
+    # 이미 수집된 URL 조회 — 단일 배치 async 호출 (이벤트 루프 블로킹 방지)
+    all_urls = [item.get("url", "") for item in raw_items]
+    existing_urls = await _fetch_existing_urls(all_urls)
+
+    effective_query = arxiv_query or topic_name
+    filtered = [item for item in raw_items if _is_quality_content(item, effective_query, existing_urls)]
     print(f"  [{category}/{topic_name}] 수집 {len(raw_items)}개 → 필터 후 {len(filtered)}개")
     return filtered[:5]
 
 
-async def collect_for_category(category: str) -> list[dict]:
-    """하위 호환용 — category를 topic_name으로 위임."""
-    return await collect_for_topic(category, category)
+async def _fetch_existing_urls(urls: list[str]) -> set[str]:
+    """오늘 이미 저장된 URL 목록을 한 번의 쿼리로 가져온다."""
+    clean = [u for u in urls if u]
+    if not clean:
+        return set()
+    try:
+        res = await asyncio.to_thread(
+            lambda: supabase.table("contents")
+                .select("original_url")
+                .in_("original_url", clean)
+                .execute()
+        )
+        return {row["original_url"] for row in (res.data or [])}
+    except Exception:
+        return set()
 
 
-def _is_quality_content(item: dict, topic_name: str) -> bool:
-    """품질 필터 3단계"""
-    text = item.get("text", "")
-    title = item.get("title", "")
+def _is_quality_content(item: dict, query: str, existing_urls: set[str]) -> bool:
+    """품질 필터"""
+    text   = item.get("text", "")
+    source = item.get("source", "")
 
     # 1. 길이 체크
     if len(text) < 150:
         return False
 
-    # 2. 관련성 체크 — topic_name을 단어 단위로 분리해 검증
-    #    "AI/ML" → ["ai", "ml"], "LangGraph" → ["langgraph"]
-    keywords = [kw.lower() for kw in re.split(r"[\s/,]+", topic_name) if len(kw) > 1]
-    combined = (title + " " + text).lower()
-    if keywords and not any(kw in combined for kw in keywords):
-        return False
-
-    # 3. 중복 체크 — 오늘 이미 수집된 URL
-    url = item.get("url", "")
-    if url:
-        existing = supabase.table("contents").select("id").eq("original_url", url).execute()
-        if existing.data:
+    # 2. 관련성 체크
+    # - arxiv: 이미 특정 쿼리로 검색했으므로 스킵
+    # - trust_score 있는 항목: Tavily가 관련성 보장했으므로 스킵
+    # - RSS/기타: query 키워드로 필터
+    is_arxiv = source == "arxiv"
+    is_web   = "trust_score" in item
+    if not is_arxiv and not is_web:
+        keywords = [kw.lower() for kw in re.split(r"[\s/,]+", query) if len(kw) > 1]
+        combined = (item.get("title", "") + " " + text).lower()
+        if keywords and not any(kw in combined for kw in keywords):
             return False
+
+    # 3. 중복 체크 — 이미 수집된 URL
+    url = item.get("url", "")
+    if url and url in existing_urls:
+        return False
 
     return True
 

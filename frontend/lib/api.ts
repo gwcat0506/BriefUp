@@ -26,10 +26,6 @@ export const api = {
   getTodayContentForUser: (userId: string) =>
     fetcher<Content[]>(`/api/content/today/for-user/${userId}`),
 
-  // 특정 토픽/카테고리로 조회 (레거시)
-  getTodayContent: (category: string) =>
-    fetcher<Content[]>(`/api/content/today/${category}`),
-
   // 오늘의 퀴즈
   getTodayQuizzes: (userId: string) =>
     fetcher<Quiz[]>(`/api/quiz/today/${userId}`),

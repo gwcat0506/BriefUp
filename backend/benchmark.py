@@ -16,7 +16,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-from agent.collector import collect_for_category
+from agent.collector import collect_for_topic
 from agent.summarizer import summarize
 from agent.quiz_gen import generate_quizzes
 from agent.verifier import verify_and_filter
@@ -38,7 +38,7 @@ async def run_benchmark(category: str = "AI/ML", max_items: int = 3):
 
     # STEP 1: 수집
     print("\n[STEP 1] 콘텐츠 수집")
-    contents = await collect_for_category(category)
+    contents = await collect_for_topic(category, category)
     stats["collected"] = len(contents)
 
     if not contents:

@@ -30,8 +30,8 @@ SUMMARY_PROMPT = """
 """
 
 
-async def summarize(title: str, text: str, category: str) -> str:
-    """소스 기반 요약 생성"""
+async def summarize(title: str, text: str, category: str) -> tuple[str, dict]:
+    """소스 기반 요약 생성. (요약문, {input, output} 토큰) 반환"""
     response = await client.chat.completions.create(
         model="gpt-4o-mini",
         max_tokens=600,
@@ -44,4 +44,5 @@ async def summarize(title: str, text: str, category: str) -> str:
             )
         }]
     )
-    return response.choices[0].message.content.strip()
+    usage = {"input": response.usage.prompt_tokens, "output": response.usage.completion_tokens}
+    return response.choices[0].message.content.strip(), usage

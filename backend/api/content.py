@@ -52,22 +52,6 @@ async def get_today_content_for_user(user_id: str):
     return all_contents
 
 
-@router.get("/today/{category}")
-async def get_today_content(category: str):
-    """오늘의 브리핑 — 토픽명 또는 카테고리로 조회"""
-    today = date.today().isoformat()
-    res = (
-        supabase.table("contents")
-        .select("*")
-        .eq("topic_category", category)
-        .eq("collected_at", today)
-        .order("created_at", desc=True)
-        .limit(5)
-        .execute()
-    )
-    return res.data
-
-
 @router.get("/")
 async def get_contents(category: str | None = None, limit: int = 10):
     q = supabase.table("contents").select("*")

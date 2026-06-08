@@ -60,8 +60,8 @@ QUIZ_PROMPT = """
 """
 
 
-async def generate_quizzes(title: str, text: str, category: str) -> list[dict]:
-    """소스 기반 퀴즈 생성"""
+async def generate_quizzes(title: str, text: str, category: str) -> tuple[list[dict], dict]:
+    """소스 기반 퀴즈 생성. (퀴즈 목록, {input, output} 토큰) 반환"""
     response = await client.chat.completions.create(
         model="gpt-4o-mini",
         max_tokens=1200,
@@ -75,10 +75,11 @@ async def generate_quizzes(title: str, text: str, category: str) -> list[dict]:
         }]
     )
 
+    usage = {"input": response.usage.prompt_tokens, "output": response.usage.completion_tokens}
     raw = response.choices[0].message.content.strip()
     raw = _extract_json(raw)
     data = json.loads(raw)
-    return data.get("quizzes", [])
+    return data.get("quizzes", []), usage
 
 
 def _extract_json(text: str) -> str:

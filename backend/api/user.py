@@ -60,9 +60,19 @@ async def add_topic(body: TopicCreate):
             "name": body.name,
             "category": category,
         }).execute()
-        return res.data[0]
+        topic_row = res.data[0]
     except Exception:
         return {"message": "이미 추가된 관심사예요"}
+
+    # 커리큘럼 생성 (없으면 Claude가 자동 생성, 있으면 DB 캐시 반환)
+    try:
+        from agent.curriculum_gen import get_or_create_curriculum
+        curriculum = await get_or_create_curriculum(body.name, category)
+        topic_row["curriculum"] = curriculum
+    except Exception as e:
+        print(f"[커리큘럼 생성 오류] {e}")
+
+    return topic_row
 
 
 @router.get("/{user_id}/topics")
