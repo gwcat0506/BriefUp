@@ -97,6 +97,8 @@ function LearnContent() {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   const track = chapterId.split("-")[0] || "rag";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, Content, Streak, ConceptLevel, NextChapter, StreakStatus, XpInfo, TEMP_USER_ID } from "@/lib/api";
+import { api, Content, Streak, ConceptLevel, NextChapter, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,10 +15,12 @@ export default function HomePage() {
   const [levels, setLevels] = useState<ConceptLevel[]>([]);
   const [xpInfo, setXpInfo] = useState<XpInfo | null>(null);
   const [nextChapter, setNextChapter] = useState<NextChapter | null>(null);
+  const [curricula, setCurricula] = useState<CurriculumTrack[]>([]);
   const [reviewCount, setReviewCount] = useState(0);
   const [statsLoading, setStatsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [expandedNews, setExpandedNews] = useState<string | null>(null);
+  const [expandedTrack, setExpandedTrack] = useState<string | null>(null);
   const [milestoneShown, setMilestoneShown] = useState(false);
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
@@ -51,10 +53,12 @@ export default function HomePage() {
       api.getTodayContentForUser(TEMP_USER_ID),
       api.getNextChapter(TEMP_USER_ID),
       api.getReviewQuizzes(TEMP_USER_ID),
-    ]).then(([c, next, reviews]) => {
+      api.getCurricula(TEMP_USER_ID),
+    ]).then(([c, next, reviews, curricRes]) => {
       if (c.status === "fulfilled") setContents(c.value);
       if (next.status === "fulfilled") setNextChapter(next.value);
       if (reviews.status === "fulfilled") setReviewCount(reviews.value.length);
+      if (curricRes.status === "fulfilled" && curricRes.value) setCurricula(curricRes.value);
     }).finally(() => setLoading(false));
   };
 
@@ -250,90 +254,171 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 커리큘럼 로드맵 배너 */}
+      {/* 내 커리큘럼 */}
       <div className="mx-5 mt-4">
-        <Link href="/roadmap">
-          <div className="bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] rounded-3xl p-4 flex items-center justify-between text-white">
-            <div>
-              <p className="text-purple-200 text-xs mb-0.5">학습 경로</p>
-              <p className="font-bold">커리큘럼 로드맵 보기 📚</p>
-              <p className="text-purple-200 text-xs mt-0.5">RAG · Agentic AI · LLM 단계별 학습</p>
-            </div>
-            <span className="text-2xl">→</span>
-          </div>
-        </Link>
-      </div>
-
-      {/* 오늘의 브리핑 — 퀴즈 연결 */}
-      <div className="mx-5 mt-4">
-        <p className="text-[#1C1C1E] font-bold text-base mb-3">오늘의 브리핑</p>
-        <p className="text-[#9CA3AF] text-xs mb-3">읽고 나서 퀴즈로 확인해보세요 ✏️</p>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[#1C1C1E] font-bold text-base">내 커리큘럼 📚</p>
+          <Link href="/roadmap" className="text-[#10B981] text-sm font-medium">전체 보기</Link>
+        </div>
 
         {loading && (
           <div className="flex flex-col gap-3">
-            <SkeletonCard className="h-32" />
-            <SkeletonCard className="h-32" />
+            <SkeletonCard className="h-24" />
+            <SkeletonCard className="h-24" />
           </div>
         )}
 
-        {!loading && contents.length === 0 && (
-          <div className="bg-white rounded-3xl p-6 text-center card-shadow">
-            <p className="text-3xl mb-2">🌅</p>
-            <p className="text-[#1C1C1E] font-bold mb-1">아직 오늘의 브리핑이 없어요</p>
-            <p className="text-[#9CA3AF] text-sm">새벽 5시에 자동으로 준비됩니다</p>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-4">
-          {contents.map((c) => (
-            <div key={c.id} className="bg-white rounded-3xl card-shadow overflow-hidden">
-              {/* 브리핑 헤더 */}
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-[#ECFDF5] text-[#10B981] text-xs px-2.5 py-1 rounded-full font-medium">
-                    {c.source}
-                  </span>
-                  <span className="text-[#9CA3AF] text-xs">{c.topic_category}</span>
-                </div>
-                <h3 className="text-[#1C1C1E] font-bold text-sm leading-snug mb-2">
-                  {c.title}
-                </h3>
-
-                {/* 요약 — 펼치기 */}
-                <p className={`text-[#6B7280] text-xs leading-relaxed ${expandedNews === c.id ? "" : "line-clamp-2"}`}>
-                  {c.summary}
-                </p>
-                <button
-                  onClick={() => setExpandedNews(expandedNews === c.id ? null : c.id)}
-                  className="text-[#10B981] text-xs mt-1 font-medium"
-                >
-                  {expandedNews === c.id ? "접기 ↑" : "더 읽기 ↓"}
-                </button>
+        {!loading && curricula.length === 0 && (
+          <Link href="/roadmap">
+            <div className="bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] rounded-3xl p-4 flex items-center justify-between text-white">
+              <div>
+                <p className="text-purple-200 text-xs mb-0.5">학습 경로</p>
+                <p className="font-bold">커리큘럼 로드맵 보기</p>
+                <p className="text-purple-200 text-xs mt-0.5">RAG · Agentic AI · LLM 단계별 학습</p>
               </div>
-
-              {/* 하단 액션 */}
-              <div className="border-t border-[#F9FAFB] flex">
-                {c.original_url && (
-                  <a
-                    href={c.original_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 py-3 text-center text-[#6B7280] text-xs font-medium"
-                  >
-                    원문 읽기 →
-                  </a>
-                )}
-                <button
-                  onClick={() => router.push(`/quiz?content_id=${c.id}`)}
-                  className="flex-1 py-3 text-center bg-[#ECFDF5] text-[#10B981] text-xs font-bold rounded-br-3xl"
-                >
-                  ✏️ 이 내용으로 퀴즈 풀기
-                </button>
-              </div>
+              <span className="text-2xl">→</span>
             </div>
-          ))}
+          </Link>
+        )}
+
+        <div className="flex flex-col gap-3">
+          {curricula.map((track) => {
+            const completedCount = track.chapters.filter(c => c.status === "completed").length;
+            const isExpanded = expandedTrack === track.id;
+            const visibleChapters = isExpanded ? track.chapters : track.chapters.slice(0, 4);
+
+            return (
+              <div key={track.id} className="bg-white rounded-3xl card-shadow overflow-hidden">
+                {/* 트랙 헤더 */}
+                <div
+                  className="p-4 cursor-pointer active:bg-[#FAFAF8] transition-colors"
+                  onClick={() => setExpandedTrack(isExpanded ? null : track.id)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl flex-shrink-0"
+                      style={{ background: `${track.color}20` }}
+                    >
+                      {track.emoji}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[#1C1C1E] font-bold text-sm">{track.title}</p>
+                        <span className="text-[#9CA3AF] text-xs">
+                          {completedCount}/{track.totalChapters}
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#F3F4F6] rounded-full h-1.5 mt-1.5 overflow-hidden">
+                        <div
+                          className="h-1.5 rounded-full transition-all duration-700"
+                          style={{
+                            width: `${track.totalChapters > 0 ? (completedCount / track.totalChapters) * 100 : 0}%`,
+                            background: track.color,
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <span className="text-[#9CA3AF] text-xs ml-1">{isExpanded ? "▲" : "▼"}</span>
+                  </div>
+                </div>
+
+                {/* 챕터 목록 */}
+                <div className="border-t border-[#F3F4F6]">
+                  {visibleChapters.map((ch, idx) => {
+                    const isCompleted = ch.status === "completed";
+                    const isLocked = ch.status === "locked";
+                    return (
+                      <div
+                        key={ch.chapter_id}
+                        className={`flex items-center gap-3 px-4 py-3 border-b border-[#F9FAFB] last:border-0 ${isLocked ? "opacity-50" : "cursor-pointer active:bg-[#FAFAF8]"}`}
+                        onClick={() => !isLocked && router.push(`/learn?id=${ch.chapter_id}`)}
+                      >
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                          isCompleted
+                            ? "bg-[#10B981] text-white"
+                            : ch.status === "available" || ch.status === "started"
+                            ? "text-white"
+                            : "bg-[#F3F4F6] text-[#9CA3AF]"
+                        }`}
+                          style={!isCompleted && !isLocked ? { background: track.color } : undefined}
+                        >
+                          {isCompleted ? "✓" : idx + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium leading-tight ${isLocked ? "text-[#9CA3AF]" : "text-[#1C1C1E]"}`}>
+                            {ch.title}
+                          </p>
+                          <p className="text-[#9CA3AF] text-xs mt-0.5">{ch.level} · {ch.duration}</p>
+                        </div>
+                        {!isLocked && (
+                          <span className="text-[#9CA3AF] text-sm">→</span>
+                        )}
+                        {isLocked && (
+                          <span className="text-[#9CA3AF] text-sm">🔒</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {!isExpanded && track.chapters.length > 4 && (
+                    <button
+                      className="w-full py-3 text-[#10B981] text-xs font-medium text-center"
+                      onClick={() => setExpandedTrack(track.id)}
+                    >
+                      {track.chapters.length - 4}개 챕터 더 보기 ▼
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      {/* 오늘의 브리핑 — 콘텐츠 있을 때만 표시 */}
+      {contents.length > 0 && (
+        <div className="mx-5 mt-4">
+          <p className="text-[#1C1C1E] font-bold text-base mb-3">오늘의 브리핑</p>
+          <p className="text-[#9CA3AF] text-xs mb-3">읽고 나서 퀴즈로 확인해보세요 ✏️</p>
+          <div className="flex flex-col gap-4">
+            {contents.map((c) => (
+              <div key={c.id} className="bg-white rounded-3xl card-shadow overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-[#ECFDF5] text-[#10B981] text-xs px-2.5 py-1 rounded-full font-medium">
+                      {c.source}
+                    </span>
+                    <span className="text-[#9CA3AF] text-xs">{c.topic_category}</span>
+                  </div>
+                  <h3 className="text-[#1C1C1E] font-bold text-sm leading-snug mb-2">{c.title}</h3>
+                  <p className={`text-[#6B7280] text-xs leading-relaxed ${expandedNews === c.id ? "" : "line-clamp-2"}`}>
+                    {c.summary}
+                  </p>
+                  <button
+                    onClick={() => setExpandedNews(expandedNews === c.id ? null : c.id)}
+                    className="text-[#10B981] text-xs mt-1 font-medium"
+                  >
+                    {expandedNews === c.id ? "접기 ↑" : "더 읽기 ↓"}
+                  </button>
+                </div>
+                <div className="border-t border-[#F9FAFB] flex">
+                  {c.original_url && (
+                    <a href={c.original_url} target="_blank" rel="noreferrer"
+                      className="flex-1 py-3 text-center text-[#6B7280] text-xs font-medium">
+                      원문 읽기 →
+                    </a>
+                  )}
+                  <button
+                    onClick={() => router.push(`/quiz?content_id=${c.id}`)}
+                    className="flex-1 py-3 text-center bg-[#ECFDF5] text-[#10B981] text-xs font-bold rounded-br-3xl"
+                  >
+                    ✏️ 이 내용으로 퀴즈 풀기
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 개념별 레벨 */}
       {levels.length > 0 && (

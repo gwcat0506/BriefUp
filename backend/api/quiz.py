@@ -131,8 +131,8 @@ async def submit_answer(body: QuizAnswer):
         from api.user import add_xp, XP_QUIZ_CORRECT
         try:
             xp_data = add_xp(body.user_id, XP_QUIZ_CORRECT)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[XP 오류] {e}")
 
     return {
         "is_correct": is_correct,
