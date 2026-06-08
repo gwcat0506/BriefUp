@@ -18,19 +18,6 @@ const SUGGESTED = [
   { id: "history",    label: "역사",        category: undefined, emoji: "📜" },
 ];
 
-const GOALS = [
-  { id: "job",    label: "취업/이직",   emoji: "💼" },
-  { id: "study",  label: "자기계발",    emoji: "📚" },
-  { id: "build",  label: "직접 만들기", emoji: "🛠️" },
-  { id: "trend",  label: "트렌드 파악", emoji: "📰" },
-];
-
-const TIMES = [
-  { id: "5",  label: "5분",  desc: "진짜 바쁠 때" },
-  { id: "10", label: "10분", desc: "출퇴근 시간" },
-  { id: "20", label: "20분", desc: "여유 있을 때" },
-];
-
 export default function OnboardingPage() {
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
@@ -40,8 +27,6 @@ export default function OnboardingPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [customTopics, setCustomTopics] = useState<string[]>([]);
   const [customInput, setCustomInput] = useState("");
-  const [selectedGoal, setSelectedGoal] = useState("");
-  const [selectedTime, setSelectedTime] = useState("10");
   const [saving, setSaving] = useState(false);
 
   function toggleSuggested(id: string) {
@@ -66,7 +51,7 @@ export default function OnboardingPage() {
   async function handleFinish() {
     setSaving(true);
     try {
-      await api.createUser(TEMP_USER_ID, nickname || "학습자");
+      await api.createUser(TEMP_USER_ID, nickname || "학습자").catch(() => {});
 
       for (const id of selectedIds) {
         const item = SUGGESTED.find(i => i.id === id);
@@ -81,8 +66,6 @@ export default function OnboardingPage() {
 
       localStorage.setItem("onboarding_done", "true");
       localStorage.setItem("user_nickname", nickname || "학습자");
-      localStorage.setItem("user_goal", selectedGoal);
-      localStorage.setItem("user_daily_minutes", selectedTime);
 
       router.push("/home");
     } catch {
@@ -92,7 +75,7 @@ export default function OnboardingPage() {
     }
   }
 
-  const totalSteps = 4;
+  const totalSteps = 2;
   const progress = (step / totalSteps) * 100;
 
   return (
@@ -206,92 +189,15 @@ export default function OnboardingPage() {
             </div>
 
             <button
-              onClick={() => setStep(3)}
-              disabled={!hasAnySelection}
-              className="mt-auto w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold py-4 rounded-2xl text-base shadow-lg shadow-emerald-100 active:scale-95 transition-all disabled:opacity-40"
-            >
-              다음 →
-            </button>
-          </div>
-        )}
-
-        {/* Step 3 — 목표 */}
-        {step === 3 && (
-          <div className="flex-1 flex flex-col">
-            <div className="mb-6">
-              <button onClick={() => setStep(2)} className="text-[#9CA3AF] text-sm mb-3 flex items-center gap-1 active:opacity-60">← 이전</button>
-              <p className="text-[#10B981] text-sm font-medium mb-1">3 / {totalSteps}</p>
-              <h2 className="text-2xl font-bold text-[#1C1C1E]">학습 목표가 뭐예요?</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {GOALS.map(goal => (
-                <button
-                  key={goal.id}
-                  onClick={() => setSelectedGoal(goal.id)}
-                  className={`flex flex-col items-center justify-center gap-2 p-5 rounded-2xl border-2 transition-all active:scale-95 ${
-                    selectedGoal === goal.id
-                      ? "border-[#10B981] bg-[#ECFDF5]"
-                      : "border-[#F3F4F6] bg-white"
-                  }`}
-                >
-                  <span className="text-3xl">{goal.emoji}</span>
-                  <p className={`font-bold text-sm text-center ${selectedGoal === goal.id ? "text-[#065F46]" : "text-[#1C1C1E]"}`}>
-                    {goal.label}
-                  </p>
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={() => setStep(4)}
-              disabled={!selectedGoal}
-              className="mt-4 w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold py-4 rounded-2xl text-base shadow-lg shadow-emerald-100 active:scale-95 transition-all disabled:opacity-40"
-            >
-              다음 →
-            </button>
-          </div>
-        )}
-
-        {/* Step 4 — 학습 시간 */}
-        {step === 4 && (
-          <div className="flex-1 flex flex-col">
-            <div className="mb-6">
-              <button onClick={() => setStep(3)} className="text-[#9CA3AF] text-sm mb-3 flex items-center gap-1 active:opacity-60">← 이전</button>
-              <p className="text-[#10B981] text-sm font-medium mb-1">4 / {totalSteps}</p>
-              <h2 className="text-2xl font-bold text-[#1C1C1E]">하루 몇 분 학습할 수 있어요?</h2>
-              <p className="text-[#9CA3AF] text-sm mt-1">나중에 바꿀 수 있어요</p>
-            </div>
-            <div className="flex flex-col gap-3 flex-1">
-              {TIMES.map(time => (
-                <button
-                  key={time.id}
-                  onClick={() => setSelectedTime(time.id)}
-                  className={`flex items-center justify-between p-5 rounded-2xl border-2 transition-all active:scale-[0.98] ${
-                    selectedTime === time.id
-                      ? "border-[#10B981] bg-[#ECFDF5]"
-                      : "border-[#F3F4F6] bg-white"
-                  }`}
-                >
-                  <div className="text-left">
-                    <p className={`font-bold text-lg ${selectedTime === time.id ? "text-[#065F46]" : "text-[#1C1C1E]"}`}>
-                      {time.label}
-                    </p>
-                    <p className="text-[#9CA3AF] text-sm">{time.desc}</p>
-                  </div>
-                  {selectedTime === time.id && (
-                    <span className="text-[#10B981] text-xl font-bold">✓</span>
-                  )}
-                </button>
-              ))}
-            </div>
-            <button
               onClick={handleFinish}
-              disabled={saving}
-              className="mt-4 w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold py-4 rounded-2xl text-base shadow-lg shadow-emerald-100 active:scale-95 transition-all disabled:opacity-50"
+              disabled={!hasAnySelection || saving}
+              className="mt-auto w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold py-4 rounded-2xl text-base shadow-lg shadow-emerald-100 active:scale-95 transition-all disabled:opacity-40"
             >
               {saving ? "저장 중..." : "🎉 학습 시작하기"}
             </button>
           </div>
         )}
+
       </div>
     </div>
   );

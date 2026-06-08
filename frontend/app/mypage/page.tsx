@@ -5,6 +5,11 @@ import { api, Topic, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import { useRouter } from "next/navigation";
 
+function getNickname() {
+  if (typeof window === "undefined") return "학습자";
+  return localStorage.getItem("user_nickname") || "학습자";
+}
+
 const SUGGESTED_TOPICS = [
   { id: "rag",        label: "RAG",         category: "AI/ML",  emoji: "🔍" },
   { id: "agent",      label: "Agentic AI",  category: "AI/ML",  emoji: "🤖" },
@@ -26,7 +31,12 @@ export default function MyPage() {
   const [adding, setAdding] = useState<string | null>(null);
   const [customInput, setCustomInput] = useState("");
   const [tab, setTab] = useState<Tab>("settings");
+  const [nickname, setNickname] = useState("학습자");
   const router = useRouter();
+
+  useEffect(() => {
+    setNickname(getNickname());
+  }, []);
 
   useEffect(() => {
     api.getTopics(TEMP_USER_ID).then(setTopics);
@@ -66,8 +76,17 @@ export default function MyPage() {
 
   return (
     <div className="flex flex-col min-h-screen pb-24 bg-[#FAFAF8]">
-      <div className="px-5 pt-14 pb-4 bg-white border-b border-[#F9FAFB]">
-        <h1 className="text-2xl font-bold text-[#1C1C1E]">마이페이지</h1>
+      <div className="px-5 pt-14 pb-5 bg-white border-b border-[#F9FAFB]">
+        <h1 className="text-2xl font-bold text-[#1C1C1E] mb-3">마이페이지</h1>
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+            {nickname.charAt(0)}
+          </div>
+          <div>
+            <p className="text-[#1C1C1E] font-bold text-base">{nickname}</p>
+            <p className="text-[#9CA3AF] text-xs">BrefUp 학습자</p>
+          </div>
+        </div>
       </div>
 
       {/* 탭 */}
@@ -170,21 +189,6 @@ export default function MyPage() {
               )}
             </div>
 
-            <div className="mt-4">
-              <h2 className="text-[#1C1C1E] font-bold text-sm mb-3">앱 정보</h2>
-              <div className="bg-white rounded-3xl card-shadow divide-y divide-[#F9FAFB]">
-                {[
-                  { label: "버전", value: "0.1.0" },
-                  { label: "AI 모델", value: "GPT-4o-mini" },
-                  { label: "퀴즈 정확도 목표", value: "95%+" },
-                ].map((item) => (
-                  <div key={item.label} className="flex justify-between px-4 py-3">
-                    <span className="text-[#6B7280] text-sm">{item.label}</span>
-                    <span className="text-[#1C1C1E] text-sm font-medium">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </>
         )}
 

@@ -14,7 +14,6 @@ from fastmcp import FastMCP
 from core.supabase import supabase
 from core.logger import PipelineLogger
 from agent.collector import collect_for_topic
-from agent.curriculum_gen import get_or_create_curriculum
 from agent.web_search import search_web
 from agent.summarizer import summarize as _summarize
 from agent.quiz_gen import generate_quizzes as _quiz_gen
@@ -86,60 +85,6 @@ async def get_active_topics() -> dict:
 
 
 @mcp.tool()
-async def get_collection_plan(topic_name: str, category: str) -> dict:
-    """
-    커리큘럼 기반으로 오늘 수집할 챕터와 검색 힌트를 반환합니다.
-    collect_articles 호출 전에 반드시 먼저 호출하세요.
-
-    반환값의 today_chapter.search_hints를 collect_articles의
-    arxiv_query / web_query 인자로 그대로 사용하세요.
-    search_hints가 없는 챕터는 topic_name을 기반으로 직접 영문 쿼리를 작성하세요.
-
-    Args:
-        topic_name: 토픽명
-        category: 카테고리
-    """
-    try:
-        curriculum = await get_or_create_curriculum(topic_name, category)
-        chapters: list[dict] = curriculum.get("chapters") or []
-
-        if not chapters:
-            return {"today_chapter": None, "curriculum_ready": False}
-
-        # 최근 7일간 이미 다룬 챕터 id 조회
-        from datetime import date, timedelta
-        since = (date.today() - timedelta(days=7)).isoformat()
-        recent = await asyncio.to_thread(
-            lambda: supabase.table("contents")
-                .select("source")
-                .eq("topic_category", topic_name)
-                .gte("collected_at", since)
-                .execute()
-        )
-        covered_ids: set[str] = set()
-        for row in (recent.data or []):
-            src = row.get("source", "")
-            if src.startswith("chapter:"):
-                covered_ids.add(src.replace("chapter:", ""))
-
-        # 아직 안 다룬 챕터 중 가장 앞선 것 선택, 없으면 첫 챕터로 순환
-        today_chapter = next(
-            (ch for ch in chapters if ch["id"] not in covered_ids),
-            chapters[0],
-        )
-
-        return {
-            "curriculum_ready": True,
-            "today_chapter": today_chapter,
-            "total_chapters": len(chapters),
-            "covered_count": len(covered_ids),
-        }
-
-    except Exception as e:
-        return {"today_chapter": None, "curriculum_ready": False, "error": str(e)}
-
-
-@mcp.tool()
 async def collect_articles(topic_name: str, category: str, arxiv_query: str | None = None, web_query: str | None = None) -> dict:
     """
     토픽에 대한 원문 아티클을 수집합니다.
@@ -147,8 +92,7 @@ async def collect_articles(topic_name: str, category: str, arxiv_query: str | No
     반환된 articles의 title/source/text_length를 보고
     품질이 낮거나 관련 없는 아티클은 건너뛰어도 됩니다.
 
-    get_collection_plan에서 받은 search_hints를 arxiv_query, web_query에 사용하세요.
-    search_hints가 없으면 topic_name을 보고 직접 영문 쿼리를 작성하세요.
+    topic_name을 보고 직접 영문 쿼리를 작성하세요.
 
     Args:
         topic_name: 토픽명 (예: RAG, 사르트르)

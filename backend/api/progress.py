@@ -57,14 +57,23 @@ async def get_user_progress(user_id: str):
 @router.get("/curricula/{user_id}")
 async def get_user_curricula(user_id: str):
     """
-    유저 관심사 토픽에 맞는 커리큘럼 목록 + 챕터별 진행 상태 반환
-    매칭 토픽 없으면 기본 AI 3트랙(rag/agent/llm) 반환
+    유저 관심사 토픽의 커리큘럼 목록 + 챕터별 진행 상태 반환.
+    DB에 없는 토픽은 Claude가 자동 생성 후 저장.
+    매칭 토픽 없으면 기본 3트랙(rag/agent/llm) 반환.
     """
-    from agent.curriculum_catalog import CURRICULUM_CATALOG
+    from agent.curriculum_gen import get_or_create_curriculum
 
     # 유저 토픽 조회
-    topics_res = supabase.table("topics").select("name").eq("user_id", user_id).execute()
-    topic_names_lower = {t["name"].lower() for t in (topics_res.data or [])}
+    topics_res = supabase.table("topics").select("name, category").eq("user_id", user_id).execute()
+    topics = topics_res.data or []
+
+    # 매칭 없으면 기본 3트랙
+    if not topics:
+        topics = [
+            {"name": "RAG", "category": "AI/ML"},
+            {"name": "Agentic AI", "category": "AI/ML"},
+            {"name": "LLM 기초", "category": "AI/ML"},
+        ]
 
     # 유저 챕터 진행 상태 조회
     try:
@@ -75,23 +84,33 @@ async def get_user_curricula(user_id: str):
         completed_ids = set()
         progress_map = {}
 
-    def build_track(track_id: str, track: dict) -> dict:
+    result = []
+    seen_keys: set[str] = set()
+
+    for topic in topics:
+        try:
+            curriculum_row = await get_or_create_curriculum(topic["name"], topic.get("category", "기타"))
+        except Exception as e:
+            print(f"[curricula] 커리큘럼 조회 실패 '{topic['name']}': {e}")
+            continue
+
+        topic_key = curriculum_row["topic_key"]
+        if topic_key in seen_keys:
+            continue
+        seen_keys.add(topic_key)
+
+        chapters = curriculum_row.get("chapters") or []
         chapters_out = []
-        for ch in track["chapters"]:
+
+        for i, ch in enumerate(chapters):
             ch_id = ch["id"]
-            order = int(ch_id.split("-")[-1])
-            # 잠금 해제 로직: 1번은 항상 가능, N번은 N-1번 완료 시 가능
-            if order == 1:
-                unlock = "available"
-            else:
-                prev_id = f"{track_id}-{order - 1}"
-                unlock = "available" if prev_id in completed_ids else "locked"
-            # 실제 진행 상태 우선
+            prev_id = chapters[i - 1]["id"] if i > 0 else None
+            unlock = "available" if (i == 0 or prev_id in completed_ids) else "locked"
             status = progress_map.get(ch_id, unlock)
             if status not in ("completed", "started") and unlock == "locked":
                 status = "locked"
             chapters_out.append({
-                "id": order,
+                "id": i + 1,
                 "chapter_id": ch_id,
                 "title": ch["title"],
                 "description": ch.get("description", ""),
@@ -99,26 +118,16 @@ async def get_user_curricula(user_id: str):
                 "duration": ch.get("duration", "5분"),
                 "status": status,
             })
-        return {
-            "id": track_id,
-            "title": track["title"],
-            "emoji": track["emoji"],
-            "color": track["color"],
-            "description": track["description"],
-            "totalChapters": len(track["chapters"]),
+
+        result.append({
+            "id": topic_key,
+            "title": curriculum_row["topic_name"],
+            "emoji": curriculum_row.get("emoji", "📚"),
+            "color": curriculum_row.get("color", "#6366F1"),
+            "description": curriculum_row.get("description", ""),
+            "totalChapters": len(chapters),
             "chapters": chapters_out,
-        }
-
-    result = []
-    for track_id, track in CURRICULUM_CATALOG.items():
-        matched = any(n.lower() in topic_names_lower for n in track["topic_names"])
-        if matched:
-            result.append(build_track(track_id, track))
-
-    # 매칭 없으면 기본 3트랙
-    if not result:
-        for track_id in ["rag", "agent", "llm"]:
-            result.append(build_track(track_id, CURRICULUM_CATALOG[track_id]))
+        })
 
     return result
 
@@ -126,12 +135,13 @@ async def get_user_curricula(user_id: str):
 @router.get("/chapter/{user_id}/next")
 async def get_next_chapter(user_id: str):
     """
-    다음에 학습할 챕터 추천
-    완료 안 된 챕터 중 가장 앞 챕터
+    다음에 학습할 챕터 추천 — 유저 토픽 기반 커리큘럼에서 완료 안 된 첫 챕터
     """
-    from agent.curriculum_catalog import CHAPTERS
+    from agent.curriculum_gen import get_or_create_curriculum
 
-    # 완료된 챕터 목록 (테이블 없으면 빈 셋으로 처리)
+    topics_res = supabase.table("topics").select("name, category").eq("user_id", user_id).execute()
+    topics = topics_res.data or []
+
     try:
         completed = supabase.table("chapter_progress")\
             .select("chapter_id")\
@@ -142,18 +152,23 @@ async def get_next_chapter(user_id: str):
     except Exception:
         completed_ids = set()
 
-    # 트랙 순서대로 완료 안 된 첫 번째 챕터 찾기
-    for track_key, track in CHAPTERS.items():
-        for ch in track["chapters"]:
+    for topic in topics:
+        try:
+            curriculum_row = await get_or_create_curriculum(topic["name"], topic.get("category", "기타"))
+        except Exception:
+            continue
+
+        for ch in (curriculum_row.get("chapters") or []):
             if ch["id"] not in completed_ids:
                 return {
                     "chapter_id": ch["id"],
-                    "track": track_key,
-                    "track_title": track["title"],
+                    "track": curriculum_row["topic_key"],
+                    "track_title": curriculum_row["topic_name"],
                     "chapter_title": ch["title"],
                     "level": ch["level"],
                     "duration": ch.get("duration", "5분"),
                 }
+
     return None  # 전부 완료
 
 

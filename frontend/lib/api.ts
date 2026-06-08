@@ -82,6 +82,10 @@ export const api = {
       body: JSON.stringify({ user_id: userId, name, category }),
     }),
 
+  // XP / 레벨
+  getUserXp: (userId: string) =>
+    fetcher<XpInfo>(`/api/user/${userId}/xp`),
+
   // 파이프라인 수동 실행 (테스트용)
   runPipeline: () =>
     fetcher(`/api/content/run-pipeline`, { method: "POST" }),
@@ -142,11 +146,27 @@ export interface AnswerBody {
   selected: string;
 }
 
+export interface XpInfo {
+  level: number;
+  total_xp: number;
+  xp_in_level: number;
+  xp_needed: number;
+  progress_pct: number;
+  char_emoji: string;
+  char_name: string;
+  char_title: string;
+  xp_gained?: number;
+  leveled_up?: boolean;
+  old_level?: number;
+}
+
 export interface AnswerResult {
   is_correct: boolean;
   answer: string;
   explanation: string;
   concept: string;
+  xp_gained?: number;
+  xp_info?: XpInfo | null;
 }
 
 export interface QuizResult {

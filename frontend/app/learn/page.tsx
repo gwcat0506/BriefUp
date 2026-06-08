@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 import { api, TEMP_USER_ID } from "@/lib/api";
@@ -24,6 +24,56 @@ interface ContentRow {
   id: string;
   title: string;
   summary: string;
+}
+
+const LOADING_STEPS = [
+  { label: "챕터 내용 확인 중", pct: 15 },
+  { label: "AI가 설명 카드 생성 중", pct: 35 },
+  { label: "개념 정리하는 중", pct: 55 },
+  { label: "예시와 인사이트 추가 중", pct: 75 },
+  { label: "마무리 중", pct: 90 },
+];
+
+function LoadingScreen() {
+  const [pct, setPct] = useState(0);
+  const [stepIdx, setStepIdx] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    let elapsed = 0;
+    timerRef.current = setInterval(() => {
+      elapsed += 200;
+      // 20초 기준으로 진행률 계산 (최대 92%에서 멈춤)
+      const natural = Math.min(92, (elapsed / 20000) * 100);
+      setPct(natural);
+      // 단계 메시지 업데이트
+      const idx = [...LOADING_STEPS].reverse().findIndex(s => natural >= s.pct - 15);
+      const resolvedIdx = idx === -1 ? 0 : LOADING_STEPS.length - 1 - idx;
+      setStepIdx(resolvedIdx);
+    }, 200);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, []);
+
+  const step = LOADING_STEPS[stepIdx];
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAFAF8] px-8">
+      <div className="text-6xl mb-6">📖</div>
+      <p className="text-[#1C1C1E] font-bold text-lg mb-1">설명 카드 준비 중</p>
+      <p className="text-[#9CA3AF] text-sm mb-8">{step.label}...</p>
+
+      {/* 진행 바 */}
+      <div className="w-full max-w-xs bg-[#F3F4F6] rounded-full h-2.5 overflow-hidden mb-3">
+        <div
+          className="h-2.5 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-300"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="text-[#10B981] text-xs font-bold">{Math.round(pct)}%</p>
+
+      <p className="text-[#D1D5DB] text-xs mt-6">AI가 실시간으로 만들어요 — 처음엔 15초 정도</p>
+    </div>
+  );
 }
 
 // 카드 타입별 배경색
@@ -82,7 +132,7 @@ function LearnContent() {
 
   const currentCard = cards[cardIdx];
   const progress = cards.length > 0 ? ((cardIdx + 1) / cards.length) * 100 : 0;
-  const style = currentCard ? CARD_STYLES[currentCard.type] : CARD_STYLES.hook;
+  const style = (currentCard && CARD_STYLES[currentCard.type]) ?? CARD_STYLES.hook;
 
   async function handleNext() {
     if (cardIdx + 1 >= cards.length) {
@@ -106,19 +156,7 @@ function LearnContent() {
   }
 
   // ── 로딩 ──
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAFAF8] gap-4">
-      <div className="text-6xl animate-bounce">📖</div>
-      <p className="text-[#1C1C1E] font-bold">설명 카드 준비 중...</p>
-      <p className="text-[#9CA3AF] text-sm">처음엔 10~15초 걸려요</p>
-      <div className="flex gap-1 mt-2">
-        {[0,1,2].map(i => (
-          <div key={i} className="w-2 h-2 rounded-full bg-[#10B981] animate-bounce"
-            style={{ animationDelay: `${i * 0.2}s` }} />
-        ))}
-      </div>
-    </div>
-  );
+  if (loading) return <LoadingScreen />;
 
   // ── 에러 ──
   if (error) return (

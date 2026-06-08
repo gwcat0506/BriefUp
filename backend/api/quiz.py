@@ -125,11 +125,22 @@ async def submit_answer(body: QuizAnswer):
     # 스트릭 업데이트
     _update_streak(body.user_id)
 
+    # XP 지급 (정답 시)
+    xp_data = None
+    if is_correct:
+        from api.user import add_xp, XP_QUIZ_CORRECT
+        try:
+            xp_data = add_xp(body.user_id, XP_QUIZ_CORRECT)
+        except Exception:
+            pass
+
     return {
         "is_correct": is_correct,
         "answer": quiz.data["answer"],
         "explanation": quiz.data["explanation"],
-        "concept": concept
+        "concept": concept,
+        "xp_gained": (xp_data["xp_gained"] if xp_data else 0),
+        "xp_info": xp_data,
     }
 
 def _update_concept_level(user_id: str, concept: str, category: str, is_correct: bool):
@@ -176,6 +187,11 @@ def _update_streak(user_id: str):
             "longest_streak": max(new_streak, row["longest_streak"]),
             "last_active_date": today.isoformat()
         }).eq("user_id", user_id).execute()
+        try:
+            from api.user import add_xp, XP_STREAK_DAY
+            add_xp(user_id, XP_STREAK_DAY)
+        except Exception:
+            pass
     else:
         supabase.table("streaks").insert({
             "user_id": user_id,

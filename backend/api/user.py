@@ -5,7 +5,63 @@ from datetime import date, timedelta
 
 router = APIRouter()
 
-# 마일스톤 정의 (듀오링고 방식)
+# ── XP 시스템 ──────────────────────────────────────────
+XP_QUIZ_CORRECT = 20
+XP_STREAK_DAY = 10
+
+_CHARACTERS = [
+    (1,  3,  "🥚", "알",     "입문자"),
+    (4,  7,  "🐣", "병아리", "초보자"),
+    (8,  15, "🐥", "새",     "학습자"),
+    (16, 25, "🦅", "독수리", "탐구자"),
+    (26, 40, "🦉", "올빼미", "학자"),
+    (41, 9999, "⭐", "전설", "마스터"),
+]
+
+def xp_for_level(level: int) -> int:
+    """레벨 n 도달에 필요한 누적 XP (50*(n-1)^2)"""
+    return 50 * (level - 1) ** 2
+
+def get_level_from_xp(total_xp: int) -> int:
+    level = 1
+    while xp_for_level(level + 1) <= total_xp:
+        level += 1
+    return level
+
+def get_xp_info(total_xp: int) -> dict:
+    level = get_level_from_xp(total_xp)
+    cur_xp = xp_for_level(level)
+    nxt_xp = xp_for_level(level + 1)
+    xp_in = total_xp - cur_xp
+    xp_need = nxt_xp - cur_xp
+    char = next((c for c in _CHARACTERS if c[0] <= level <= c[1]), _CHARACTERS[-1])
+    return {
+        "level": level,
+        "total_xp": total_xp,
+        "xp_in_level": xp_in,
+        "xp_needed": xp_need,
+        "progress_pct": int(xp_in / xp_need * 100) if xp_need > 0 else 100,
+        "char_emoji": char[2],
+        "char_name": char[3],
+        "char_title": char[4],
+    }
+
+def add_xp(user_id: str, amount: int) -> dict:
+    """XP 추가 후 레벨 정보 반환 (sync)"""
+    res = supabase.table("users").select("xp").eq("id", user_id).execute()
+    cur = (res.data[0] if res.data else {}).get("xp") or 0
+    old_level = get_level_from_xp(cur)
+    new_xp = cur + amount
+    new_level = get_level_from_xp(new_xp)
+    supabase.table("users").update({"xp": new_xp}).eq("id", user_id).execute()
+    return {
+        **get_xp_info(new_xp),
+        "xp_gained": amount,
+        "leveled_up": new_level > old_level,
+        "old_level": old_level,
+    }
+
+# ── 마일스톤 정의 (듀오링고 방식) ──────────────────────
 MILESTONES = {
     7:   {"badge": "🔥 일주일 달성!", "reward": "스트릭 프리즈 1개 추가"},
     30:  {"badge": "💎 한 달 달성!", "reward": "스트릭 프리즈 2개 추가"},
@@ -24,20 +80,31 @@ class TopicCreate(BaseModel):
     category: str | None = None
 
 
+@router.get("/{user_id}/xp")
+async def get_user_xp(user_id: str):
+    res = supabase.table("users").select("xp").eq("id", user_id).execute()
+    total_xp = (res.data[0] if res.data else {}).get("xp") or 0
+    return get_xp_info(total_xp)
+
+
 @router.post("/")
 async def create_user(body: UserCreate):
+    insert_data: dict = {"email": body.email, "nickname": body.nickname}
+    if body.id:
+        insert_data["id"] = body.id
     try:
-        insert_data: dict = {"email": body.email, "nickname": body.nickname}
-        if body.id:
-            insert_data["id"] = body.id
         res = supabase.table("users").insert(insert_data).execute()
-        return res.data[0]
+        return res.data[0] if res.data else {}
     except Exception:
+        pass
+    try:
         res = supabase.table("users")\
             .update({"nickname": body.nickname})\
-            .eq("email", body.email)\
+            .eq("id", body.id)\
             .execute()
         return res.data[0] if res.data else {}
+    except Exception:
+        return {}
 
 
 @router.get("/{user_id}")

@@ -33,3 +33,36 @@ body {
 .progress-bar {
   animation: fill 1s ease-out forwards;
 }
+
+/* XP 획득 플로팅 */
+@keyframes xpFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  30% { opacity: 1; transform: translateY(-12px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-44px) scale(0.8); }
+}
+.xp-float { animation: xpFloat 1.1s ease-out forwards; }
+
+/* 레벨업 팡파레 */
+@keyframes levelUpPop {
+  0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+  60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.level-up-pop { animation: levelUpPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+/* 캐릭터 두근거림 */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.18); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.1); }
+  70% { transform: scale(1); }
+}
+.character-heartbeat { animation: heartbeat 1.8s ease-in-out infinite; }
+
+/* 반짝임 */
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.shimmer { animation: shimmer 1.5s ease-in-out infinite; }

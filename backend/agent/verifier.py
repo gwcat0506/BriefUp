@@ -12,18 +12,25 @@ client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 VERIFY_PROMPT = """
 당신은 퀴즈 품질 검증 전문가입니다.
-아래 [퀴즈]가 [원문]에 근거한 내용인지 엄격하게 검증하세요.
+아래 [퀴즈]를 [원문] 기준으로 엄격하게 검증하세요.
 
-검증 기준 (모두 통과해야 PASS):
-1. 정답이 원문에서 명확히 찾을 수 있는가?
-2. 오답 보기들이 원문에서는 틀린 내용인가?
-3. 해설이 원문 내용과 일치하는가?
+## PASS 조건 (모두 충족해야 함)
+1. 정답이 원문에서 명확히 근거를 찾을 수 있는가?
+2. 오답 보기들이 그럴 듯하지만 원문 기준으로 틀린 내용인가? (명백히 틀린 보기는 감점)
+3. 해설이 원문 내용과 일치하며 오답 이유도 설명하는가?
 4. 문제가 명확하고 모호하지 않은가?
+5. 단순 정의·이름 암기 문제가 아닌가? ("이 개념의 이름은?", "~란 무엇인가?" 형식은 FAIL)
+
+## FAIL 조건 (하나라도 해당하면 FAIL)
+- 정답 근거를 원문에서 찾을 수 없음
+- 오답 보기 중 명백히 말이 안 되는 것이 포함됨 (함정이 너무 쉬움)
+- "~의 이름은?", "~를 무엇이라 하는가?" 같은 단순 정의 암기 문제
+- 보기 4개 중 실질적으로 구분이 안 되는 보기가 있음
 
 [원문]
 {source_text}
 
-[퀴즈]
+[퀴즈] (difficulty: {difficulty})
 문제: {question}
 보기: {options}
 정답: {answer}
@@ -50,6 +57,7 @@ async def verify_quiz(quiz: dict, source_text: str) -> tuple[dict, dict]:
                 options=json.dumps(quiz["options"], ensure_ascii=False),
                 answer=quiz["answer"],
                 explanation=quiz["explanation"],
+                difficulty=quiz.get("difficulty", 1),
             )
         }]
     )

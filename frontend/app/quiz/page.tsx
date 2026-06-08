@@ -2,8 +2,9 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { api, Quiz, AnswerResult, TEMP_USER_ID } from "@/lib/api";
+import { api, Quiz, AnswerResult, XpInfo, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
+import LevelUpModal from "@/components/ui/LevelUpModal";
 import Link from "next/link";
 
 type Step = "loading" | "quiz" | "result" | "done" | "empty" | "error";
@@ -23,6 +24,10 @@ function QuizContent() {
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [step, setStep] = useState<Step>("loading");
   const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [sessionXp, setSessionXp] = useState(0);
+  const [xpFloatKey, setXpFloatKey] = useState(0);
+  const [showXpFloat, setShowXpFloat] = useState(false);
+  const [levelUpData, setLevelUpData] = useState<XpInfo | null>(null);
   const [error, setError] = useState("");
   // content_id에서 chapter_id 추출 (챕터 퀴즈인 경우)
   const chapterSource = quizzes[0]?.content_id || "";
@@ -70,6 +75,15 @@ function QuizContent() {
       setResult(res);
       setStep("result");
       setScore((s) => ({ correct: s.correct + (res.is_correct ? 1 : 0), total: s.total + 1 }));
+      if (res.is_correct && res.xp_gained) {
+        setSessionXp((x) => x + res.xp_gained!);
+        setXpFloatKey((k) => k + 1);
+        setShowXpFloat(true);
+        setTimeout(() => setShowXpFloat(false), 1200);
+        if (res.xp_info?.leveled_up) {
+          setTimeout(() => setLevelUpData(res.xp_info!), 800);
+        }
+      }
     } catch (e: any) { setError(e.message); setStep("error"); }
   }
 
@@ -124,9 +138,20 @@ function QuizContent() {
         <div className="flex-1 flex flex-col items-center justify-center px-5 text-center">
           <p className="text-7xl mb-5">{pct >= 70 ? "🎉" : "💪"}</p>
           <h2 className="text-[#1C1C1E] text-2xl font-bold mb-1">퀴즈 완료!</h2>
-          <p className="text-[#6B7280] text-sm mb-8">
+          <p className="text-[#6B7280] text-sm mb-4">
             {score.total}문제 중 <span className="text-[#10B981] font-bold">{score.correct}문제</span> 정답
           </p>
+
+          {/* XP 획득 표시 */}
+          {sessionXp > 0 && (
+            <div className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white rounded-2xl px-6 py-3 mb-5 flex items-center gap-3 level-up-pop">
+              <span className="text-2xl">⚡</span>
+              <div className="text-left">
+                <p className="font-bold text-base">+{sessionXp} XP 획득!</p>
+                <p className="text-emerald-100 text-xs">오늘도 성장했어요</p>
+              </div>
+            </div>
+          )}
 
           <div className="w-full bg-white rounded-3xl p-6 card-shadow mb-6">
             <div className="flex justify-between mb-3">
@@ -170,6 +195,20 @@ function QuizContent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FAFAF8] pb-24">
+      {/* 레벨업 모달 */}
+      {levelUpData && (
+        <LevelUpModal xpInfo={levelUpData} onClose={() => setLevelUpData(null)} />
+      )}
+
+      {/* XP 플로팅 */}
+      {showXpFloat && (
+        <div
+          key={xpFloatKey}
+          className="xp-float fixed top-24 right-6 z-40 bg-[#10B981] text-white font-bold text-sm px-4 py-2 rounded-full shadow-lg pointer-events-none"
+        >
+          +{result?.xp_gained ?? 20} XP ⚡
+        </div>
+      )}
 
       {/* 헤더 */}
       <div className="px-5 pt-14 pb-4 bg-white border-b border-[#F9FAFB]">

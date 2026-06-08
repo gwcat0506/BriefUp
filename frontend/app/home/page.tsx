@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, Content, Streak, ConceptLevel, NextChapter, StreakStatus, TEMP_USER_ID } from "@/lib/api";
+import { api, Content, Streak, ConceptLevel, NextChapter, StreakStatus, XpInfo, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ export default function HomePage() {
   const [streak, setStreak] = useState<Streak | null>(null);
   const [streakStatus, setStreakStatus] = useState<StreakStatus | null>(null);
   const [levels, setLevels] = useState<ConceptLevel[]>([]);
+  const [xpInfo, setXpInfo] = useState<XpInfo | null>(null);
   const [nextChapter, setNextChapter] = useState<NextChapter | null>(null);
   const [reviewCount, setReviewCount] = useState(0);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -26,12 +27,13 @@ export default function HomePage() {
     setLoading(true);
     setStatsLoading(true);
 
-    // 통계 카드 — 빠르게 먼저 표시 (streak/levels/status)
+    // 통계 카드 — 빠르게 먼저 표시 (streak/levels/xp/status)
     Promise.allSettled([
       api.getStreak(TEMP_USER_ID),
       api.getLevels(TEMP_USER_ID),
       api.getStreakStatus(TEMP_USER_ID),
-    ]).then(([s, l, status]) => {
+      api.getUserXp(TEMP_USER_ID),
+    ]).then(([s, l, status, xp]) => {
       if (s.status === "fulfilled") {
         setStreak(s.value);
         if (s.value?.milestone && !milestoneShown) {
@@ -41,6 +43,7 @@ export default function HomePage() {
       }
       if (l.status === "fulfilled") setLevels(l.value);
       if (status.status === "fulfilled") setStreakStatus(status.value);
+      if (xp.status === "fulfilled") setXpInfo(xp.value);
     }).finally(() => setStatsLoading(false));
 
     // 콘텐츠 — 느려도 괜찮은 항목
@@ -97,38 +100,60 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold text-[#1C1C1E]">{greeting}</h1>
       </div>
 
-      {/* 학습 현황 카드 */}
+      {/* 캐릭터 + 레벨 카드 */}
       {statsLoading ? <div className="mx-5 mt-4"><SkeletonStat /></div> : null}
       <div className={`mx-5 mt-4 bg-white rounded-3xl p-5 card-shadow ${statsLoading ? "hidden" : ""}`}>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="text-[#6B7280] text-xs mb-1">전체 학습 레벨</p>
-            <p className="text-3xl font-bold text-[#1C1C1E]">
-              {avgLevel}<span className="text-lg text-[#6B7280]">%</span>
-            </p>
+        <div className="flex items-center gap-4">
+          {/* 캐릭터 */}
+          <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#ECFDF5] to-[#D1FAE5] rounded-2xl flex items-center justify-center">
+            <span className="text-4xl character-heartbeat inline-block">
+              {xpInfo?.char_emoji ?? "🥚"}
+            </span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <p className="text-[#6B7280] text-xs">연속</p>
-              <p className="text-lg font-bold text-[#F59E0B]">🔥 {streak?.current_streak ?? 0}일</p>
+
+          {/* 레벨 정보 */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-0.5">
+              <div>
+                <span className="text-[#10B981] font-bold text-lg">Lv.{xpInfo?.level ?? 1}</span>
+                <span className="text-[#6B7280] text-sm ml-2">{xpInfo?.char_title ?? "입문자"}</span>
+              </div>
+              <span className="text-[#1C1C1E] font-bold text-sm">{xpInfo?.char_name ?? "알"}</span>
             </div>
-            <div className="text-center">
-              <p className="text-[#6B7280] text-xs">정답률</p>
-              <p className="text-lg font-bold text-[#10B981]">{accuracy}%</p>
+
+            {/* XP 바 */}
+            <div className="w-full bg-[#F3F4F6] rounded-full h-2.5 mb-1.5 overflow-hidden">
+              <div
+                className="h-2.5 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-1000"
+                style={{ width: `${xpInfo?.progress_pct ?? 0}%` }}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-[#9CA3AF] text-xs">
+                {xpInfo?.xp_in_level ?? 0} / {xpInfo?.xp_needed ?? 50} XP
+              </p>
+              <p className="text-[#9CA3AF] text-xs">
+                다음 레벨까지 {(xpInfo?.xp_needed ?? 50) - (xpInfo?.xp_in_level ?? 0)} XP
+              </p>
             </div>
           </div>
         </div>
-        <div className="w-full bg-[#F3F4F6] rounded-full h-3 mb-2 overflow-hidden">
-          <div
-            className="h-3 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-1000"
-            style={{ width: `${avgLevel}%` }}
-          />
+
+        {/* 스트릭 + 정답률 */}
+        <div className="flex gap-3 mt-4 pt-4 border-t border-[#F3F4F6]">
+          <div className="flex-1 text-center bg-[#FFFBEB] rounded-2xl py-2.5">
+            <p className="text-[#F59E0B] text-lg font-bold">🔥 {streak?.current_streak ?? 0}일</p>
+            <p className="text-[#92400E] text-xs mt-0.5">연속 학습</p>
+          </div>
+          <div className="flex-1 text-center bg-[#ECFDF5] rounded-2xl py-2.5">
+            <p className="text-[#10B981] text-lg font-bold">{accuracy}%</p>
+            <p className="text-[#065F46] text-xs mt-0.5">정답률</p>
+          </div>
+          <div className="flex-1 text-center bg-[#EFF6FF] rounded-2xl py-2.5">
+            <p className="text-[#3B82F6] text-lg font-bold">{xpInfo?.total_xp ?? 0}</p>
+            <p className="text-[#1D4ED8] text-xs mt-0.5">총 XP</p>
+          </div>
         </div>
-        <p className="text-[#9CA3AF] text-xs">
-          {avgLevel < 30 ? "시작이 반이에요! 꾸준히 해봐요 🌱" :
-           avgLevel < 60 ? "잘 하고 있어요! 계속 달려봐요 🚀" :
-           avgLevel < 90 ? "거의 다 왔어요! 조금만 더 💎" : "마스터에 가까워요 🏆"}
-        </p>
       </div>
 
       {/* 스트릭 상태 배너 */}
