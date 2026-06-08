@@ -36,11 +36,12 @@ body {
 
 /* XP 획득 플로팅 */
 @keyframes xpFloat {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  30% { opacity: 1; transform: translateY(-12px) scale(1.2); }
-  100% { opacity: 0; transform: translateY(-44px) scale(0.8); }
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0) scale(0.7); }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(-10px) scale(1.1); }
+  70%  { opacity: 1; transform: translateX(-50%) translateY(-20px) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-50px) scale(0.9); }
 }
-.xp-float { animation: xpFloat 1.1s ease-out forwards; }
+.xp-float { animation: xpFloat 1.8s ease-out forwards; }
 
 /* 레벨업 팡파레 */
 @keyframes levelUpPop {

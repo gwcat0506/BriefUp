@@ -79,7 +79,7 @@ function QuizContent() {
         setSessionXp((x) => x + res.xp_gained!);
         setXpFloatKey((k) => k + 1);
         setShowXpFloat(true);
-        setTimeout(() => setShowXpFloat(false), 1200);
+        setTimeout(() => setShowXpFloat(false), 1800);
         if (res.xp_info?.leveled_up) {
           setTimeout(() => setLevelUpData(res.xp_info!), 800);
         }
@@ -200,13 +200,14 @@ function QuizContent() {
         <LevelUpModal xpInfo={levelUpData} onClose={() => setLevelUpData(null)} />
       )}
 
-      {/* XP 플로팅 */}
+      {/* XP 플로팅 — 화면 중앙 상단 */}
       {showXpFloat && (
         <div
           key={xpFloatKey}
-          className="xp-float fixed top-24 right-6 z-40 bg-[#10B981] text-white font-bold text-sm px-4 py-2 rounded-full shadow-lg pointer-events-none"
+          className="xp-float fixed top-1/3 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold text-2xl px-8 py-4 rounded-3xl shadow-2xl pointer-events-none flex items-center gap-2"
         >
-          +{result?.xp_gained ?? 20} XP ⚡
+          <span>⚡</span>
+          <span>+{result?.xp_gained ?? 20} XP</span>
         </div>
       )}
 
@@ -295,9 +296,16 @@ function QuizContent() {
               ? "bg-[#ECFDF5] border border-[#10B981]/30"
               : "bg-[#FEF2F2] border border-[#EF4444]/30"
           }`}>
-            <p className={`font-bold mb-2 text-sm ${result.is_correct ? "text-[#059669]" : "text-[#DC2626]"}`}>
-              {result.is_correct ? "✅ 정답이에요!" : "❌ 아쉬워요!"}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <p className={`font-bold text-sm ${result.is_correct ? "text-[#059669]" : "text-[#DC2626]"}`}>
+                {result.is_correct ? "✅ 정답이에요!" : "❌ 아쉬워요!"}
+              </p>
+              {result.is_correct && result.xp_gained ? (
+                <span className="bg-[#10B981] text-white text-xs font-bold px-3 py-1 rounded-full">
+                  +{result.xp_gained} XP ⚡
+                </span>
+              ) : null}
+            </div>
             <p className="text-[#374151] text-sm leading-relaxed">{result.explanation}</p>
           </div>
         )}

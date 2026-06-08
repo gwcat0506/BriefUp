@@ -136,9 +136,12 @@ function LearnContent() {
   const progress = cards.length > 0 ? ((cardIdx + 1) / cards.length) * 100 : 0;
   const style = (currentCard && CARD_STYLES[currentCard.type]) ?? CARD_STYLES.hook;
 
+  function handlePrev() {
+    if (cardIdx > 0) setCardIdx(i => i - 1);
+  }
+
   async function handleNext() {
     if (cardIdx + 1 >= cards.length) {
-      // 챕터 학습 완료 기록
       await api.updateProgress({
         user_id: TEMP_USER_ID,
         chapter_id: chapterId,
@@ -148,6 +151,27 @@ function LearnContent() {
       setDone(true);
     } else {
       setCardIdx(i => i + 1);
+    }
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const delta = e.touches[0].clientX - touchStartX.current;
+    setDragOffset(delta);
+  }
+
+  async function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    setDragOffset(0);
+    if (Math.abs(delta) > 60) {
+      if (delta < 0) await handleNext();
+      else handlePrev();
     }
   }
 
@@ -229,8 +253,17 @@ function LearnContent() {
       <div className="flex-1 px-5 py-6 flex flex-col">
         <div
           key={cardIdx}
-          className="flex-1 rounded-3xl p-6 border-2 flex flex-col justify-between"
-          style={{ backgroundColor: style.bg, borderColor: style.border }}
+          className="flex-1 rounded-3xl p-6 border-2 flex flex-col justify-between select-none"
+          style={{
+            backgroundColor: style.bg,
+            borderColor: style.border,
+            transform: `translateX(${dragOffset}px) rotate(${dragOffset * 0.03}deg)`,
+            transition: dragOffset === 0 ? "transform 0.3s ease" : "none",
+            cursor: "grab",
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {/* 카드 상단 */}
           <div>
@@ -290,11 +323,20 @@ function LearnContent() {
         </div>
       </div>
 
-      {/* 다음 버튼 */}
-      <div className="px-5 pb-2">
+      {/* 하단 버튼 */}
+      <div className="px-5 pb-2 flex gap-3">
+        {cardIdx > 0 && (
+          <button
+            onClick={handlePrev}
+            className="flex-none font-bold py-4 px-5 rounded-2xl text-base active:scale-95 transition-all border-2"
+            style={{ color: style.titleColor, borderColor: style.border, backgroundColor: style.bg }}
+          >
+            ←
+          </button>
+        )}
         <button
           onClick={handleNext}
-          className="w-full font-bold py-4 rounded-2xl text-base active:scale-95 transition-all text-white shadow-lg"
+          className="flex-1 font-bold py-4 rounded-2xl text-base active:scale-95 transition-all text-white shadow-lg"
           style={{ background: `linear-gradient(to right, ${style.titleColor}, ${style.titleColor}cc)` }}
         >
           {cardIdx + 1 >= cards.length ? "학습 완료! 퀴즈 풀기 →" : "다음 카드 →"}
