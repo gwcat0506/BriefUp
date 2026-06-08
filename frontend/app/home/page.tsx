@@ -48,16 +48,22 @@ export default function HomePage() {
 
     Promise.allSettled([
       api.getTodayContentForUser(TEMP_USER_ID),
-      api.getNextChapter(TEMP_USER_ID),
       api.getReviewQuizzes(TEMP_USER_ID),
       api.getCurricula(TEMP_USER_ID),
-    ]).then(([c, next, reviews, curricRes]) => {
+    ]).then(([c, reviews, curricRes]) => {
       if (c.status === "fulfilled") setContents(c.value);
-      if (next.status === "fulfilled") setNextChapter(next.value);
       if (reviews.status === "fulfilled") setReviewCount(reviews.value.length);
       if (curricRes.status === "fulfilled" && curricRes.value) {
-        setCurricula(curricRes.value);
-        setSelectedTrackId((prev) => prev ?? curricRes.value[0]?.id ?? null);
+        const sorted = [...curricRes.value].sort((a, b) => {
+          const score = (t: CurriculumTrack) => {
+            if (t.chapters.some(ch => ch.status === "started")) return 2;
+            if (t.chapters.some(ch => ch.status === "available")) return 1;
+            return 0;
+          };
+          return score(b) - score(a);
+        });
+        setCurricula(sorted);
+        setSelectedTrackId((prev) => prev ?? sorted[0]?.id ?? null);
       }
     }).finally(() => setLoading(false));
   };
@@ -201,32 +207,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 오늘 학습할 챕터 */}
-      {nextChapter && (
-        <div className="mx-5 mt-4">
-          <p className="text-[#1C1C1E] font-bold text-base mb-3">오늘 학습할 챕터 🎯</p>
-          <div
-            className="bg-white rounded-3xl p-4 card-shadow cursor-pointer active:scale-[0.98] transition-all"
-            onClick={() => router.push(`/learn?id=${nextChapter.chapter_id}`)}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center text-2xl flex-shrink-0">
-                📖
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="bg-[#ECFDF5] text-[#10B981] text-xs px-2 py-0.5 rounded-full font-medium">{nextChapter.track_title}</span>
-                  <span className="text-[#9CA3AF] text-xs">{nextChapter.level}</span>
-                </div>
-                <p className="text-[#1C1C1E] font-bold text-sm">{nextChapter.chapter_title}</p>
-                <p className="text-[#9CA3AF] text-xs mt-0.5">{nextChapter.duration} · 다음 학습</p>
-              </div>
-              <span className="text-[#10B981] text-lg">→</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 커리큘럼 — 가로 탭 + 챕터 목록 */}
       <div className="mt-4">
         <div className="flex items-center justify-between px-5 mb-3">
@@ -285,14 +265,17 @@ export default function HomePage() {
             </div>
 
             {/* 선택된 트랙 챕터 목록 */}
-            {selectedTrack && (
+            {selectedTrack && (() => {
+              const nextCh = selectedTrack.chapters.find(c => c.status === "started" || c.status === "available");
+              const completedCount = selectedTrack.chapters.filter(c => c.status === "completed").length;
+              return (
               <div className="mx-5 mt-2 bg-white rounded-3xl card-shadow overflow-hidden">
-                {/* 트랙 진행률 */}
+                {/* 트랙 진행률 + 학습 시작 CTA */}
                 <div className="px-4 pt-4 pb-3 border-b border-[#F3F4F6]">
                   <div className="flex items-center justify-between mb-1.5">
                     <p className="text-[#6B7280] text-xs">{selectedTrack.description}</p>
                     <span className="text-[#9CA3AF] text-xs">
-                      {selectedTrack.chapters.filter(c => c.status === "completed").length}/{selectedTrack.totalChapters} 완료
+                      {completedCount}/{selectedTrack.totalChapters} 완료
                     </span>
                   </div>
                   <div className="w-full bg-[#F3F4F6] rounded-full h-1.5 overflow-hidden">
@@ -300,12 +283,31 @@ export default function HomePage() {
                       className="h-1.5 rounded-full transition-all duration-700"
                       style={{
                         width: `${selectedTrack.totalChapters > 0
-                          ? (selectedTrack.chapters.filter(c => c.status === "completed").length / selectedTrack.totalChapters) * 100
+                          ? (completedCount / selectedTrack.totalChapters) * 100
                           : 0}%`,
                         background: selectedTrack.color,
                       }}
                     />
                   </div>
+                  {nextCh && (
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex-1 min-w-0 pr-3">
+                        <p className="text-[#9CA3AF] text-xs mb-0.5">다음 학습</p>
+                        <p className="text-[#1C1C1E] text-sm font-semibold truncate">{nextCh.title}</p>
+                        <p className="text-[#9CA3AF] text-xs mt-0.5">{nextCh.level} · {nextCh.duration}</p>
+                      </div>
+                      <button
+                        onClick={() => router.push(`/learn?id=${nextCh.chapter_id}`)}
+                        className="flex-shrink-0 px-4 py-2 rounded-2xl text-white text-xs font-bold active:scale-95 transition-all"
+                        style={{ background: selectedTrack.color }}
+                      >
+                        ▶ 학습 시작
+                      </button>
+                    </div>
+                  )}
+                  {!nextCh && completedCount === selectedTrack.totalChapters && selectedTrack.totalChapters > 0 && (
+                    <p className="text-[#10B981] text-xs font-bold mt-3 text-center">✅ 트랙 완료!</p>
+                  )}
                 </div>
 
                 {/* 챕터 목록 */}
@@ -339,7 +341,8 @@ export default function HomePage() {
                   );
                 })}
               </div>
-            )}
+              );
+            })()}
           </>
         )}
       </div>
