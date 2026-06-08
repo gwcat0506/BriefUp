@@ -387,7 +387,6 @@ export default function HomePage() {
           {contents.length > 0 && (
             <div className="mx-5 mt-4">
               <p className="text-[#1C1C1E] font-bold text-base mb-3">오늘의 브리핑</p>
-              <p className="text-[#9CA3AF] text-xs mb-3">읽고 나서 퀴즈로 확인해보세요 ✏️</p>
               <div className="flex flex-col gap-4">
                 {contents.map((c) => (
                   <div key={c.id} className="bg-white rounded-3xl card-shadow overflow-hidden">
