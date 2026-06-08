@@ -17,37 +17,45 @@ router = APIRouter()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 LEARN_PROMPT = """
-당신은 {track} 분야 전문가입니다. 아래 챕터를 학습 카드 5장으로 만드세요.
-독자가 읽고 나서 "이걸 알면 실제로 뭔가 달라지겠다"고 느껴야 합니다.
+당신은 {track} 분야의 현업 전문가입니다. 아래 챕터를 학습 카드 5장으로 만드세요.
+독자 수준: 해당 분야를 처음 배우지만 논리적 사고 가능한 성인.
+목표: 읽고 나서 "이 개념이 왜 필요한지, 실제로 어떻게 쓰이는지" 명확히 알 것.
 
 챕터: {chapter_title} ({level})
-핵심 개념: {concepts}
+다뤄야 할 개념: {concepts}
 
-## 카드 구성 및 기준
+## 카드별 작성 기준 (엄격하게 따를 것)
 
-**카드 1 — hook (문제 제기)**
-- 독자가 이미 겪었거나 곧 겪을 현실적인 문제 상황 제시
-- "혹시 이런 상황 있지 않나요?" 수준이 아니라, 실제로 이 개념 없이 생기는 구체적 문제
+**카드 1 — hook**
+- 이 개념 없이 실제로 발생하는 문제를 구체적으로 묘사
+- 수치, 상황, 결과를 포함해 "나한테도 일어날 수 있다"는 공감 유발
+- "혹시 이런 경험 있나요?" 식의 막연한 질문 ❌
 
-**카드 2 — concept (핵심 원리)**
-- 개념의 본질과 작동 원리를 설명 — 비유 OK, 하지만 비유만으로 끝내지 말 것
-- "왜 이렇게 설계됐는지" 이유까지 포함
+**카드 2 — concept**
+- 핵심 원리를 단계적으로 설명 (A → B → C 흐름)
+- "왜 이렇게 설계됐는가"의 이유까지 포함
+- 비유를 쓰되, 비유 이후 반드시 실제 기술 원리로 연결
+- 관련 개념 간 관계와 차이도 설명
 
-**카드 3 — example (실제 적용)**
-- 현실 서비스/상황에서 이 개념이 어떻게 쓰이는지 구체적 사례
-- 수치나 맥락 포함 권장 ("ChatGPT는 이 원리로 ~를 처리한다")
+**카드 3 — example**
+- 실제 서비스(ChatGPT, Google, Netflix, Kakao 등)에서 이 원리가 쓰이는 방식
+- 구체적 수치, 규모, 결과 포함 ("~는 이 방식으로 ~% 성능 향상")
+- 독자가 직접 적용하거나 연상할 수 있는 사례
 
-**카드 4 — pitfall (흔한 오해 또는 주의사항)**
-- 이 개념을 처음 배울 때 많이 하는 오해 또는 실수
-- "~라고 생각하기 쉽지만, 실제로는 ~이다" 형식
+**카드 4 — insight**
+- 이 개념을 알면 어떤 판단이 달라지는가 — 전문가적 시각
+- 흔한 오해와 실제 차이, 또는 트레이드오프
+- "~라고 생각하기 쉽지만, 실제로는 ~이기 때문에 ~해야 한다" 형식
 
-**카드 5 — summary (핵심 정리)**
-- 기억해야 할 핵심 포인트 3가지 — 구체적이고 실용적으로
+**카드 5 — summary**
+- 핵심 포인트 3가지 — 각각 한 문장, 행동 가능하거나 기억에 남는 형태
+- "~하면 ~이다" 또는 "~할 때 ~를 써야 한다" 형식 권장
 
-규칙:
-- 각 카드 content는 3~5문장, 밀도 있게 작성
-- 이모지 활용, 한국어 작성 (전문용어 영어 병기 가능)
-- 뻔한 도입부 금지: "오늘은 ~에 대해 알아보겠습니다" 형식 금지
+공통 규칙:
+- 각 카드 content는 4~6문장, 정보 밀도 높게 (한 문장에 하나의 핵심 정보)
+- 전문용어는 영어 병기 후 한국어 설명 병행
+- "오늘은 ~에 대해 알아보겠습니다" 형식 절대 금지
+- 이모지는 의미 있는 것만 사용
 
 JSON 형식으로만 응답:
 {{
@@ -56,32 +64,32 @@ JSON 형식으로만 응답:
     {{
       "type": "hook",
       "emoji": "🤔",
-      "title": "이런 문제, 겪어보셨나요?",
-      "content": "이 개념 없이 생기는 현실적인 문제 상황"
+      "title": "이 문제, 한 번쯤 겪어봤을 거예요",
+      "content": "구체적 문제 상황 (4~6문장, 수치/맥락 포함)"
     }},
     {{
       "type": "concept",
       "emoji": "💡",
-      "title": "핵심 개념명 — 왜 이렇게 동작하는가",
-      "content": "원리 + 왜 이렇게 설계됐는지 이유"
+      "title": "핵심 원리 — 왜 이렇게 동작하는가",
+      "content": "단계적 원리 설명 + 설계 이유 (4~6문장)"
     }},
     {{
       "type": "example",
       "emoji": "🎯",
-      "title": "실제로는 이렇게 씁니다",
-      "content": "구체적 서비스/수치/맥락 포함 사례"
+      "title": "실제 서비스에서는 이렇게 씁니다",
+      "content": "구체적 사례 + 수치 + 적용 결과 (4~6문장)"
     }},
     {{
-      "type": "pitfall",
-      "emoji": "⚠️",
-      "title": "이건 오해하기 쉬워요",
-      "content": "흔한 오해 또는 주의사항 — ~라고 생각하기 쉽지만 실제로는 ~"
+      "type": "insight",
+      "emoji": "⚡",
+      "title": "전문가가 보는 핵심 포인트",
+      "content": "오해 교정 + 트레이드오프 + 판단 기준 (4~6문장)"
     }},
     {{
       "type": "summary",
       "emoji": "📌",
-      "title": "기억할 것 3가지",
-      "points": ["구체적 포인트 1", "구체적 포인트 2", "구체적 포인트 3"]
+      "title": "이것만 기억하세요",
+      "points": ["행동 가능한 핵심 포인트 1", "행동 가능한 핵심 포인트 2", "행동 가능한 핵심 포인트 3"]
     }}
   ]
 }}
@@ -151,10 +159,11 @@ async def get_all_chapters():
 
 
 @router.get("/{chapter_id}")
-async def get_chapter_content(chapter_id: str):
+async def get_chapter_content(chapter_id: str, refresh: bool = False):
     """
     챕터 학습 콘텐츠 반환.
     DB에 캐시된 것 있으면 반환, 없으면 GPT로 즉시 생성.
+    refresh=true 이면 캐시 무시하고 재생성.
     """
     # 캐시 확인
     cached = supabase.table("contents")\
@@ -162,7 +171,7 @@ async def get_chapter_content(chapter_id: str):
         .eq("source", f"chapter:{chapter_id}")\
         .execute()
 
-    if cached.data:
+    if cached.data and not refresh:
         row = cached.data[0]
         try:
             cards_data = json.loads(row["summary"])
@@ -178,7 +187,7 @@ async def get_chapter_content(chapter_id: str):
     # GPT로 학습 카드 즉시 생성
     response = await client.chat.completions.create(
         model="gpt-4o-mini",
-        max_tokens=1000,
+        max_tokens=3000,
         messages=[{
             "role": "user",
             "content": LEARN_PROMPT.format(
@@ -224,10 +233,10 @@ async def _generate_and_save_quizzes(explanation: str, content_id: str):
     try:
         response = await client.chat.completions.create(
             model="gpt-4o-mini",
-            max_tokens=1000,
+            max_tokens=2000,
             messages=[{
                 "role": "user",
-                "content": QUIZ_FROM_CHAPTER_PROMPT.format(content=explanation[:2000])
+                "content": QUIZ_FROM_CHAPTER_PROMPT.format(content=explanation[:3000])
             }]
         )
         raw = response.choices[0].message.content.strip()
@@ -249,6 +258,16 @@ async def _generate_and_save_quizzes(explanation: str, content_id: str):
             }).execute()
     except Exception as e:
         print(f"[퀴즈 생성 오류] {e}")
+
+
+@router.delete("/cache/all")
+async def clear_chapter_cache():
+    """챕터 캐시 전체 삭제 — 프롬프트 변경 후 재생성용"""
+    res = supabase.table("contents")\
+        .delete()\
+        .like("source", "chapter:%")\
+        .execute()
+    return {"deleted": len(res.data or [])}
 
 
 async def _find_chapter_from_db(chapter_id: str) -> tuple[dict | None, str, str]:
