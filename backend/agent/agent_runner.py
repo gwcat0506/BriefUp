@@ -17,11 +17,11 @@ claude = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 MODEL = "claude-haiku-4-5-20251001"
 
-# 가격 (per token) — Claude Haiku 4.5, GPT-4o-mini
+# 가격 (per token) — Claude Haiku 4.5, GPT-5
 _HAIKU_IN  = 1.00 / 1_000_000
 _HAIKU_OUT = 5.00 / 1_000_000
-_GPT_IN    = 0.15 / 1_000_000
-_GPT_OUT   = 0.60 / 1_000_000
+_GPT_IN    = 15.00 / 1_000_000   # GPT-5 input
+_GPT_OUT   = 60.00 / 1_000_000   # GPT-5 output
 
 SYSTEM_PROMPT = """당신은 BrefUp 콘텐츠 큐레이터 에이전트입니다.
 
@@ -162,15 +162,55 @@ async def run_agent_pipeline(topics: list[dict] | None = None) -> dict:
             6,
         )
         stats["cost_usd"] = cost_usd
+
+        quality = stats.get("quality", {})
+        faith_scores = quality.get("faithfulness_scores", [])
+        avg_faith = round(sum(faith_scores) / len(faith_scores), 3) if faith_scores else 0
+        quiz_rates = quality.get("quiz_pass_rates", [])
+        avg_quiz_pass = round(sum(quiz_rates) / len(quiz_rates), 3) if quiz_rates else 0
+
+        # ── 스킵 추론: collect된 article 중 summary 없으면 Claude가 판단해 스킵 ──
+        all_ids = set(_session["articles"].keys())
+        summarized_ids = {k for k, v in _session["articles"].items() if "summary" in v}
+        saved_ids = {k for k, v in _session["articles"].items() if v.get("quizzes")}
+        agent_skipped = len(all_ids - summarized_ids)
+        stats["skipped"] = {
+            "by_agent":           agent_skipped,
+            "by_faithfulness":    quality.get("faithfulness_failures", 0),
+            "total_collected":    len(all_ids),
+            "total_summarized":   len(summarized_ids),
+            "total_saved":        len(saved_ids),
+        }
+
+        # ── 퀴즈 통과율 (전체 생성 대비 검증 통과) ──
+        total_gen = stats.get("total_generated_quizzes", 0)
+        total_ver = stats["total_quizzes"]
+        stats["quiz_pass_rate"] = round(total_ver / total_gen, 3) if total_gen > 0 else 0
+        stats["avg_faithfulness"] = avg_faith
+
+        # ── run_quality 판정 (success / partial / failed) ──
+        total_contents = stats["total_contents"]
+        if total_contents == 0:
+            run_quality = "failed"
+        elif stats["total_failed"] > total_contents or agent_skipped > total_contents * 2:
+            run_quality = "partial"
+        else:
+            run_quality = "success"
+        stats["run_quality"] = run_quality
+
         print(
             f"\n[비용] Claude {tokens['claude_input']}in/{tokens['claude_output']}out | "
-            f"OpenAI {tokens['openai_input']}in/{tokens['openai_output']}out | "
+            f"GPT-5 {tokens['openai_input']}in/{tokens['openai_output']}out | "
             f"총 ${cost_usd:.4f}"
         )
+        print(
+            f"[품질] 수집={len(all_ids)} 처리={len(summarized_ids)} 저장={total_contents} "
+            f"agent스킵={agent_skipped} 퀴즈통과율={stats['quiz_pass_rate']:.0%} "
+            f"충실도={avg_faith:.2f} → {run_quality}"
+        )
 
-        status = "success" if stats["total_contents"] > 0 else "failed"
         logger.finish_run(
-            status=status,
+            status=run_quality,
             stats={**stats, "agent_summary": agent_summary, "iterations": iteration},
         )
 

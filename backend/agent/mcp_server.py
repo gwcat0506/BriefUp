@@ -17,7 +17,7 @@ from agent.collector import collect_for_topic
 from agent.web_search import search_web
 from agent.summarizer import summarize as _summarize
 from agent.quiz_gen import generate_quizzes as _quiz_gen
-from agent.verifier import verify_and_filter
+from agent.verifier import verify_and_filter, check_faithfulness
 
 mcp = FastMCP(
     name="BrefUp Pipeline",
@@ -36,23 +36,53 @@ _session: dict = {
     "articles": {},  # article_id → {title, text, source, url, summary?, quizzes?}
     "run_stats": {
         "total_contents": 0, "total_quizzes": 0, "total_failed": 0,
+        "total_generated_quizzes": 0,
         "tokens": {"claude_input": 0, "claude_output": 0, "openai_input": 0, "openai_output": 0},
+        "quality": {
+            "faithfulness_scores": [],
+            "faithfulness_failures": 0,
+            "dedup_filtered": 0,
+            "quiz_pass_rates": [],
+        },
     },
     "logger": None,
+    # collect 단계 step_order 보관 → summarize의 parent_step_order 연결에 사용
+    "collect_step_orders": {},  # topic_name → step_order
 }
+
+# 충실도 통과 기준
+FAITHFULNESS_THRESHOLD = 0.7
 
 
 def reset_session(logger: PipelineLogger) -> None:
     _session["articles"].clear()
+    _session["collect_step_orders"].clear()
     _session["run_stats"] = {
         "total_contents": 0, "total_quizzes": 0, "total_failed": 0,
+        "total_generated_quizzes": 0,
         "tokens": {"claude_input": 0, "claude_output": 0, "openai_input": 0, "openai_output": 0},
+        "quality": {
+            "faithfulness_scores": [],
+            "faithfulness_failures": 0,
+            "dedup_filtered": 0,
+            "quiz_pass_rates": [],
+        },
     }
     _session["logger"] = logger
 
 
 def _log() -> PipelineLogger | None:
     return _session["logger"]
+
+
+def _add_claude_tokens(input_tokens: int, output_tokens: int) -> None:
+    _session["run_stats"]["tokens"]["claude_input"] += input_tokens
+    _session["run_stats"]["tokens"]["claude_output"] += output_tokens
+
+
+def _add_openai_tokens(input_tokens: int, output_tokens: int) -> None:
+    _session["run_stats"]["tokens"]["openai_input"] += input_tokens
+    _session["run_stats"]["tokens"]["openai_output"] += output_tokens
 
 
 # ── Tools ─────────────────────────────────────────────────────
@@ -85,14 +115,17 @@ async def get_active_topics() -> dict:
 
 
 @mcp.tool()
-async def collect_articles(topic_name: str, category: str, arxiv_query: str | None = None, web_query: str | None = None) -> dict:
+async def collect_articles(
+    topic_name: str,
+    category: str,
+    arxiv_query: str | None = None,
+    web_query: str | None = None,
+) -> dict:
     """
     토픽에 대한 원문 아티클을 수집합니다.
     여러 토픽을 동시에 호출할 수 있습니다.
-    반환된 articles의 title/source/text_length를 보고
+    반환된 articles의 title/source/text_length/text_preview를 보고
     품질이 낮거나 관련 없는 아티클은 건너뛰어도 됩니다.
-
-    topic_name을 보고 직접 영문 쿼리를 작성하세요.
 
     Args:
         topic_name: 토픽명 (예: RAG, 사르트르)
@@ -113,6 +146,7 @@ async def collect_articles(topic_name: str, category: str, arxiv_query: str | No
         for item in web_items:
             item["topic_category"] = category
 
+        # 런 내 URL 중복 제거
         seen_urls: set[str] = set()
         raw_contents: list[dict] = []
         for item in trad_items + web_items:
@@ -122,6 +156,23 @@ async def collect_articles(topic_name: str, category: str, arxiv_query: str | No
             if url:
                 seen_urls.add(url)
             raw_contents.append(item)
+
+        # 크로스런 URL 중복 제거 — DB에 이미 저장된 URL 제외
+        urls_to_check = [item.get("url", "") for item in raw_contents if item.get("url")]
+        if urls_to_check:
+            existing_res = await asyncio.to_thread(
+                lambda u=urls_to_check: supabase.table("contents")
+                    .select("original_url")
+                    .in_("original_url", u)
+                    .execute()
+            )
+            existing_urls: set[str] = {r["original_url"] for r in (existing_res.data or [])}
+            before_dedup = len(raw_contents)
+            raw_contents = [item for item in raw_contents if item.get("url", "") not in existing_urls]
+            dedup_count = before_dedup - len(raw_contents)
+            if dedup_count > 0:
+                _session["run_stats"]["quality"]["dedup_filtered"] += dedup_count
+                print(f"  [크로스런 중복 제거] {dedup_count}개 기존 URL 제외 ({topic_name})")
 
         prefix = topic_name[:8].lower().replace(" ", "_").replace("/", "_")
         articles_meta = []
@@ -133,22 +184,35 @@ async def collect_articles(topic_name: str, category: str, arxiv_query: str | No
                 "source": raw.get("source", "unknown"),
                 "url":    raw.get("url", ""),
             }
+            # Claude에 text_preview 노출 → 관련성 판단 품질 향상
+            text_preview = raw.get("text", "")[:300].replace("\n", " ").strip()
             articles_meta.append({
-                "id":          article_id,
-                "title":       raw["title"][:80],
-                "source":      raw.get("source", "unknown"),
-                "text_length": len(raw.get("text", "")),
+                "id":           article_id,
+                "title":        raw["title"][:80],
+                "source":       raw.get("source", "unknown"),
+                "text_length":  len(raw.get("text", "")),
+                "text_preview": text_preview,
             })
 
+        collected_count = len(raw_contents)
         if logger:
-            logger.log_step(
+            step_order = logger.log_step(
                 tool_name="collect",
                 inputs={"topic_name": topic_name, "category": category},
-                output={"trad": len(trad_items), "web": len(web_items), "total": len(raw_contents)},
+                output={
+                    "trad": len(trad_items), "web": len(web_items),
+                    "total": collected_count,
+                    "dedup_filtered": _session["run_stats"]["quality"]["dedup_filtered"],
+                    # 0건이면 quality_rejected로 분류 (기술 실패 아님)
+                    **({"failure_type": "quality_rejected"} if collected_count == 0 else {}),
+                },
                 duration_ms=int((time.monotonic() - t) * 1000),
-                status="success",
+                status="success" if collected_count > 0 else "failed",
                 category=category,
+                failure_type="quality_rejected" if collected_count == 0 else None,
             )
+            # collect step_order 보관 → 이 토픽의 summarize 단계에서 parent로 참조
+            _session["collect_step_orders"][topic_name] = step_order
         return {"topic_name": topic_name, "articles": articles_meta}
 
     except Exception as e:
@@ -160,6 +224,7 @@ async def collect_articles(topic_name: str, category: str, arxiv_query: str | No
                 status="failed",
                 error_message=str(e),
                 category=category,
+                failure_type="technical",
             )
         _session["run_stats"]["total_failed"] += 1
         return {"topic_name": topic_name, "articles": [], "error": str(e)}
@@ -168,9 +233,9 @@ async def collect_articles(topic_name: str, category: str, arxiv_query: str | No
 @mcp.tool()
 async def summarize_article(article_id: str, category: str) -> dict:
     """
-    아티클 하나를 요약합니다.
+    아티클 하나를 요약하고 원문 충실도를 검증합니다 (GPT-5 생성 → Claude 검증).
     같은 토픽의 여러 아티클에 대해 동시에 호출할 수 있습니다.
-    실패(success=false) 시 해당 아티클은 건너뛰세요.
+    실패(success=false) 또는 충실도 미달(faithful=false) 시 해당 아티클은 건너뛰세요.
 
     Args:
         article_id: collect_articles에서 받은 article ID
@@ -179,24 +244,78 @@ async def summarize_article(article_id: str, category: str) -> dict:
     logger = _log()
     article = _session["articles"].get(article_id)
     if not article:
-        return {"success": False, "error": f"article_id '{article_id}' not found"}
-
-    t = time.monotonic()
-    try:
-        summary, usage = await _summarize(article["title"], article["text"], category)
-        article["summary"] = summary
-        _session["run_stats"]["tokens"]["openai_input"] += usage["input"]
-        _session["run_stats"]["tokens"]["openai_output"] += usage["output"]
         if logger:
             logger.log_step(
                 tool_name="summarize",
                 inputs={"article_id": article_id, "category": category},
-                output={"summary_length": len(summary)},
+                duration_ms=0,
+                status="failed",
+                error_message=f"article_id '{article_id}' not found",
+                category=category,
+                failure_type="not_found",
+            )
+        return {"success": False, "error": f"article_id '{article_id}' not found"}
+
+    # 이 아티클이 속한 토픽의 collect step_order를 parent로 참조
+    topic_prefix = article_id.rsplit("_", 1)[0]
+    parent_order = _session["collect_step_orders"].get(topic_prefix)
+
+    t = time.monotonic()
+    try:
+        # GPT-5로 요약 생성
+        summary, gen_usage = await _summarize(article["title"], article["text"], category)
+        _add_openai_tokens(gen_usage["input"], gen_usage["output"])
+
+        # Claude Haiku로 충실도 검증 (교차 검증)
+        is_faithful, faith_score, issues, faith_usage = await check_faithfulness(
+            summary, article["text"]
+        )
+        _add_claude_tokens(faith_usage["claude_input"], faith_usage["claude_output"])
+        _session["run_stats"]["quality"]["faithfulness_scores"].append(faith_score)
+
+        if not is_faithful or faith_score < FAITHFULNESS_THRESHOLD:
+            _session["run_stats"]["quality"]["faithfulness_failures"] += 1
+            _session["run_stats"]["total_failed"] += 1
+            print(f"    [충실도 미달] {article_id} — score={faith_score:.2f}, issues={issues}")
+            if logger:
+                logger.log_step(
+                    tool_name="summarize",
+                    inputs={"article_id": article_id, "category": category},
+                    output={"faithfulness_score": faith_score, "issues": issues},
+                    duration_ms=int((time.monotonic() - t) * 1000),
+                    status="failed",
+                    error_message=f"충실도 미달 (score={faith_score:.2f}): {issues}",
+                    category=category,
+                    failure_type="policy_rejected",
+                    parent_step_order=parent_order,
+                )
+            return {
+                "success": False,
+                "faithful": False,
+                "faithfulness_score": faith_score,
+                "issues": issues,
+                "error": "요약이 원문에 충실하지 않아 스킵합니다.",
+            }
+
+        article["summary"] = summary
+        print(f"    [충실도 PASS] {article_id} — score={faith_score:.2f}")
+
+        if logger:
+            logger.log_step(
+                tool_name="summarize",
+                inputs={"article_id": article_id, "category": category},
+                output={"summary_length": len(summary), "faithfulness_score": faith_score},
                 duration_ms=int((time.monotonic() - t) * 1000),
                 status="success",
                 category=category,
+                parent_step_order=parent_order,
             )
-        return {"success": True, "summary_length": len(summary)}
+        return {
+            "success": True,
+            "faithful": True,
+            "faithfulness_score": faith_score,
+            "summary_length": len(summary),
+        }
 
     except Exception as e:
         if logger:
@@ -207,6 +326,8 @@ async def summarize_article(article_id: str, category: str) -> dict:
                 status="failed",
                 error_message=str(e),
                 category=category,
+                failure_type="technical",
+                parent_step_order=parent_order,
             )
         _session["run_stats"]["total_failed"] += 1
         return {"success": False, "error": str(e)}
@@ -215,7 +336,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
 @mcp.tool()
 async def generate_quizzes(article_id: str, category: str) -> dict:
     """
-    아티클에 대한 퀴즈를 생성하고 자동 검증합니다.
+    아티클에 대한 퀴즈를 생성하고 Claude로 교차 검증합니다 (GPT-5 생성 → Claude Haiku 검증).
     summarize_article 완료 후 호출하세요.
     verified_count가 0이면 save_content를 호출하지 마세요.
 
@@ -226,28 +347,63 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
     logger = _log()
     article = _session["articles"].get(article_id)
     if not article:
+        if logger:
+            logger.log_step(
+                tool_name="quiz_gen",
+                inputs={"article_id": article_id, "category": category},
+                duration_ms=0,
+                status="failed",
+                error_message=f"article_id '{article_id}' not found",
+                category=category,
+                failure_type="not_found",
+            )
         return {"verified_count": 0, "error": f"article_id '{article_id}' not found"}
     if "summary" not in article:
         return {"verified_count": 0, "error": "summarize_article을 먼저 호출하세요"}
 
     t = time.monotonic()
     try:
+        # GPT-5로 퀴즈 생성
         quizzes, gen_usage = await _quiz_gen(article["title"], article["text"], category)
         if not quizzes:
             raise ValueError("퀴즈 생성 결과 없음")
-        _session["run_stats"]["tokens"]["openai_input"] += gen_usage["input"]
-        _session["run_stats"]["tokens"]["openai_output"] += gen_usage["output"]
+        _add_openai_tokens(gen_usage["input"], gen_usage["output"])
+        _session["run_stats"]["total_generated_quizzes"] += len(quizzes)
 
+        # Claude Haiku로 교차 검증 (동일 모델 blind spot 방지)
         verified, ver_usage = await verify_and_filter(quizzes, article["text"])
-        _session["run_stats"]["tokens"]["openai_input"] += ver_usage["input"]
-        _session["run_stats"]["tokens"]["openai_output"] += ver_usage["output"]
+        _add_claude_tokens(ver_usage["claude_input"], ver_usage["claude_output"])
+
         article["quizzes"] = verified
+
+        pass_rate = len(verified) / len(quizzes) if quizzes else 0
+        _session["run_stats"]["quality"]["quiz_pass_rates"].append(pass_rate)
+
+        # 검증 통과 퀴즈가 0개 → policy_rejected
+        if len(verified) == 0:
+            if logger:
+                logger.log_step(
+                    tool_name="quiz_gen",
+                    inputs={"article_id": article_id, "category": category},
+                    output={"generated": len(quizzes), "verified": 0, "pass_rate": 0},
+                    duration_ms=int((time.monotonic() - t) * 1000),
+                    status="failed",
+                    error_message="생성된 퀴즈가 모두 검증 탈락",
+                    category=category,
+                    failure_type="policy_rejected",
+                )
+            _session["run_stats"]["total_failed"] += 1
+            return {"verified_count": 0, "total_generated": len(quizzes), "pass_rate": 0}
 
         if logger:
             logger.log_step(
                 tool_name="quiz_gen",
                 inputs={"article_id": article_id, "category": category},
-                output={"generated": len(quizzes), "verified": len(verified)},
+                output={
+                    "generated": len(quizzes),
+                    "verified": len(verified),
+                    "pass_rate": round(pass_rate, 2),
+                },
                 duration_ms=int((time.monotonic() - t) * 1000),
                 status="success",
                 category=category,
@@ -255,6 +411,7 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
         return {
             "verified_count": len(verified),
             "total_generated": len(quizzes),
+            "pass_rate": round(pass_rate, 2),
             "concepts": [q.get("concept", "") for q in verified],
         }
 
@@ -267,6 +424,7 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
                 status="failed",
                 error_message=str(e),
                 category=category,
+                failure_type="technical",
             )
         _session["run_stats"]["total_failed"] += 1
         return {"verified_count": 0, "error": str(e)}
@@ -324,6 +482,7 @@ async def save_content(article_id: str, topic_name: str, category: str) -> dict:
                 status="failed",
                 error_message=str(e),
                 category=category,
+                failure_type="technical",
             )
         _session["run_stats"]["total_failed"] += 1
         return {"error": str(e)}
@@ -363,5 +522,4 @@ def _insert_quizzes(quizzes: list[dict], content_id: str) -> int:
 
 
 if __name__ == "__main__":
-    # 외부 MCP 클라이언트(Claude Desktop 등)에서 쓸 때 stdio 서버로 실행
     mcp.run()

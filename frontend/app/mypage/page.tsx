@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { api, Topic, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
 
 function getNickname() {
-  if (typeof window === "undefined") return "학습자";
-  return localStorage.getItem("user_nickname") || "학습자";
+  if (typeof window === "undefined") return "최고운";
+  return localStorage.getItem("user_nickname") || "최고운";
 }
 
 const SUGGESTED_TOPICS = [
@@ -31,11 +32,13 @@ export default function MyPage() {
   const [adding, setAdding] = useState<string | null>(null);
   const [customInput, setCustomInput] = useState("");
   const [tab, setTab] = useState<Tab>("settings");
-  const [nickname, setNickname] = useState("학습자");
+  const [nickname, setNickname] = useState("최고운");
+  const [confirmTopic, setConfirmTopic] = useState<{ id: string; name: string } | null>(null);
   const router = useRouter();
+  const { show: showToast, ToastComponent } = useToast();
 
   useEffect(() => {
-    setNickname(getNickname());
+    setNickname("최고운");
   }, []);
 
   useEffect(() => {
@@ -43,8 +46,26 @@ export default function MyPage() {
     api.getBookmarks(TEMP_USER_ID).then(setBookmarks);
   }, []);
 
+  async function handleRemoveTopic(topicId: string) {
+    const snapshot = topics;
+    setTopics(prev => prev.filter(t => t.id !== topicId));
+    setConfirmTopic(null);
+    try {
+      await api.removeTopic(topicId);
+      // 홈 캐시 무효화 — 삭제된 주제가 홈/로드맵에 계속 표시되는 것 방지
+      localStorage.removeItem(`home_summary_v1_${TEMP_USER_ID}`);
+    } catch {
+      setTopics(snapshot);
+    }
+  }
+
   async function handleAddSuggested(id: string, label: string, category: string) {
-    if (adding || topics.some(t => t.name === label)) return;
+    const existing = topics.find(t => t.name === label);
+    if (existing) {
+      setConfirmTopic({ id: existing.id, name: label });
+      return;
+    }
+    if (adding) return;
     setAdding(id);
     try {
       await api.addTopic(TEMP_USER_ID, label, category);
@@ -64,6 +85,9 @@ export default function MyPage() {
       const updated = await api.getTopics(TEMP_USER_ID);
       setTopics(updated);
       setCustomInput("");
+      showToast(`'${trimmed}' 관심사가 추가됐어요!`, "success");
+    } catch {
+      showToast("추가 중 오류가 생겼어요. 다시 시도해주세요.", "error");
     } finally {
       setAdding(null);
     }
@@ -76,6 +100,7 @@ export default function MyPage() {
 
   return (
     <div className="flex flex-col min-h-screen pb-24 bg-[#FAFAF8]">
+      {ToastComponent}
       <div className="px-5 pt-14 pb-5 bg-white border-b border-[#F9FAFB]">
         <h1 className="text-2xl font-bold text-[#1C1C1E] mb-3">마이페이지</h1>
         <div className="flex items-center gap-3">
@@ -113,57 +138,44 @@ export default function MyPage() {
 
         {/* 설정 탭 */}
         {tab === "settings" && (
-          <>
-            <div className="mt-4">
-              <h2 className="text-[#1C1C1E] font-bold text-sm mb-1">관심사 설정</h2>
-              <p className="text-[#9CA3AF] text-xs mb-3">추가한 관심사가 로드맵 커리큘럼에 반영돼요</p>
+          <div className="mt-4 flex flex-col gap-4">
 
-              {/* 현재 관심사 */}
-              {topics.length > 0 && (
-                <div className="bg-white rounded-3xl p-4 card-shadow mb-3">
-                  <p className="text-[#6B7280] text-xs mb-2 font-medium">현재 관심사</p>
-                  <div className="flex flex-wrap gap-2">
-                    {topics.map((t) => (
-                      <span key={t.id} className="bg-[#ECFDF5] text-[#10B981] text-sm px-3 py-1.5 rounded-full font-medium">
-                        {t.name}
-                      </span>
-                    ))}
-                  </div>
+            {/* 가치 설명 카드 */}
+            <div className="bg-gradient-to-br from-[#10B981] to-[#059669] rounded-3xl p-5 text-white">
+              <p className="font-bold text-base leading-snug mb-4">관심사만 고르면,<br/>나머지는 BrefUp이 알아서 해요</p>
+              <div className="flex items-start gap-1 text-sm">
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  <span className="text-xl">🎯</span>
+                  <span className="text-white/90 text-xs font-medium text-center">관심사<br/>선택</span>
                 </div>
-              )}
-
-              {/* 추천 토픽 칩 */}
-              <div className="bg-white rounded-3xl p-4 card-shadow mb-3">
-                <p className="text-[#6B7280] text-xs mb-3 font-medium">커리큘럼 있는 주제</p>
-                <div className="flex flex-wrap gap-2">
-                  {SUGGESTED_TOPICS.map((item) => {
-                    const already = topics.some(t => t.name === item.label);
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => handleAddSuggested(item.id, item.label, item.category)}
-                        disabled={already || adding !== null}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all active:scale-95 disabled:cursor-default ${
-                          already
-                            ? "border-[#10B981] bg-[#ECFDF5] text-[#065F46]"
-                            : "border-[#F3F4F6] bg-[#F9FAFB] text-[#374151]"
-                        }`}
-                      >
-                        <span>{item.emoji}</span>
-                        <span>{item.label}</span>
-                        {already && <span className="text-[#10B981]">✓</span>}
-                        {adding === item.id && <span className="text-[#9CA3AF]">...</span>}
-                      </button>
-                    );
-                  })}
+                <span className="text-white/50 mt-2">→</span>
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  <span className="text-xl">📚</span>
+                  <span className="text-white/90 text-xs font-medium text-center">커리큘럼<br/>자동 생성</span>
+                </div>
+                <span className="text-white/50 mt-2">→</span>
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  <span className="text-xl">📰</span>
+                  <span className="text-white/90 text-xs font-medium text-center">매일<br/>브리핑</span>
+                </div>
+                <span className="text-white/50 mt-2">→</span>
+                <div className="flex flex-col items-center gap-1 flex-1">
+                  <span className="text-xl">✏️</span>
+                  <span className="text-white/90 text-xs font-medium text-center">퀴즈<br/>자동 출제</span>
                 </div>
               </div>
+            </div>
+
+            {/* 관심사 추가 — 직접 입력 상단, 추천 주제 하단 */}
+            <div className="bg-white rounded-3xl p-4 card-shadow">
+              <p className="text-[#1C1C1E] font-bold text-sm mb-0.5">관심사 추가</p>
+              <p className="text-[#9CA3AF] text-xs mb-3">배우고 싶은 걸 입력하거나, 아래에서 골라보세요</p>
 
               {/* 직접 입력 */}
-              <div className="bg-white rounded-3xl p-4 card-shadow flex gap-2">
+              <div className="flex gap-2 mb-2">
                 <input
                   type="text"
-                  placeholder="직접 입력 (예: 블록체인)"
+                  placeholder="예: 블록체인, 영양학, 클래식 음악..."
                   value={customInput}
                   onChange={(e) => setCustomInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAddCustom()}
@@ -175,21 +187,88 @@ export default function MyPage() {
                   disabled={!customInput.trim() || adding !== null}
                   className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold px-4 py-3 rounded-xl text-sm active:scale-95 transition-all disabled:opacity-40"
                 >
-                  {adding === "custom" ? "..." : "추가"}
+                  {adding === "custom" ? "생성 중" : "추가"}
                 </button>
               </div>
+              {adding === "custom" && (
+                <div className="flex items-center gap-2 mb-4 px-1">
+                  <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
+                  <p className="text-[#10B981] text-xs">AI가 커리큘럼을 설계 중이에요... 최대 1분 정도 걸려요</p>
+                </div>
+              )}
+              {adding && adding !== "custom" && (
+                <div className="flex items-center gap-2 mb-4 px-1">
+                  <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
+                  <p className="text-[#10B981] text-xs">관심사 추가 중...</p>
+                </div>
+              )}
+              {!adding && <div className="mb-4" />}
 
-              {topics.length > 0 && (
-                <button
-                  onClick={() => router.push("/roadmap")}
-                  className="mt-3 w-full bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] text-white font-bold py-3 rounded-2xl text-sm active:scale-95 transition-all"
-                >
-                  📚 내 로드맵 보러 가기 →
-                </button>
+              {/* 구분선 */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex-1 h-px bg-[#F3F4F6]" />
+                <span className="text-[#9CA3AF] text-xs">추천 주제</span>
+                <div className="flex-1 h-px bg-[#F3F4F6]" />
+              </div>
+
+              {/* 추천 주제 칩 */}
+              <div className="flex flex-wrap gap-2">
+                {SUGGESTED_TOPICS.map((item) => {
+                  const already = topics.some(t => t.name === item.label);
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleAddSuggested(item.id, item.label, item.category)}
+                      disabled={!already && adding !== null}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-full border-2 text-sm font-medium transition-all active:scale-95 disabled:cursor-default ${
+                        already
+                          ? "border-[#10B981] bg-[#ECFDF5] text-[#065F46]"
+                          : "border-[#F3F4F6] bg-[#F9FAFB] text-[#374151]"
+                      }`}
+                    >
+                      <span>{item.emoji}</span>
+                      <span>{item.label}</span>
+                      {already && <span className="text-[#10B981] text-xs">✓</span>}
+                      {adding === item.id && <span className="text-[#9CA3AF] text-xs">생성 중...</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 내 관심사 — 항상 표시 */}
+            <div className="bg-white rounded-3xl p-4 card-shadow">
+              <p className="text-[#1C1C1E] font-bold text-sm mb-2">
+                내 관심사{topics.length > 0 ? ` (${topics.length}개)` : ""}
+              </p>
+              {topics.length === 0 ? (
+                <p className="text-[#9CA3AF] text-sm text-center py-3">아직 추가한 관심사가 없어요</p>
+              ) : (
+                <>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {topics.map((t) => (
+                      <span key={t.id} className="flex items-center gap-1 bg-[#ECFDF5] text-[#10B981] text-sm px-3 py-1.5 rounded-full font-medium">
+                        {t.name}
+                        <button
+                          onClick={() => setConfirmTopic({ id: t.id, name: t.name })}
+                          className="text-[#10B981]/60 hover:text-[#EF4444] ml-0.5 leading-none"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => router.push("/roadmap")}
+                    className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] text-white font-bold py-3 rounded-2xl text-sm active:scale-95 transition-all"
+                  >
+                    📚 내 로드맵 보러 가기 →
+                  </button>
+                </>
               )}
             </div>
 
-          </>
+          </div>
         )}
 
         {/* 북마크 탭 */}
@@ -239,6 +318,43 @@ export default function MyPage() {
       </div>
 
       <BottomNav active="mypage" />
+
+      {/* 관심사 제거 확인 모달 */}
+      {confirmTopic && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center"
+          onClick={() => setConfirmTopic(null)}
+        >
+          <div className="absolute inset-0 bg-black/40" />
+          <div
+            className="relative w-full max-w-md bg-white rounded-t-3xl px-5 pt-6 pb-10 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-[#E5E7EB] rounded-full mx-auto mb-5" />
+            <p className="text-[#1C1C1E] font-bold text-base mb-1 text-center">
+              관심사를 제거할까요?
+            </p>
+            <p className="text-[#6B7280] text-sm text-center mb-6">
+              <span className="font-bold text-[#1C1C1E]">{confirmTopic.name}</span>을(를) 목록에서 지워요.
+              <br />관련 커리큘럼과 진행 상태는 그대로 남아요.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmTopic(null)}
+                className="flex-1 py-3.5 rounded-2xl bg-[#F3F4F6] text-[#374151] font-bold text-sm active:scale-95 transition-all"
+              >
+                취소
+              </button>
+              <button
+                onClick={() => handleRemoveTopic(confirmTopic.id)}
+                className="flex-1 py-3.5 rounded-2xl bg-[#EF4444] text-white font-bold text-sm active:scale-95 transition-all"
+              >
+                제거
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

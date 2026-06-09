@@ -9,6 +9,7 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 const LEVEL_COLOR: Record<string, string> = {
   "입문": "#10B981",
   "기본": "#F59E0B",
+  "중급": "#3B82F6",
   "심화": "#EF4444",
 };
 

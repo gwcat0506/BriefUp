@@ -27,8 +27,9 @@ LEARN_PROMPT = """
 ## 카드별 작성 기준 (엄격하게 따를 것)
 
 **카드 1 — hook**
-- 이 개념 없이 실제로 발생하는 문제를 구체적으로 묘사
-- 수치, 상황, 결과를 포함해 "나한테도 일어날 수 있다"는 공감 유발
+- 이 개념 없이 실제로 발생하는 구체적인 문제 상황을 묘사
+- 상황, 원인, 결과를 포함해 "이 문제가 왜 중요한가"를 느끼게 할 것
+- title은 이 챕터의 핵심 긴장감이나 질문을 담아 직접 작성 (고정 문구 ❌)
 - "혹시 이런 경험 있나요?" 식의 막연한 질문 ❌
 
 **카드 2 — concept**
@@ -38,9 +39,9 @@ LEARN_PROMPT = """
 - 관련 개념 간 관계와 차이도 설명
 
 **카드 3 — example**
-- 실제 서비스(ChatGPT, Google, Netflix, Kakao 등)에서 이 원리가 쓰이는 방식
-- 구체적 수치, 규모, 결과 포함 ("~는 이 방식으로 ~% 성능 향상")
-- 독자가 직접 적용하거나 연상할 수 있는 사례
+- 실제 서비스(ChatGPT, Google, Netflix, Kakao 등)나 오픈소스 프로젝트에서 이 원리가 쓰이는 방식
+- 어떤 문제를 해결했는지, 어떻게 적용했는지 구체적으로 서술
+- 확인할 수 없는 통계 수치(%, 배율 등)는 절대 언급하지 말 것 — 사례의 맥락과 방식으로만 설명
 
 **카드 4 — insight**
 - 이 개념을 알면 어떤 판단이 달라지는가 — 전문가적 시각
@@ -52,10 +53,12 @@ LEARN_PROMPT = """
 - "~하면 ~이다" 또는 "~할 때 ~를 써야 한다" 형식 권장
 
 공통 규칙:
-- 각 카드 content는 4~6문장, 정보 밀도 높게 (한 문장에 하나의 핵심 정보)
+- 각 카드 content는 3~4문장으로 압축 (모바일 가독성 우선)
+- 문장 간 줄바꿈(\n)을 활용해 단락을 나눌 것
 - 전문용어는 영어 병기 후 한국어 설명 병행
 - "오늘은 ~에 대해 알아보겠습니다" 형식 절대 금지
 - 이모지는 의미 있는 것만 사용
+- 불확실한 정보는 "~로 알려져 있다", "~라고 보고된다" 형식으로 완화할 것
 
 JSON 형식으로만 응답:
 {{
@@ -64,26 +67,26 @@ JSON 형식으로만 응답:
     {{
       "type": "hook",
       "emoji": "🤔",
-      "title": "이 문제, 한 번쯤 겪어봤을 거예요",
-      "content": "구체적 문제 상황 (4~6문장, 수치/맥락 포함)"
+      "title": "챕터 핵심 긴장감을 담은 제목 (직접 작성)",
+      "content": "구체적 문제 상황 (3~4문장, \\n으로 단락 구분)"
     }},
     {{
       "type": "concept",
       "emoji": "💡",
       "title": "핵심 원리 — 왜 이렇게 동작하는가",
-      "content": "단계적 원리 설명 + 설계 이유 (4~6문장)"
+      "content": "단계적 원리 설명 + 설계 이유 (3~4문장, \\n으로 단락 구분)"
     }},
     {{
       "type": "example",
       "emoji": "🎯",
-      "title": "실제 서비스에서는 이렇게 씁니다",
-      "content": "구체적 사례 + 수치 + 적용 결과 (4~6문장)"
+      "title": "실제로 이렇게 씁니다",
+      "content": "구체적 사례 + 어떤 문제를 어떻게 해결했는지 (3~4문장, 수치 없이)"
     }},
     {{
       "type": "insight",
       "emoji": "⚡",
       "title": "전문가가 보는 핵심 포인트",
-      "content": "오해 교정 + 트레이드오프 + 판단 기준 (4~6문장)"
+      "content": "오해 교정 + 트레이드오프 + 판단 기준 (3~4문장, \\n으로 단락 구분)"
     }},
     {{
       "type": "summary",
@@ -179,6 +182,12 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
             cards_data = None
         return {"content": row, "cards": cards_data, "from_cache": True}
 
+    # refresh=True면 이전 캐시 + 연결된 퀴즈 삭제 (중복 방지)
+    if cached.data and refresh:
+        for old_row in cached.data:
+            supabase.table("quizzes").delete().eq("content_id", old_row["id"]).execute()
+            supabase.table("contents").delete().eq("id", old_row["id"]).execute()
+
     # topic_curricula DB에서 챕터 메타데이터 찾기
     chapter_meta, topic_key, topic_name = await _find_chapter_from_db(chapter_id)
     if not chapter_meta:
@@ -186,8 +195,8 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
 
     # GPT로 학습 카드 즉시 생성
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
-        max_tokens=3000,
+        model="gpt-5",
+        max_completion_tokens=3000,
         messages=[{
             "role": "user",
             "content": LEARN_PROMPT.format(

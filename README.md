@@ -1,6 +1,6 @@
 # BrefUp — AI 브리핑 학습 서비스
 
-> 관심사를 입력하면, 매일 최신 콘텐츠를 자동 수집·요약해 퀴즈로 지식 레벨을 채워가는 PWA
+> 관심사를 입력하면, 최신 콘텐츠를 자동 수집·요약해 퀴즈로 지식 레벨을 채워가는 PWA
 
 **프로덕션:** https://brief-up.vercel.app  
 **백엔드 API:** https://briefup.onrender.com
@@ -37,11 +37,11 @@
 ```
 온보딩 (관심사 선택)
   → Claude가 커리큘럼 자동 생성 (챕터 구조 + 검색 힌트)
-  → 매일 새벽 파이프라인 실행
+  → 파이프라인 실행 (POST /api/content/run-pipeline)
        → 커리큘럼 기반으로 오늘 다룰 챕터 결정
        → 챕터에 맞는 영문 쿼리로 아티클 수집
        → AI 요약 + 퀴즈 생성 + 자체 검증
-  → 유저가 아침에 앱 열면 오늘의 브리핑 + 퀴즈 준비 완료
+  → 앱 열면 오늘의 브리핑 + 퀴즈 준비 완료
 ```
 
 ---
@@ -49,7 +49,7 @@
 ## 전체 아키텍처
 
 ```
-[매일 새벽 05:00 — APScheduler]
+[파이프라인 실행 — POST /api/content/run-pipeline]
         ↓
   agent_runner.py  ← Claude Haiku 4.5 + FastMCP 오케스트레이션
         ↓
@@ -308,7 +308,7 @@ pipeline_logs  — tool_name, category, inputs(메타만), output, duration_ms, 
 | 파트 | 기술 |
 |------|------|
 | Frontend | Next.js 14 (App Router), Tailwind CSS, PWA |
-| Backend | Python 3.11, FastAPI, APScheduler |
+| Backend | Python 3.11, FastAPI |
 | DB | Supabase (PostgreSQL + RLS) |
 | AI 오케스트레이션 | Claude Haiku 4.5 (Anthropic) + FastMCP |
 | AI 처리 | GPT-4o-mini (OpenAI) — 요약 / 퀴즈 생성 / 자체 검증 |
@@ -322,7 +322,7 @@ pipeline_logs  — tool_name, category, inputs(메타만), output, duration_ms, 
 
 ```
 backend/
-├── main.py                    FastAPI 앱 + APScheduler lifespan
+├── main.py                    FastAPI 앱 진입점
 ├── agent/
 │   ├── agent_runner.py        Claude + FastMCP 오케스트레이터 (MAX_ITERATIONS=50)
 │   ├── mcp_server.py          FastMCP 서버 — 도구 6개 정의 + 세션 스토어
@@ -334,7 +334,7 @@ backend/
 │   ├── quiz_gen.py            GPT-4o-mini 퀴즈 생성
 │   ├── verifier.py            GPT-4o-mini 자체 검증
 │   ├── classifier.py          토픽 카테고리 자동 분류
-│   └── scheduler.py           APScheduler 일일 실행 진입점
+│   └── scheduler.py           파이프라인 실행 진입점 (직접 실행 or API 트리거)
 ├── api/
 │   ├── user.py                유저 + 관심사 추가 (커리큘럼 자동 생성 연동)
 │   ├── content.py             오늘의 브리핑 조회
@@ -345,9 +345,7 @@ backend/
 ├── core/
 │   ├── supabase.py            싱글톤 Supabase 클라이언트
 │   └── logger.py              PipelineLogger
-├── schema_v2.sql              chapter_progress, bookmarks 테이블
-├── schema_curricula.sql       topic_curricula 테이블
-└── seed_curricula.py          기존 9개 토픽 DB seed 스크립트
+└── requirements.txt
 ```
 
 ---
@@ -411,15 +409,8 @@ pip install -r requirements.txt
 cp .env.example .env            # .env 값 채우기
 uvicorn main:app --reload       # http://localhost:8000
 
-# 파이프라인 수동 1회 실행
+# 파이프라인 수동 실행
 python -m agent.scheduler
-
-# 기존 커리큘럼 9개 DB seed (최초 1회)
-python seed_curricula.py
-
-# 벤치마크
-python benchmark.py             # AI/ML 기본
-python benchmark.py 철학        # 특정 카테고리
 ```
 
 ### 프론트엔드

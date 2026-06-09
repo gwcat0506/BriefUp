@@ -20,7 +20,7 @@
 
 ## 1. 서비스 개요
 
-**BrefUp**은 사용자의 관심사(예: RAG, 양자컴퓨팅, 철학)에 맞춰 매일 아침 학습 콘텐츠를 자동으로 준비하는 AI 학습 서비스입니다.
+**BrefUp**은 사용자의 관심사(예: RAG, 양자컴퓨팅, 철학)에 맞춰 최신 콘텐츠를 자동 수집·요약하고 퀴즈로 지식 레벨을 쌓아가는 AI 학습 서비스입니다.
 
 ### 해결하려는 문제
 
@@ -31,7 +31,7 @@
 ### 핵심 루프
 
 ```
-매일 05:00 자동 수집 → AI 요약 → AI 퀴즈 생성 → 검증
+파이프라인 실행 → AI 요약 → AI 퀴즈 생성 → 검증
 → 유저: 브리핑 읽기 → 퀴즈 풀기 → 개념 레벨 상승 → 스트릭 유지
 ```
 
@@ -42,7 +42,7 @@
 ### 전체 흐름
 
 ```
-APScheduler (매일 05:00)
+파이프라인 실행 (POST /api/content/run-pipeline or python -m agent.scheduler)
   └─ agent_runner.py (Claude Haiku 4.5 + FastMCP Client)
        ├─ get_active_topics()       ← DB에서 유저 관심사 조회
        ├─ get_collection_plan()     ← 오늘 다룰 챕터 + 검색 힌트
@@ -507,14 +507,6 @@ Render Free 티어는 15분 비활성 후 슬립 → 첫 요청 30~60초 소요.
 
 **왜 FastAPI?** 비동기(async/await)가 필수인 파이프라인(여러 API 동시 호출)에서 Flask보다 훨씬 빠릅니다.
 
-### APScheduler (매일 05:00)
-
-```python
-scheduler.add_job(run_daily_pipeline, "cron", hour=5, minute=0)
-```
-
-**왜 05:00?** 유저가 아침에 일어나 앱을 열기 전에 콘텐츠가 준비되어 있어야 합니다.
-
 ### PipelineLogger (관찰 가능성)
 
 ```python
@@ -523,7 +515,7 @@ logger.log_step(tool_name="collect", status="success", duration_ms=1200, ...)
 
 파이프라인의 모든 단계를 `pipeline_logs` 테이블에 기록합니다.
 
-**왜 필요한가?** Render Free 티어는 로그가 사라집니다. 어제 새벽 5시 파이프라인이 어디서 실패했는지 알려면 DB에 기록해야 합니다.
+**왜 필요한가?** Render Free 티어는 로그가 사라집니다. 파이프라인이 어느 단계에서 실패했는지 추적하려면 DB에 기록해야 합니다.
 
 ### TEMP_USER_ID 하드코딩
 

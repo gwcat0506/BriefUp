@@ -9,10 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 cd backend
 source .venv/bin/activate
 uvicorn main:app --reload              # http://localhost:8000
-python -m agent.scheduler              # 파이프라인 수동 1회 실행
-python benchmark.py                    # 퀴즈 정확도 벤치마크 (AI/ML)
-python benchmark.py 철학               # 특정 카테고리 벤치마크
-python seed_curricula.py               # topic_curricula DB 초기 데이터 삽입 (최초 1회)
+python -m agent.scheduler              # 파이프라인 수동 1회 실행 (직접 실행용)
 ```
 
 ### Frontend
@@ -27,7 +24,7 @@ npm run lint
 
 ### Data Flow
 ```
-[매일 05:00 APScheduler]
+[파이프라인 실행 — POST /api/content/run-pipeline or python -m agent.scheduler]
   agent_runner.py (Claude Haiku 4.5 + FastMCP Client 에이전트)
     → mcp_server.py 도구들 (in-process 연결):
         get_active_topics()       ← DB 활성 토픽 조회
@@ -59,11 +56,11 @@ npm run lint
 - **퀴즈 검증 강화**: 검증 오류 시 이전(보수적 통과)과 달리 탈락 처리 (불확실하면 탈락)
 
 ### Backend (`backend/`)
-- `main.py` — FastAPI 앱 진입점. APScheduler lifespan, 라우터 등록, CORS 설정
+- `main.py` — FastAPI 앱 진입점. 라우터 등록, CORS 설정
 - `agent/agent_runner.py` — Claude Haiku + FastMCP Client 에이전트. MCP 도구 목록 동적 조회, 병렬 실행
 - `agent/mcp_server.py` — FastMCP 서버. 도구 5개 정의 (`@mcp.tool()`): get_active_topics / get_collection_plan / collect_articles / summarize_article / generate_quizzes / save_content + 세션 스토어
 - `agent/curriculum_gen.py` — 관심사 추가 시 Claude Haiku로 커리큘럼 자동 생성. `topic_curricula` DB에 캐시. alias 매칭 지원
-- `agent/curriculum_catalog.py` — 하드코딩 커리큘럼 카탈로그 10트랙. chapter.py + progress.py 모두 여기서 import. `seed_curricula.py`로 DB에 삽입
+- `agent/curriculum_catalog.py` — 하드코딩 커리큘럼 카탈로그 10트랙. chapter.py + progress.py 모두 여기서 import
 - `agent/collector.py` — arxiv API + RSS 수집. `arxiv_query` 파라미터로 챕터별 정밀 검색 지원
 - `agent/web_search.py` — Tavily 웹 검색 + 도메인 신뢰도 점수 필터 (0.65 미만 제외)
 - `agent/summarizer.py` — GPT-4o-mini 요약. `tuple[str, dict]` 반환 (요약문, 토큰 usage)
@@ -86,9 +83,9 @@ npm run lint
 현재 MVP: `TEMP_USER_ID = "00000000-0000-0000-0000-000000000001"` 하드코딩. Supabase Auth 연동 예정. 유저 관련 로직 수정 시 이 상수를 참고.
 
 ### DB 스키마
-- `schema_v2.sql` — `chapter_progress`, `bookmarks` 테이블
-- `schema_curricula.sql` — `topic_curricula` 테이블 (챕터 구조 + 검색 힌트 JSONB)
-- 기존 주요 테이블: `users`, `topics`, `contents`, `quizzes`, `quiz_results`, `concept_levels`, `streaks`, `push_subscriptions`
+- 주요 테이블: `users`, `topics`, `contents`, `quizzes`, `quiz_results`, `concept_levels`, `streaks`, `push_subscriptions`
+- `chapter_progress`, `bookmarks` — 챕터 진행 상태 + 북마크
+- `topic_curricula` — 챕터 구조 + 검색 힌트 JSONB
 - `pipeline_runs`, `pipeline_logs` — 파이프라인 실행 로그
 - 백엔드는 `SUPABASE_SECRET_KEY`(서비스 롤)를 사용해 RLS를 우회
 

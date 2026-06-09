@@ -15,7 +15,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "rag-1",
                 "title": "RAG는 왜 필요한가? — LLM의 한계와 검색의 결합",
-                "description": "환각(Hallucination)·지식 단절 문제를 검색으로 해결하는 핵심 아이디어",
+                "description": "RAG가 왜 등장했는지 이해하고 Hallucination·Knowledge Cutoff 문제에서 검색이 어떤 역할을 하는지 설명할 수 있다",
                 "level": "입문", "duration": "7분",
                 "concepts": ["Hallucination", "Knowledge Cutoff", "Open-Domain QA", "Retrieval-then-Read"],
                 "search_hints": {
@@ -26,7 +26,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "rag-2",
                 "title": "Dense Retrieval의 원리 — Bi-Encoder vs Cross-Encoder",
-                "description": "SBERT와 Cross-Encoder의 구조 차이, Trade-off, FAISS 인덱싱",
+                "description": "Bi-Encoder와 Cross-Encoder의 속도·정확도 트레이드오프를 이해하고 검색 파이프라인에서 어떤 구조를 써야 할지 판단할 수 있다",
                 "level": "기본", "duration": "9분",
                 "concepts": ["Bi-Encoder", "Cross-Encoder", "SBERT", "FAISS", "HNSW", "IVF-PQ"],
                 "search_hints": {
@@ -48,8 +48,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "rag-4",
                 "title": "Query가 애매할 때 — HyDE와 Query Expansion",
-                "description": "가상 문서 생성으로 Zero-shot 검색 성능을 높이는 HyDE, Query2Doc 기법",
-                "level": "심화", "duration": "9분",
+                "description": "HyDE·Query2Doc의 원리를 이해하고 Zero-shot 검색 성능이 낮을 때 어떤 기법을 적용할지 판단할 수 있다",
+                "level": "중급", "duration": "9분",
                 "concepts": ["HyDE", "Query2Doc", "Query Expansion", "Pseudo Relevance Feedback", "Zero-shot Retrieval"],
                 "search_hints": {
                     "arxiv_query": "HyDE hypothetical document embeddings zero-shot dense retrieval Gao 2022",
@@ -59,8 +59,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "rag-5",
                 "title": "Reranking으로 Top-K 정제하기",
-                "description": "1차 검색 결과를 Cross-Encoder로 재정렬 — BGE-Reranker, Cohere Reranker 비교",
-                "level": "심화", "duration": "9분",
+                "description": "Cross-Encoder 재정렬 원리를 이해하고 BGE-Reranker vs Cohere Reranker 중 상황에 맞는 선택을 할 수 있다",
+                "level": "중급", "duration": "9분",
                 "concepts": ["Reranking", "BGE-Reranker", "Cohere Reranker", "MRR", "NDCG", "Reciprocal Rank Fusion"],
                 "search_hints": {
                     "arxiv_query": "reranking cross-encoder retrieval augmented generation BGE reranker 2024",
@@ -70,8 +70,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "rag-6",
                 "title": "컨텍스트 노이즈 제거 — Lost in the Middle과 Context Compression",
-                "description": "LLM이 컨텍스트 중간 정보를 무시하는 현상과 LLMLingua 압축 기법",
-                "level": "심화", "duration": "9분",
+                "description": "LLM이 컨텍스트 중간을 무시하는 원인을 이해하고 LLMLingua 등 압축 기법을 언제 적용할지 판단할 수 있다",
+                "level": "중급", "duration": "9분",
                 "concepts": ["Lost in the Middle", "Context Compression", "LLMLingua", "Selective Context", "Token Budget"],
                 "search_hints": {
                     "arxiv_query": "lost in the middle long context LLM compression LLMLingua 2023 2024",
@@ -81,8 +81,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "rag-7",
                 "title": "Hybrid Search — BM25 + 벡터 검색의 결합",
-                "description": "키워드 검색과 Dense Retrieval을 RRF로 합치면 왜 더 강력한가",
-                "level": "심화", "duration": "8분",
+                "description": "BM25와 Dense Retrieval의 약점을 이해하고 RRF로 결합했을 때 어떤 상황에서 더 강력한지 설명할 수 있다",
+                "level": "중급", "duration": "8분",
                 "concepts": ["BM25", "Hybrid Search", "RRF (Reciprocal Rank Fusion)", "Sparse-Dense Fusion", "Lexical Match"],
                 "search_hints": {
                     "arxiv_query": "hybrid retrieval BM25 dense vector search reciprocal rank fusion 2024",
@@ -134,7 +134,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "agent-1",
                 "title": "Agent란 무엇인가? — ReAct와 Plan-and-Execute의 차이",
-                "description": "단순 Chat과 Agent의 구조적 차이, ReAct 패턴의 작동 원리",
+                "description": "에이전트와 단순 챗봇의 구조적 차이를 이해하고 ReAct 루프가 어떻게 도구 호출과 추론을 결합하는지 설명할 수 있다",
                 "level": "입문", "duration": "7분",
                 "concepts": ["ReAct", "Plan-and-Execute", "Tool Use", "Observation-Action Loop", "Scratchpad"],
                 "search_hints": {
@@ -156,7 +156,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "agent-3",
                 "title": "Agent 메모리 아키텍처 — 단기·장기·에피소딕 메모리",
-                "description": "In-context, External Store, Episodic Memory 설계 패턴과 MemGPT 접근법",
+                "description": "In-context·External·Episodic Memory의 차이를 이해하고 에이전트 목적에 맞는 메모리 구조를 선택할 수 있다",
                 "level": "기본", "duration": "9분",
                 "concepts": ["In-context Memory", "External Memory", "MemGPT", "Episodic Memory", "Memory Consolidation"],
                 "search_hints": {
@@ -167,8 +167,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "agent-4",
                 "title": "Tree of Thought — AI가 여러 경로를 탐색하는 방법",
-                "description": "Chain-of-Thought를 넘어 탐색 트리로 복잡한 추론 문제 해결하기",
-                "level": "심화", "duration": "9분",
+                "description": "ToT가 CoT와 어떻게 다른지 이해하고 복잡한 추론 태스크에 탐색 전략을 선택할 수 있다",
+                "level": "중급", "duration": "9분",
                 "concepts": ["Tree of Thought", "Chain of Thought", "MCTS", "BFS/DFS on Thought", "Self-Evaluation"],
                 "search_hints": {
                     "arxiv_query": "Tree of Thoughts deliberate problem solving language model Yao 2023",
@@ -178,8 +178,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "agent-5",
                 "title": "Multi-Agent 시스템 — Supervisor 패턴과 Swarm",
-                "description": "에이전트 팀을 어떻게 조직할까? 중앙집중형 vs 분산형 오케스트레이션",
-                "level": "심화", "duration": "10분",
+                "description": "Supervisor vs Swarm 패턴의 트레이드오프를 이해하고 태스크 유형에 맞는 오케스트레이션 구조를 선택할 수 있다",
+                "level": "중급", "duration": "10분",
                 "concepts": ["Supervisor Pattern", "Swarm", "Handoff", "AutoGen", "LangGraph", "Agent Specialization"],
                 "search_hints": {
                     "arxiv_query": "multi-agent system LLM collaboration AutoGen orchestration 2024",
@@ -222,8 +222,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "agent-9",
                 "title": "MCP (Model Context Protocol) — 에이전트 도구 표준화",
-                "description": "Anthropic MCP 아키텍처, Tool 서버 생태계, Claude Desktop 연동 방식",
-                "level": "심화", "duration": "9분",
+                "description": "MCP 아키텍처를 이해하고 직접 MCP 서버를 설계할 때 어떤 구조를 선택할지 판단할 수 있다",
+                "level": "중급", "duration": "9분",
                 "concepts": ["MCP", "Model Context Protocol", "MCP Server", "Tool Discovery", "FastMCP"],
                 "search_hints": {
                     "arxiv_query": "model context protocol MCP tool use standardization agent 2024",
@@ -253,7 +253,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "llm-1",
                 "title": "Attention은 왜 강력한가? — Self-Attention 수식 뜯어보기",
-                "description": "Q, K, V 행렬 연산, Multi-head Attention, Position Encoding의 직관적 이해",
+                "description": "Self-Attention의 Q·K·V 연산 흐름을 이해하고 Transformer가 시퀀스의 어느 부분에 주목하는지 설명할 수 있다",
                 "level": "입문", "duration": "10분",
                 "concepts": ["Self-Attention", "Q/K/V Matrix", "Multi-head Attention", "Positional Encoding", "Softmax"],
                 "search_hints": {
@@ -297,8 +297,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "llm-5",
                 "title": "Fine-tuning의 현실 — LoRA·QLoRA로 모델 커스터마이징",
-                "description": "Full fine-tuning vs PEFT, LoRA의 수학적 원리, RAG와의 비용-성능 비교",
-                "level": "심화", "duration": "11분",
+                "description": "Full fine-tuning vs LoRA의 차이를 이해하고 RAG와 fine-tuning 중 언제 무엇을 선택할지 판단할 수 있다",
+                "level": "중급", "duration": "11분",
                 "concepts": ["Fine-tuning", "LoRA", "QLoRA", "PEFT", "Adapter", "Catastrophic Forgetting"],
                 "search_hints": {
                     "arxiv_query": "LoRA low-rank adaptation large language model fine-tuning Hu 2021 QLoRA",
@@ -308,8 +308,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "llm-6",
                 "title": "양자화와 추론 최적화 — 어떻게 더 빠르고 싸게 쓸까?",
-                "description": "INT4/INT8 양자화, KV Cache, Speculative Decoding, vLLM 아키텍처",
-                "level": "심화", "duration": "10분",
+                "description": "INT4/INT8 양자화와 KV Cache의 원리를 이해하고 추론 비용·속도·품질 트레이드오프를 상황에 맞게 선택할 수 있다",
+                "level": "중급", "duration": "10분",
                 "concepts": ["Quantization", "INT4/INT8", "KV Cache", "Speculative Decoding", "vLLM", "PagedAttention"],
                 "search_hints": {
                     "arxiv_query": "LLM inference optimization speculative decoding vLLM paged attention quantization 2024",
@@ -319,8 +319,8 @@ CURRICULUM_CATALOG: dict[str, dict] = {
             {
                 "id": "llm-7",
                 "title": "Long Context의 함정 — 컨텍스트가 길면 정말 더 잘할까?",
-                "description": "Position Encoding 한계, Lost-in-the-Middle 재방문, Needle-in-a-Haystack 평가",
-                "level": "심화", "duration": "9분",
+                "description": "Position Encoding의 한계와 Lost-in-the-Middle 현상을 이해하고 긴 컨텍스트를 신뢰할 수 있는 조건을 판단할 수 있다",
+                "level": "중급", "duration": "9분",
                 "concepts": ["RoPE", "ALiBi", "Needle-in-a-Haystack", "Lost-in-the-Middle", "Context Window Scaling"],
                 "search_hints": {
                     "arxiv_query": "long context LLM position encoding RoPE ALiBi needle haystack evaluation 2024",

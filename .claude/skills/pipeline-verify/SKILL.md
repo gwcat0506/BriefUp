@@ -56,7 +56,7 @@ python test_mcp_server.py
 - `run_pipeline_for_category()` 가 summarizer → quiz_gen → verifier 를 호출하는지
 - Supabase 저장까지 오류 없이 완료되는지
 
-### Step 4 — agent_runner.py (GPT-4o-mini Tool Use 루프)
+### Step 4 — agent_runner.py (Tool Use 루프 전체 실행)
 
 ```bash
 python -m agent.scheduler

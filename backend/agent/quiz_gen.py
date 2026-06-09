@@ -1,7 +1,7 @@
 """
 STEP 3 — 퀴즈 생성
 소스 본문 기반으로만 생성 → 할루시네이션 최소화
-GPT-4o-mini 사용
+GPT-5 사용
 """
 
 from openai import AsyncOpenAI
@@ -10,8 +10,7 @@ import json
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-QUIZ_PROMPT = """
-당신은 {category} 분야의 전문가이자 교육자입니다.
+QUIZ_PROMPT = """당신은 {category} 분야의 전문가이자 교육자입니다.
 아래 [원문]을 바탕으로 난이도가 다른 퀴즈 3개를 만드세요.
 
 ## 난이도별 기준 (엄격하게 구분)
@@ -71,21 +70,20 @@ JSON 형식으로만 응답:
       "difficulty": 3
     }}
   ]
-}}
-"""
+}}"""
 
 
 async def generate_quizzes(title: str, text: str, category: str) -> tuple[list[dict], dict]:
     """소스 기반 퀴즈 생성. (퀴즈 목록, {input, output} 토큰) 반환"""
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5",
         max_tokens=1800,
         messages=[{
             "role": "user",
             "content": QUIZ_PROMPT.format(
                 category=category,
                 title=title,
-                text=text[:3000]
+                text=text[:6000],
             )
         }]
     )
@@ -98,7 +96,6 @@ async def generate_quizzes(title: str, text: str, category: str) -> tuple[list[d
 
 
 def _extract_json(text: str) -> str:
-    """LLM 응답에서 JSON 블록 추출"""
     if "```json" in text:
         return text.split("```json")[1].split("```")[0].strip()
     if "```" in text:

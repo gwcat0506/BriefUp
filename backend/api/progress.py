@@ -38,6 +38,12 @@ async def update_chapter_progress(body: ProgressUpdate):
         res = supabase.table("chapter_progress").upsert(
             data, on_conflict="user_id,chapter_id"
         ).execute()
+        if body.status == "completed":
+            try:
+                from api.quiz import _update_streak
+                _update_streak(body.user_id)
+            except Exception:
+                pass
         return res.data[0] if res.data else {}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"chapter_progress 테이블 미생성: {e}")

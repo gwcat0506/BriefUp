@@ -1,37 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
-from api import quiz, user, content, chapter, progress, logs, home
-from agent.scheduler import run_daily_pipeline
-
-scheduler = AsyncIOScheduler()
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # 매일 새벽 5시 파이프라인 자동 실행
-    scheduler.add_job(
-        run_daily_pipeline,
-        "cron",
-        hour=5,
-        minute=0,
-        id="daily_pipeline"
-    )
-    scheduler.start()
-    print("✅ 스케줄러 시작 — 매일 05:00 파이프라인 실행")
-    yield
-    scheduler.shutdown()
+from api import quiz, user, content, chapter, progress, logs, home, observability
 
 app = FastAPI(
     title="BrefUp API",
     description="AI 브리핑 학습 Agent",
     version="0.1.0",
-    lifespan=lifespan
 )
 
 app.add_middleware(
@@ -48,6 +26,7 @@ app.include_router(chapter.router, prefix="/api/chapter", tags=["chapter"])
 app.include_router(progress.router, prefix="/api/progress", tags=["progress"])
 app.include_router(logs.router, prefix="/api/logs", tags=["logs"])
 app.include_router(home.router, prefix="/api/home", tags=["home"])
+app.include_router(observability.router, prefix="/api/pipeline", tags=["observability"])
 
 @app.get("/")
 async def root():

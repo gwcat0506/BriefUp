@@ -1,6 +1,7 @@
 """
-스케줄러 — 매일 새벽 5시 에이전트 파이프라인 실행
-agent_runner.run_agent_pipeline()으로 위임
+파이프라인 실행 진입점 — agent_runner.run_agent_pipeline()으로 위임
+직접 실행: python -m agent.scheduler
+API 트리거: POST /api/content/run-pipeline
 """
 
 async def run_daily_pipeline(topics: list[dict] | None = None):

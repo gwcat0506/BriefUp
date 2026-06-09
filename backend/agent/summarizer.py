@@ -1,17 +1,15 @@
 """
 STEP 2 — 요약 생성
-소스 본문 기반으로만 요약 → 할루시네이션 최소화
-GPT-4o-mini 사용 (비용 최적화)
+소스 본문 기반으로만 생성 → 할루시네이션 최소화
+GPT-5 사용
 """
 
 from openai import AsyncOpenAI
 import os
-import json
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-SUMMARY_PROMPT = """
-당신은 {category} 분야 전문가입니다.
+SUMMARY_PROMPT = """당신은 {category} 분야 전문가입니다.
 아래 [원문]을 읽고, 독자가 "이걸 알면 실제로 뭐가 달라지는지" 느낄 수 있도록 핵심을 정리하세요.
 
 작성 구조 (이 순서로):
@@ -32,21 +30,20 @@ SUMMARY_PROMPT = """
 [원문 내용]
 {text}
 
-요약문만 반환하세요. JSON 불필요.
-"""
+요약문만 반환하세요. JSON 불필요."""
 
 
 async def summarize(title: str, text: str, category: str) -> tuple[str, dict]:
     """소스 기반 요약 생성. (요약문, {input, output} 토큰) 반환"""
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5",
         max_tokens=800,
         messages=[{
             "role": "user",
             "content": SUMMARY_PROMPT.format(
                 category=category,
                 title=title,
-                text=text[:3000]
+                text=text[:6000],
             )
         }]
     )

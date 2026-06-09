@@ -23,7 +23,6 @@ export default function OnboardingPage() {
   const { show: showToast, ToastComponent } = useToast();
   const [step, setStep] = useState(1);
   const [nickname, setNickname] = useState("");
-  // { id, label, category? } — suggested는 id 기반, custom은 label이 id
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [customTopics, setCustomTopics] = useState<string[]>([]);
   const [customInput, setCustomInput] = useState("");
@@ -52,21 +51,16 @@ export default function OnboardingPage() {
     setSaving(true);
     try {
       await api.createUser(TEMP_USER_ID, nickname || "학습자").catch(() => {});
-
       for (const id of selectedIds) {
         const item = SUGGESTED.find(i => i.id === id);
         if (!item) continue;
         await api.addTopic(TEMP_USER_ID, item.label, item.category).catch(() => {});
       }
-
       for (const label of customTopics) {
-        // category 없이 보내면 백엔드에서 GPT로 자동 분류
         await api.addTopic(TEMP_USER_ID, label).catch(() => {});
       }
-
       localStorage.setItem("onboarding_done", "true");
       localStorage.setItem("user_nickname", nickname || "학습자");
-
       router.push("/home");
     } catch {
       showToast("저장 중 오류가 생겼어요. 다시 시도해주세요.", "error");
@@ -81,7 +75,21 @@ export default function OnboardingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#FAFAF8]">
       {ToastComponent}
-      {/* 진행 바 */}
+
+      {saving && (
+        <div className="fixed inset-0 z-50 bg-[#FAFAF8] flex flex-col items-center justify-center px-8">
+          <div className="w-16 h-16 rounded-full border-4 border-[#D1FAE5] border-t-[#10B981] animate-spin mb-6" />
+          <h2 className="text-xl font-bold text-[#1C1C1E] mb-2 text-center">학습 준비 중이에요</h2>
+          <p className="text-[#6B7280] text-sm text-center leading-relaxed">
+            맞춤 커리큘럼을 만들고 있어요.<br />잠깐만 기다려 주세요!
+          </p>
+          {customTopics.length > 0 && (
+            <p className="text-[#9CA3AF] text-xs text-center mt-4 leading-relaxed">
+              직접 입력한 주제는 AI가 새로 설계하기 때문에<br />최대 1~2분이 걸릴 수 있어요
+            </p>
+          )}
+        </div>
+      )}
       <div className="w-full bg-[#F3F4F6] h-1.5">
         <div
           className="h-1.5 bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-500"
@@ -91,50 +99,21 @@ export default function OnboardingPage() {
 
       <div className="flex-1 px-6 pt-12 pb-8 flex flex-col">
 
-        {/* Step 1 — 환영 */}
+        {/* Step 1 — 닉네임 */}
         {step === 1 && (
           <div className="flex-1 flex flex-col">
             <div className="flex-1 flex flex-col justify-center">
               <div className="text-center mb-8">
-                <p className="text-6xl mb-5">📖</p>
-                <h1 className="text-2xl font-bold text-[#1C1C1E] mb-3">
-                  매일 아침, 딱 맞는 지식이 온다
+                <p className="text-5xl mb-4">👋</p>
+                <h1 className="text-2xl font-bold text-[#1C1C1E] mb-2">
+                  어떻게 불러드릴까요?
                 </h1>
-                <p className="text-[#6B7280] text-base leading-relaxed">
-                  관심사를 알려주면 AI가 오늘 읽을<br />학습 카드를 자동으로 만들어줘요
-                </p>
+                <p className="text-[#9CA3AF] text-sm">닉네임은 나중에 바꿀 수 있어요</p>
               </div>
-
-              {/* 기능 소개 3개 */}
-              <div className="flex flex-col gap-3 mb-7">
-                <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 card-shadow">
-                  <span className="text-2xl">🎯</span>
-                  <div>
-                    <p className="text-[#1C1C1E] font-semibold text-sm">관심사 맞춤 학습 카드</p>
-                    <p className="text-[#9CA3AF] text-xs mt-0.5">AI가 어려운 개념을 5분 분량으로 요약해줘요</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 card-shadow">
-                  <span className="text-2xl">💡</span>
-                  <div>
-                    <p className="text-[#1C1C1E] font-semibold text-sm">퀴즈로 제대로 기억하기</p>
-                    <p className="text-[#9CA3AF] text-xs mt-0.5">읽고 끝이 아니라 퀴즈까지 풀어야 진짜 내 것</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 card-shadow">
-                  <span className="text-2xl">🔥</span>
-                  <div>
-                    <p className="text-[#1C1C1E] font-semibold text-sm">스트릭으로 꾸준히</p>
-                    <p className="text-[#9CA3AF] text-xs mt-0.5">하루도 빠지지 않는 습관, 레벨업으로 보람 있게</p>
-                  </div>
-                </div>
-              </div>
-
               <div className="bg-white rounded-3xl p-5 card-shadow">
-                <p className="text-[#6B7280] text-sm mb-2">이름이 뭐예요? (선택)</p>
                 <input
                   type="text"
-                  placeholder="닉네임 입력"
+                  placeholder="닉네임 입력 (선택)"
                   value={nickname}
                   onChange={e => setNickname(e.target.value)}
                   maxLength={10}
@@ -146,7 +125,7 @@ export default function OnboardingPage() {
               onClick={() => setStep(2)}
               className="w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold py-4 rounded-2xl text-base shadow-lg shadow-emerald-100 active:scale-95 transition-all"
             >
-              시작하기 →
+              다음 →
             </button>
           </div>
         )}
@@ -161,7 +140,6 @@ export default function OnboardingPage() {
               <p className="text-[#9CA3AF] text-sm mt-1">관심사면 뭐든 OK — 여러 개 선택 가능해요</p>
             </div>
 
-            {/* 추천 태그 */}
             <div className="flex flex-wrap gap-2 mb-5">
               {SUGGESTED.map(item => (
                 <button
@@ -180,7 +158,6 @@ export default function OnboardingPage() {
               ))}
             </div>
 
-            {/* 직접 입력 */}
             <div className="bg-white rounded-2xl border-2 border-[#F3F4F6] p-4 mb-4">
               <p className="text-[#6B7280] text-xs mb-2 font-medium">직접 입력하기</p>
               <div className="flex gap-2">

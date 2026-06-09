@@ -1,48 +1,109 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+
+const SLIDES = [
+  {
+    emoji: "📖",
+    title: "BrefUp에 오신 걸\n환영해요",
+    desc: "관심사를 말하면 AI가 오늘 읽을\n학습 카드를 직접 만들어줘요.",
+    sub: "매일 아침, 딱 맞는 지식이 준비돼 있어요",
+    bg: "from-emerald-50 to-white",
+    accent: "#10B981",
+  },
+  {
+    emoji: "🎯",
+    title: "내 관심사만 골라서\n매일 배워요",
+    desc: "AI가 관심사에 맞는 최신 자료를 찾아\n5분 분량 카드로 만들어줘요.",
+    sub: "퀴즈까지 풀면 진짜 내 것이 돼요 ✅",
+    bg: "from-blue-50 to-white",
+    accent: "#3B82F6",
+  },
+  {
+    emoji: "🔥",
+    title: "매일 하면\n실력이 달라져요",
+    desc: "학습을 완료할 때마다 연속 기록이 쌓이고\n레벨이 올라가요.",
+    sub: "하루 빠져도 OK — 보호권 1장이 기록을 지켜줘요 🛡️",
+    bg: "from-orange-50 to-white",
+    accent: "#F97316",
+  },
+];
 
 export default function Root() {
   const router = useRouter();
-  const [pct, setPct] = useState(0);
-  const [show, setShow] = useState(false);
+  const [slide, setSlide] = useState(0);
 
-  useEffect(() => {
-    const done = localStorage.getItem("onboarding_done");
-    if (!done) {
-      router.replace("/onboarding");
-      return;
+  function proceed() {
+    router.replace("/onboarding");
+  }
+
+  function nextSlide() {
+    if (slide < SLIDES.length - 1) {
+      setSlide(s => s + 1);
+    } else {
+      proceed();
     }
-    setShow(true);
-    const start = Date.now();
-    const timer = setInterval(() => {
-      const p = Math.min(100, ((Date.now() - start) / 700) * 100);
-      setPct(p);
-      if (p >= 100) {
-        clearInterval(timer);
-        router.replace("/home");
-      }
-    }, 30);
-    return () => clearInterval(timer);
-  }, []);
+  }
 
-  if (!show) return null;
+  const s = SLIDES[slide];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAFAF8] px-8">
-      <div className="flex flex-col items-center gap-3">
-        <p className="text-6xl">📖</p>
-        <p className="text-[#1C1C1E] font-bold text-2xl tracking-tight">BrefUp</p>
-        <p className="text-[#6B7280] text-sm text-center leading-relaxed">
-          관심사를 고르면 AI가 매일<br />딱 맞는 학습 카드를 준비해줘요
+    <div className={`flex flex-col min-h-screen bg-gradient-to-b ${s.bg} transition-all duration-500`}>
+      {/* 점 인디케이터 */}
+      <div className="flex justify-center gap-2 pt-10">
+        {SLIDES.map((_, i) => (
+          <div
+            key={i}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === slide ? 20 : 6,
+              height: 6,
+              backgroundColor: i === slide ? s.accent : "#D1FAE5",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* 콘텐츠 */}
+      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+        <div
+          className="w-24 h-24 rounded-3xl flex items-center justify-center mb-8 shadow-lg"
+          style={{ backgroundColor: `${s.accent}18` }}
+        >
+          <span className="text-5xl">{s.emoji}</span>
+        </div>
+        <h1 className="text-2xl font-bold text-[#1C1C1E] leading-tight mb-4 whitespace-pre-line">
+          {s.title}
+        </h1>
+        <p className="text-[#6B7280] text-base leading-relaxed whitespace-pre-line mb-3">
+          {s.desc}
+        </p>
+        <p
+          className="text-sm font-medium px-4 py-2 rounded-full"
+          style={{ color: s.accent, backgroundColor: `${s.accent}15` }}
+        >
+          {s.sub}
         </p>
       </div>
-      <div className="w-40 bg-[#F3F4F6] rounded-full h-1 overflow-hidden mt-10">
-        <div
-          className="h-1 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-75"
-          style={{ width: `${pct}%` }}
-        />
+
+      {/* 버튼 */}
+      <div className="px-6 pb-12 flex flex-col gap-3">
+        <button
+          onClick={nextSlide}
+          className="w-full text-white font-bold py-4 rounded-2xl text-base shadow-lg active:scale-95 transition-all"
+          style={{ backgroundColor: s.accent }}
+        >
+          {slide < SLIDES.length - 1 ? "다음 →" : "시작하기 🎉"}
+        </button>
+        {slide < SLIDES.length - 1 && (
+          <button
+            onClick={proceed}
+            className="text-[#9CA3AF] text-sm py-2 active:opacity-60"
+          >
+            건너뛰기
+          </button>
+        )}
       </div>
     </div>
   );
