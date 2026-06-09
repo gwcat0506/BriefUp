@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BrefUp",
+  title: "BriefUp",
   description: "매일 아침 10분, AI 브리핑 학습",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "BrefUp",
+    title: "BriefUp",
   },
 };
 

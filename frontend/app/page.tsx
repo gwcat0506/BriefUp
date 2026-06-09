@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const SLIDES = [
   {
     emoji: "📖",
-    title: "BrefUp에 오신 걸\n환영해요",
+    title: "BriefUp에 오신 걸\n환영해요",
     desc: "관심사를 말하면 AI가 오늘 읽을\n학습 카드를 직접 만들어줘요.",
     sub: "매일 아침, 딱 맞는 지식이 준비돼 있어요",
     bg: "from-emerald-50 to-white",
@@ -35,7 +35,7 @@ export default function Root() {
   const [slide, setSlide] = useState(0);
 
   function proceed() {
-    router.replace("/onboarding");
+    router.replace("/home");
   }
 
   function nextSlide() {

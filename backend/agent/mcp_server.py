@@ -1,5 +1,5 @@
 """
-FastMCP 서버 — BrefUp 파이프라인 도구 정의
+FastMCP 서버 — BriefUp 파이프라인 도구 정의
 
 내부 에이전트: FastMCP Client로 in-process 연결
 외부 클라이언트(Claude Desktop 등): `python -m agent.mcp_server` 로 stdio 서버 실행
@@ -20,9 +20,9 @@ from agent.quiz_gen import generate_quizzes as _quiz_gen
 from agent.verifier import verify_and_filter, check_faithfulness
 
 mcp = FastMCP(
-    name="BrefUp Pipeline",
+    name="BriefUp Pipeline",
     instructions=(
-        "BrefUp 학습 콘텐츠 파이프라인 도구입니다. "
+        "BriefUp 학습 콘텐츠 파이프라인 도구입니다. "
         "collect_articles → summarize_article → generate_quizzes → save_content 순으로 처리하세요. "
         "collect_articles와 summarize_article은 여러 항목을 동시에 호출할 수 있습니다."
     ),

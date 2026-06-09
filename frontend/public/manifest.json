@@ -1,6 +1,6 @@
 {
-  "name": "BrefUp",
-  "short_name": "BrefUp",
+  "name": "BriefUp",
+  "short_name": "BriefUp",
   "description": "매일 아침 10분, AI 브리핑 학습",
   "start_url": "/",
   "display": "standalone",

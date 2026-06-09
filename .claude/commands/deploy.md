@@ -1,4 +1,4 @@
-BrefUp 전체 배포 (백엔드 + 프론트엔드 동시)
+BriefUp 전체 배포 (백엔드 + 프론트엔드 동시)
 
 1. `git push origin main` — Render 백엔드 자동 배포 트리거
 2. `cd frontend && vercel --prod --yes` — Vercel 프론트엔드 프로덕션 배포

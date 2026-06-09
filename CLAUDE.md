@@ -66,7 +66,7 @@ npm run lint
 - `agent/summarizer.py` — GPT-4o-mini 요약. `tuple[str, dict]` 반환 (요약문, 토큰 usage)
 - `agent/quiz_gen.py` — GPT-4o-mini 퀴즈 생성. `tuple[list[dict], dict]` 반환 (퀴즈, 토큰 usage)
 - `agent/verifier.py` — GPT-4o-mini 퀴즈 검증. `tuple[list[dict], dict]` 반환 (통과 퀴즈, 토큰 usage). 검증 오류 시 탈락
-- `core/supabase.py` — 싱글톤 Supabase 클라이언트. `.env` 로드 우선순위: `BrefUp/.env` → `backend/.env`
+- `core/supabase.py` — 싱글톤 Supabase 클라이언트. `.env` 로드 우선순위: `BriefUp/.env` → `backend/.env`
 - `core/logger.py` — `PipelineLogger`: 단계별 실행 로그를 `pipeline_logs` 테이블에 기록 (Render 무료 티어 로그 소실 대응)
 
 ### Frontend (`frontend/`)

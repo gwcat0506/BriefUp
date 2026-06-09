@@ -23,7 +23,7 @@ _HAIKU_OUT = 5.00 / 1_000_000
 _GPT_IN    = 15.00 / 1_000_000   # GPT-5 input
 _GPT_OUT   = 60.00 / 1_000_000   # GPT-5 output
 
-SYSTEM_PROMPT = """당신은 BrefUp 콘텐츠 큐레이터 에이전트입니다.
+SYSTEM_PROMPT = """당신은 BriefUp 콘텐츠 큐레이터 에이전트입니다.
 
 목표: 모든 활성 관심사에 대해 오늘의 학습 콘텐츠를 수집·요약·퀴즈 생성·저장합니다.
 

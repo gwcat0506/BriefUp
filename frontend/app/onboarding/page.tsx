@@ -1,22 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api, TEMP_USER_ID } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
+import { SUGGESTED_TOPICS as SUGGESTED } from "@/lib/topics";
 
-const SUGGESTED = [
-  { id: "rag",        label: "RAG",         category: "AI/ML",  emoji: "🔍" },
-  { id: "agent",      label: "Agentic AI",  category: "AI/ML",  emoji: "🤖" },
-  { id: "llm",        label: "LLM 기초",    category: "AI/ML",  emoji: "🧠" },
-  { id: "quantum",    label: "양자컴퓨팅",  category: undefined, emoji: "⚛️" },
-  { id: "invest",     label: "주식/투자",   category: undefined, emoji: "📈" },
-  { id: "psych",      label: "심리학",      category: "심리학", emoji: "🧬" },
-  { id: "philosophy", label: "철학",        category: "철학",   emoji: "💭" },
-  { id: "startup",    label: "스타트업",    category: undefined, emoji: "🚀" },
-  { id: "health",     label: "헬스/운동",   category: undefined, emoji: "💪" },
-  { id: "history",    label: "역사",        category: undefined, emoji: "📜" },
-];
+type TopicStatus = "pending" | "loading" | "done" | "error";
+interface SavingTopic {
+  label: string;
+  isCustom: boolean;
+  status: TopicStatus;
+  category?: string;
+}
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -27,6 +23,25 @@ export default function OnboardingPage() {
   const [customTopics, setCustomTopics] = useState<string[]>([]);
   const [customInput, setCustomInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const [savingTopics, setSavingTopics] = useState<SavingTopic[]>([]);
+  const [customElapsed, setCustomElapsed] = useState(0);
+  const customTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function startCustomTimer() {
+    setCustomElapsed(0);
+    customTimerRef.current = setInterval(() => {
+      setCustomElapsed(s => s + 1);
+    }, 1000);
+  }
+
+  function stopCustomTimer() {
+    if (customTimerRef.current) {
+      clearInterval(customTimerRef.current);
+      customTimerRef.current = null;
+    }
+  }
+
+  useEffect(() => () => stopCustomTimer(), []);
 
   function toggleSuggested(id: string) {
     setSelectedIds(prev =>
@@ -49,28 +64,46 @@ export default function OnboardingPage() {
 
   async function handleFinish() {
     setSaving(true);
+
+    const topicList: SavingTopic[] = [
+      ...selectedIds.map(id => {
+        const item = SUGGESTED.find(i => i.id === id)!;
+        return { label: item.label, isCustom: false, status: "pending" as TopicStatus, category: item.category };
+      }),
+      ...customTopics.map(label => ({ label, isCustom: true, status: "pending" as TopicStatus })),
+    ];
+    setSavingTopics(topicList);
+
     try {
       await api.createUser(TEMP_USER_ID, nickname || "학습자").catch(() => {});
-      for (const id of selectedIds) {
-        const item = SUGGESTED.find(i => i.id === id);
-        if (!item) continue;
-        await api.addTopic(TEMP_USER_ID, item.label, item.category).catch(() => {});
+
+      for (let i = 0; i < topicList.length; i++) {
+        const item = topicList[i];
+        setSavingTopics(prev => prev.map((t, idx) => idx === i ? { ...t, status: "loading" } : t));
+        if (item.isCustom) startCustomTimer();
+        try {
+          await api.addTopic(TEMP_USER_ID, item.label, item.category).catch(() => {});
+          setSavingTopics(prev => prev.map((t, idx) => idx === i ? { ...t, status: "done" } : t));
+        } catch {
+          setSavingTopics(prev => prev.map((t, idx) => idx === i ? { ...t, status: "error" } : t));
+        } finally {
+          if (item.isCustom) stopCustomTimer();
+        }
       }
-      for (const label of customTopics) {
-        await api.addTopic(TEMP_USER_ID, label).catch(() => {});
-      }
+
       localStorage.setItem("onboarding_done", "true");
       localStorage.setItem("user_nickname", nickname || "학습자");
       router.push("/home");
     } catch {
       showToast("저장 중 오류가 생겼어요. 다시 시도해주세요.", "error");
-    } finally {
       setSaving(false);
     }
   }
 
   const totalSteps = 2;
   const progress = (step / totalSteps) * 100;
+  const doneCount = savingTopics.filter(t => t.status === "done").length;
+  const allDone = savingTopics.length > 0 && doneCount === savingTopics.length;
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FAFAF8]">
@@ -78,18 +111,67 @@ export default function OnboardingPage() {
 
       {saving && (
         <div className="fixed inset-0 z-50 bg-[#FAFAF8] flex flex-col items-center justify-center px-8">
-          <div className="w-16 h-16 rounded-full border-4 border-[#D1FAE5] border-t-[#10B981] animate-spin mb-6" />
-          <h2 className="text-xl font-bold text-[#1C1C1E] mb-2 text-center">학습 준비 중이에요</h2>
-          <p className="text-[#6B7280] text-sm text-center leading-relaxed">
-            맞춤 커리큘럼을 만들고 있어요.<br />잠깐만 기다려 주세요!
-          </p>
-          {customTopics.length > 0 && (
-            <p className="text-[#9CA3AF] text-xs text-center mt-4 leading-relaxed">
-              직접 입력한 주제는 AI가 새로 설계하기 때문에<br />최대 1~2분이 걸릴 수 있어요
-            </p>
+          {!allDone ? (
+            <>
+              <div className="w-12 h-12 rounded-full border-4 border-[#D1FAE5] border-t-[#10B981] animate-spin mb-5" />
+              <h2 className="text-xl font-bold text-[#1C1C1E] mb-1 text-center">학습 준비 중이에요</h2>
+              <p className="text-[#9CA3AF] text-sm text-center mb-6">커리큘럼을 설계하고 있어요</p>
+            </>
+          ) : (
+            <>
+              <div className="w-12 h-12 rounded-full bg-[#ECFDF5] flex items-center justify-center mb-5">
+                <span className="text-2xl">✅</span>
+              </div>
+              <h2 className="text-xl font-bold text-[#1C1C1E] mb-1 text-center">모든 준비가 끝났어요!</h2>
+              <p className="text-[#9CA3AF] text-sm text-center mb-6">홈으로 이동하고 있어요...</p>
+            </>
           )}
+
+          <div className="w-full max-w-sm flex flex-col gap-2">
+            {savingTopics.map((item, i) => (
+              <div key={i} className="bg-white rounded-2xl px-4 py-3 card-shadow">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                    {item.status === "pending" && (
+                      <div className="w-4 h-4 rounded-full border-2 border-[#E5E7EB]" />
+                    )}
+                    {item.status === "loading" && (
+                      <div className="w-4 h-4 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin" />
+                    )}
+                    {item.status === "done" && (
+                      <span className="text-[#10B981] text-sm font-bold">✓</span>
+                    )}
+                    {item.status === "error" && (
+                      <span className="text-[#EF4444] text-sm">!</span>
+                    )}
+                  </div>
+                  <span className="text-[#1C1C1E] text-sm font-medium flex-1">{item.label}</span>
+                  {item.isCustom && item.status === "pending" && (
+                    <span className="text-[#9CA3AF] text-xs">최대 2분</span>
+                  )}
+                  {item.isCustom && item.status === "loading" && (
+                    <span className="text-[#6B7280] text-xs tabular-nums">
+                      {customElapsed < 90 ? `약 ${90 - customElapsed}초 남음` : "거의 다 됐어요"}
+                    </span>
+                  )}
+                  {item.isCustom && item.status === "done" && (
+                    <span className="text-[#10B981] text-xs font-medium">완료!</span>
+                  )}
+                </div>
+                {item.isCustom && item.status === "loading" && (
+                  <div className="mt-2 h-1 bg-[#F3F4F6] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] rounded-full transition-all duration-1000"
+                      style={{ width: `${Math.min((customElapsed / 90) * 100, 95)}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
+
       <div className="w-full bg-[#F3F4F6] h-1.5">
         <div
           className="h-1.5 bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-500"
@@ -158,8 +240,13 @@ export default function OnboardingPage() {
               ))}
             </div>
 
-            <div className="bg-white rounded-2xl border-2 border-[#F3F4F6] p-4 mb-4">
-              <p className="text-[#6B7280] text-xs mb-2 font-medium">직접 입력하기</p>
+            <div className={`bg-white rounded-2xl border-2 p-4 mb-4 transition-colors ${customTopics.length > 0 ? "border-[#FCD34D]" : "border-[#F3F4F6]"}`}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[#6B7280] text-xs font-medium">직접 입력하기</p>
+                {customTopics.length > 0 && (
+                  <span className="text-[#D97706] text-xs font-medium">⏱ 주제당 최대 2분 소요</span>
+                )}
+              </div>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -190,6 +277,9 @@ export default function OnboardingPage() {
                     </span>
                   ))}
                 </div>
+              )}
+              {customTopics.length > 0 && (
+                <p className="text-[#9CA3AF] text-xs mt-2">AI가 직접 커리큘럼을 설계해요. 추천 주제보다 시간이 더 걸려요.</p>
               )}
             </div>
 

@@ -7,7 +7,7 @@ load_dotenv()
 from api import quiz, user, content, chapter, progress, logs, home, observability
 
 app = FastAPI(
-    title="BrefUp API",
+    title="BriefUp API",
     description="AI 브리핑 학습 Agent",
     version="0.1.0",
 )
@@ -30,7 +30,7 @@ app.include_router(observability.router, prefix="/api/pipeline", tags=["observab
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "service": "BrefUp API"}
+    return {"status": "ok", "service": "BriefUp API"}
 
 @app.get("/health")
 async def health():

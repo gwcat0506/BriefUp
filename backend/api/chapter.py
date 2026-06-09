@@ -5,8 +5,11 @@
 
 import asyncio
 import json
+import logging
 import os
 from datetime import date
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, HTTPException
 from openai import AsyncOpenAI
@@ -207,11 +210,14 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
             )
         }]
     )
-    raw = response.choices[0].message.content.strip()
+    raw = response.choices[0].message.content
+    logger.info("[chapter] GPT raw response: %r", raw)
+    raw = (raw or "").strip()
     if "```json" in raw:
         raw = raw.split("```json")[1].split("```")[0].strip()
     elif "```" in raw:
         raw = raw.split("```")[1].split("```")[0].strip()
+    logger.info("[chapter] parsed raw (first 300): %r", raw[:300])
 
     cards_data = json.loads(raw)
     summary_json = json.dumps(cards_data, ensure_ascii=False)

@@ -1,28 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { api, Topic, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
-
-function getNickname() {
-  if (typeof window === "undefined") return "최고운";
-  return localStorage.getItem("user_nickname") || "최고운";
-}
-
-const SUGGESTED_TOPICS = [
-  { id: "rag",        label: "RAG",         category: "AI/ML",  emoji: "🔍" },
-  { id: "agent",      label: "Agentic AI",  category: "AI/ML",  emoji: "🤖" },
-  { id: "llm",        label: "LLM 기초",    category: "AI/ML",  emoji: "🧠" },
-  { id: "quantum",    label: "양자컴퓨팅",  category: "IT",     emoji: "⚛️" },
-  { id: "invest",     label: "주식/투자",   category: "경제",   emoji: "📈" },
-  { id: "psych",      label: "심리학",      category: "심리학", emoji: "🧬" },
-  { id: "philosophy", label: "철학",        category: "철학",   emoji: "💭" },
-  { id: "startup",    label: "스타트업",    category: "경제",   emoji: "🚀" },
-  { id: "health",     label: "헬스/운동",   category: "건강",   emoji: "💪" },
-  { id: "history",    label: "역사",        category: "인문",   emoji: "📜" },
-];
+import { SUGGESTED_TOPICS as SUGGESTED } from "@/lib/topics";
 
 type Tab = "settings" | "bookmarks";
 
@@ -32,13 +15,23 @@ export default function MyPage() {
   const [adding, setAdding] = useState<string | null>(null);
   const [customInput, setCustomInput] = useState("");
   const [tab, setTab] = useState<Tab>("settings");
-  const [nickname, setNickname] = useState("최고운");
+  const [nickname, setNickname] = useState("");
+  const [editingNickname, setEditingNickname] = useState(false);
+  const [nicknameInput, setNicknameInput] = useState("");
   const [confirmTopic, setConfirmTopic] = useState<{ id: string; name: string } | null>(null);
+  const [customElapsed, setCustomElapsed] = useState(0);
+  const customTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
 
+  useEffect(() => () => {
+    if (customTimerRef.current) clearInterval(customTimerRef.current);
+  }, []);
+
   useEffect(() => {
-    setNickname("최고운");
+    const saved = localStorage.getItem("user_nickname") || "학습자";
+    setNickname(saved);
+    setNicknameInput(saved);
   }, []);
 
   useEffect(() => {
@@ -46,13 +39,22 @@ export default function MyPage() {
     api.getBookmarks(TEMP_USER_ID).then(setBookmarks);
   }, []);
 
+  async function handleSaveNickname() {
+    const trimmed = nicknameInput.trim();
+    if (!trimmed) return;
+    localStorage.setItem("user_nickname", trimmed);
+    setNickname(trimmed);
+    setEditingNickname(false);
+    await api.createUser(TEMP_USER_ID, trimmed).catch(() => {});
+    showToast("닉네임이 변경됐어요!", "success");
+  }
+
   async function handleRemoveTopic(topicId: string) {
     const snapshot = topics;
     setTopics(prev => prev.filter(t => t.id !== topicId));
     setConfirmTopic(null);
     try {
       await api.removeTopic(topicId);
-      // 홈 캐시 무효화 — 삭제된 주제가 홈/로드맵에 계속 표시되는 것 방지
       localStorage.removeItem(`home_summary_v1_${TEMP_USER_ID}`);
     } catch {
       setTopics(snapshot);
@@ -80,15 +82,23 @@ export default function MyPage() {
     const trimmed = customInput.trim();
     if (!trimmed || adding) return;
     setAdding("custom");
+    setCustomElapsed(0);
+    customTimerRef.current = setInterval(() => {
+      setCustomElapsed(s => s + 1);
+    }, 1000);
     try {
       await api.addTopic(TEMP_USER_ID, trimmed);
       const updated = await api.getTopics(TEMP_USER_ID);
       setTopics(updated);
       setCustomInput("");
-      showToast(`'${trimmed}' 관심사가 추가됐어요!`, "success");
+      showToast(`'${trimmed}' 커리큘럼이 완성됐어요!`, "success");
     } catch {
       showToast("추가 중 오류가 생겼어요. 다시 시도해주세요.", "error");
     } finally {
+      if (customTimerRef.current) {
+        clearInterval(customTimerRef.current);
+        customTimerRef.current = null;
+      }
       setAdding(null);
     }
   }
@@ -105,11 +115,45 @@ export default function MyPage() {
         <h1 className="text-2xl font-bold text-[#1C1C1E] mb-3">마이페이지</h1>
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-            {nickname.charAt(0)}
+            {nickname.charAt(0) || "?"}
           </div>
-          <div>
-            <p className="text-[#1C1C1E] font-bold text-base">{nickname}</p>
-            <p className="text-[#9CA3AF] text-xs">BrefUp 학습자</p>
+          <div className="flex-1 min-w-0">
+            {editingNickname ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={nicknameInput}
+                  onChange={e => setNicknameInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && handleSaveNickname()}
+                  maxLength={10}
+                  autoFocus
+                  className="flex-1 bg-[#F9FAFB] text-[#1C1C1E] text-sm px-3 py-1.5 rounded-xl outline-none border border-[#10B981] min-w-0"
+                />
+                <button
+                  onClick={handleSaveNickname}
+                  className="text-white bg-[#10B981] text-xs font-bold px-3 py-1.5 rounded-xl flex-shrink-0"
+                >
+                  저장
+                </button>
+                <button
+                  onClick={() => { setEditingNickname(false); setNicknameInput(nickname); }}
+                  className="text-[#9CA3AF] text-xs px-2 py-1.5 flex-shrink-0"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="text-[#1C1C1E] font-bold text-base">{nickname}</p>
+                <button
+                  onClick={() => setEditingNickname(true)}
+                  className="text-[#9CA3AF] text-xs underline"
+                >
+                  수정
+                </button>
+              </div>
+            )}
+            <p className="text-[#9CA3AF] text-xs mt-0.5">BriefUp 학습자</p>
           </div>
         </div>
       </div>
@@ -142,7 +186,7 @@ export default function MyPage() {
 
             {/* 가치 설명 카드 */}
             <div className="bg-gradient-to-br from-[#10B981] to-[#059669] rounded-3xl p-5 text-white">
-              <p className="font-bold text-base leading-snug mb-4">관심사만 고르면,<br/>나머지는 BrefUp이 알아서 해요</p>
+              <p className="font-bold text-base leading-snug mb-4">관심사만 고르면,<br/>나머지는 BriefUp이 알아서 해요</p>
               <div className="flex items-start gap-1 text-sm">
                 <div className="flex flex-col items-center gap-1 flex-1">
                   <span className="text-xl">🎯</span>
@@ -166,7 +210,7 @@ export default function MyPage() {
               </div>
             </div>
 
-            {/* 관심사 추가 — 직접 입력 상단, 추천 주제 하단 */}
+            {/* 관심사 추가 */}
             <div className="bg-white rounded-3xl p-4 card-shadow">
               <p className="text-[#1C1C1E] font-bold text-sm mb-0.5">관심사 추가</p>
               <p className="text-[#9CA3AF] text-xs mb-3">배우고 싶은 걸 입력하거나, 아래에서 골라보세요</p>
@@ -191,9 +235,20 @@ export default function MyPage() {
                 </button>
               </div>
               {adding === "custom" && (
-                <div className="flex items-center gap-2 mb-4 px-1">
-                  <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
-                  <p className="text-[#10B981] text-xs">AI가 커리큘럼을 설계 중이에요... 최대 1분 정도 걸려요</p>
+                <div className="mb-4 px-1">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
+                    <p className="text-[#10B981] text-xs flex-1">AI가 커리큘럼을 설계 중이에요</p>
+                    <span className="text-[#6B7280] text-xs tabular-nums">
+                      {customElapsed < 90 ? `약 ${90 - customElapsed}초 남음` : "거의 다 됐어요"}
+                    </span>
+                  </div>
+                  <div className="h-1 bg-[#F3F4F6] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] rounded-full transition-all duration-1000"
+                      style={{ width: `${Math.min((customElapsed / 90) * 100, 95)}%` }}
+                    />
+                  </div>
                 </div>
               )}
               {adding && adding !== "custom" && (
@@ -213,7 +268,7 @@ export default function MyPage() {
 
               {/* 추천 주제 칩 */}
               <div className="flex flex-wrap gap-2">
-                {SUGGESTED_TOPICS.map((item) => {
+                {SUGGESTED.map((item) => {
                   const already = topics.some(t => t.name === item.label);
                   return (
                     <button
@@ -229,14 +284,14 @@ export default function MyPage() {
                       <span>{item.emoji}</span>
                       <span>{item.label}</span>
                       {already && <span className="text-[#10B981] text-xs">✓</span>}
-                      {adding === item.id && <span className="text-[#9CA3AF] text-xs">생성 중...</span>}
+                      {adding === item.id && <span className="text-[#9CA3AF] text-xs">추가 중...</span>}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* 내 관심사 — 항상 표시 */}
+            {/* 내 관심사 */}
             <div className="bg-white rounded-3xl p-4 card-shadow">
               <p className="text-[#1C1C1E] font-bold text-sm mb-2">
                 내 관심사{topics.length > 0 ? ` (${topics.length}개)` : ""}
