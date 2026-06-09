@@ -117,6 +117,12 @@ async def get_user(user_id: str):
 
 @router.post("/topic")
 async def add_topic(body: TopicCreate):
+    # 동일 이름 활성 토픽 중복 방지
+    existing = supabase.table("topics").select("*")\
+        .eq("user_id", body.user_id).eq("name", body.name).eq("is_active", True).execute()
+    if existing.data:
+        return existing.data[0]
+
     category = body.category
     if not category:
         from agent.classifier import classify_topic
@@ -151,7 +157,14 @@ async def remove_topic(topic_id: str):
 @router.get("/{user_id}/topics")
 async def get_topics(user_id: str):
     res = supabase.table("topics").select("*").eq("user_id", user_id).eq("is_active", True).execute()
-    return res.data
+    # 이름 중복 제거 (같은 이름 여러 행 있을 경우 첫 번째만 반환)
+    seen: set[str] = set()
+    unique = []
+    for row in res.data:
+        if row["name"] not in seen:
+            seen.add(row["name"])
+            unique.append(row)
+    return unique
 
 
 @router.get("/{user_id}/streak")

@@ -73,14 +73,21 @@ async def get_user_curricula(user_id: str):
 
     # 토픽 + 챕터 진행 상태를 병렬 조회
     topics_task = asyncio.to_thread(
-        lambda: supabase.table("topics").select("name, category").eq("user_id", user_id).execute()
+        lambda: supabase.table("topics").select("name, category").eq("user_id", user_id).eq("is_active", True).execute()
     )
     progress_task = asyncio.to_thread(
         lambda: supabase.table("chapter_progress").select("chapter_id,status").eq("user_id", user_id).execute()
     )
     topics_res, progress_res = await asyncio.gather(topics_task, progress_task, return_exceptions=True)
 
-    topics = (topics_res.data if not isinstance(topics_res, Exception) else None) or []
+    raw_topics = (topics_res.data if not isinstance(topics_res, Exception) else None) or []
+    # 이름 중복 제거
+    seen_names: set[str] = set()
+    topics = []
+    for t in raw_topics:
+        if t["name"] not in seen_names:
+            seen_names.add(t["name"])
+            topics.append(t)
     if not topics:
         topics = [
             {"name": "RAG", "category": "AI/ML"},
