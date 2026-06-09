@@ -36,7 +36,6 @@ const LOADING_STEPS = [
 
 const LEARNING_TIPS = [
   { emoji: "🧠", text: "퀴즈를 풀면 단순히 읽는 것보다 기억에 2배 오래 남아요" },
-  { emoji: "⚡", text: "능동적 회상(Active Recall)은 밑줄 긋기보다 6배 효과적이에요" },
   { emoji: "📊", text: "매일 5분씩 꾸준히 하면 1년에 30시간이 쌓여요" },
   { emoji: "🌙", text: "배운 내용은 잠들기 전 짧게 복습하면 장기 기억으로 넘어가요" },
   { emoji: "🎯", text: "남에게 설명할 수 있으면 진짜 이해한 거예요 — 파인만 기법" },
