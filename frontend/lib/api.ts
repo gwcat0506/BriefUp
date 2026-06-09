@@ -123,6 +123,9 @@ export const api = {
 
   checkBookmark: (userId: string, contentId: string) =>
     fetcher<{ bookmarked: boolean }>(`/api/progress/bookmark/${userId}/check/${contentId}`),
+
+  submitFeedback: (body: { user_id: string; feedback_type: "positive" | "negative" | "suggestion"; message: string; topic_name?: string; content_id?: string }) =>
+    fetcher(`/api/user/feedback`, { method: "POST", body: JSON.stringify(body) }),
 };
 
 // ── 타입 ──────────────────────────────────────────

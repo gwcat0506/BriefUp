@@ -79,6 +79,13 @@ class TopicCreate(BaseModel):
     name: str
     category: str | None = None
 
+class FeedbackCreate(BaseModel):
+    user_id: str
+    feedback_type: str  # "positive" | "negative" | "suggestion"
+    message: str
+    content_id: str | None = None
+    topic_name: str | None = None
+
 
 @router.get("/{user_id}/xp")
 async def get_user_xp(user_id: str):
@@ -146,6 +153,23 @@ async def add_topic(body: TopicCreate):
         print(f"[커리큘럼 생성 오류] {e}")
 
     return topic_row
+
+
+@router.post("/feedback")
+async def submit_feedback(body: FeedbackCreate):
+    if body.feedback_type not in ("positive", "negative", "suggestion"):
+        raise HTTPException(status_code=400, detail="올바르지 않은 feedback_type")
+    insert_data: dict = {
+        "user_id": body.user_id,
+        "feedback_type": body.feedback_type,
+        "message": body.message,
+    }
+    if body.content_id:
+        insert_data["content_id"] = body.content_id
+    if body.topic_name:
+        insert_data["topic_name"] = body.topic_name
+    res = supabase.table("user_feedback").insert(insert_data).execute()
+    return res.data[0] if res.data else {"success": True}
 
 
 @router.delete("/topic/{topic_id}")

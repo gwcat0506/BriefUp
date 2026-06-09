@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { SUGGESTED_TOPICS as SUGGESTED } from "@/lib/topics";
 
-type Tab = "settings" | "bookmarks";
+type Tab = "settings" | "bookmarks" | "feedback";
+type FeedbackType = "positive" | "negative" | "suggestion";
 
 export default function MyPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -20,6 +21,9 @@ export default function MyPage() {
   const [nicknameInput, setNicknameInput] = useState("");
   const [confirmTopic, setConfirmTopic] = useState<{ id: string; name: string } | null>(null);
   const [customElapsed, setCustomElapsed] = useState(0);
+  const [feedbackType, setFeedbackType] = useState<FeedbackType>("suggestion");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const customTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
@@ -103,6 +107,21 @@ export default function MyPage() {
     }
   }
 
+  async function handleSubmitFeedback() {
+    const trimmed = feedbackMessage.trim();
+    if (!trimmed || feedbackSubmitting) return;
+    setFeedbackSubmitting(true);
+    try {
+      await api.submitFeedback({ user_id: TEMP_USER_ID, feedback_type: feedbackType, message: trimmed });
+      setFeedbackMessage("");
+      showToast("피드백을 전달했어요! 더 나은 브리핑을 만들게요 🙏", "success");
+    } catch {
+      showToast("전송 중 오류가 생겼어요. 다시 시도해주세요.", "error");
+    } finally {
+      setFeedbackSubmitting(false);
+    }
+  }
+
   async function handleRemoveBookmark(contentId: string) {
     await api.toggleBookmark(TEMP_USER_ID, contentId);
     setBookmarks(bm => bm.filter(b => b.content_id !== contentId));
@@ -163,6 +182,7 @@ export default function MyPage() {
         {[
           { key: "settings", label: "⚙️ 설정" },
           { key: "bookmarks", label: `🔖 북마크 ${bookmarks.length > 0 ? `(${bookmarks.length})` : ""}` },
+          { key: "feedback", label: "💬 피드백" },
         ].map((t) => (
           <button
             key={t.key}
@@ -370,6 +390,72 @@ export default function MyPage() {
             )}
           </div>
         )}
+        {/* 피드백 탭 */}
+        {tab === "feedback" && (
+          <div className="mt-4 flex flex-col gap-4">
+            <div className="bg-white rounded-3xl p-5 card-shadow">
+              <p className="text-[#1C1C1E] font-bold text-base mb-1">BriefUp에 의견 보내기</p>
+              <p className="text-[#9CA3AF] text-sm mb-5">여러분의 피드백이 AI 브리핑 품질을 높여요</p>
+
+              {/* 피드백 유형 선택 */}
+              <p className="text-[#374151] text-xs font-semibold mb-2">어떤 종류의 피드백인가요?</p>
+              <div className="flex gap-2 mb-5">
+                {([
+                  { type: "positive" as FeedbackType, emoji: "👍", label: "좋아요" },
+                  { type: "negative" as FeedbackType, emoji: "👎", label: "아쉬워요" },
+                  { type: "suggestion" as FeedbackType, emoji: "💡", label: "제안해요" },
+                ]).map((item) => (
+                  <button
+                    key={item.type}
+                    onClick={() => setFeedbackType(item.type)}
+                    className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-2xl border-2 text-sm font-medium transition-all ${
+                      feedbackType === item.type
+                        ? "border-[#10B981] bg-[#ECFDF5] text-[#065F46]"
+                        : "border-[#F3F4F6] bg-[#F9FAFB] text-[#6B7280]"
+                    }`}
+                  >
+                    <span className="text-xl">{item.emoji}</span>
+                    <span className="text-xs">{item.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* 메시지 입력 */}
+              <p className="text-[#374151] text-xs font-semibold mb-2">내용을 적어주세요</p>
+              <textarea
+                value={feedbackMessage}
+                onChange={(e) => setFeedbackMessage(e.target.value)}
+                placeholder={
+                  feedbackType === "positive" ? "어떤 점이 좋았나요?" :
+                  feedbackType === "negative" ? "어떤 점이 아쉬웠나요?" :
+                  "어떤 기능이나 개선을 원하시나요?"
+                }
+                maxLength={500}
+                rows={4}
+                className="w-full bg-[#F9FAFB] text-[#1C1C1E] placeholder-[#9CA3AF] text-sm px-4 py-3 rounded-2xl outline-none border border-[#F3F4F6] focus:border-[#10B981] resize-none"
+              />
+              <div className="flex items-center justify-between mt-1 mb-4">
+                <span className="text-[#9CA3AF] text-xs">{feedbackMessage.length}/500</span>
+              </div>
+
+              <button
+                onClick={handleSubmitFeedback}
+                disabled={!feedbackMessage.trim() || feedbackSubmitting}
+                className="w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold py-4 rounded-2xl text-sm active:scale-95 transition-all disabled:opacity-40"
+              >
+                {feedbackSubmitting ? "전송 중..." : "피드백 보내기"}
+              </button>
+            </div>
+
+            <div className="bg-[#F9FAFB] rounded-2xl p-4 text-center">
+              <p className="text-[#9CA3AF] text-xs leading-relaxed">
+                보내주신 피드백은 AI 에이전트가 다음 브리핑 생성 시<br/>
+                참고 자료로 직접 반영돼요
+              </p>
+            </div>
+          </div>
+        )}
+
       </div>
 
       <BottomNav active="mypage" />
