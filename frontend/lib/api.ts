@@ -95,7 +95,7 @@ export const api = {
     fetcher<Topic[]>(`/api/user/${userId}/topics`),
 
   addTopic: (userId: string, name: string, category?: string) =>
-    fetcher(`/api/user/topic`, {
+    fetcher<Topic>(`/api/user/topic`, {
       method: "POST",
       body: JSON.stringify({ user_id: userId, name, category }),
     }),

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 from core.supabase import supabase
 from datetime import date, timedelta
@@ -123,7 +123,7 @@ async def get_user(user_id: str):
 
 
 @router.post("/topic")
-async def add_topic(body: TopicCreate):
+async def add_topic(body: TopicCreate, background_tasks: BackgroundTasks):
     # 동일 이름 활성 토픽 중복 방지
     existing = supabase.table("topics").select("*")\
         .eq("user_id", body.user_id).eq("name", body.name).eq("is_active", True).execute()
@@ -151,6 +151,10 @@ async def add_topic(body: TopicCreate):
         topic_row["curriculum"] = curriculum
     except Exception as e:
         print(f"[커리큘럼 생성 오류] {e}")
+
+    # 새 토픽에 대해 즉시 콘텐츠 수집 (백그라운드)
+    from agent.scheduler import run_daily_pipeline
+    background_tasks.add_task(run_daily_pipeline, [{"name": body.name, "category": category}])
 
     return topic_row
 

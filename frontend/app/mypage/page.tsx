@@ -10,6 +10,16 @@ import { SUGGESTED_TOPICS as SUGGESTED } from "@/lib/topics";
 type Tab = "settings" | "bookmarks" | "feedback";
 type FeedbackType = "positive" | "negative" | "suggestion";
 
+type PipelineStatus = {
+  topicName: string;
+  phase: "curriculum" | "pipeline";
+  elapsed: number;
+  startedAt: number; // 파이프라인 시작 Unix ms — 이 시점 이후 생성된 콘텐츠만 감지
+  done: boolean;
+};
+
+const PIPELINE_ESTIMATE = 90; // 예상 파이프라인 소요 시간 (초)
+
 export default function MyPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [bookmarks, setBookmarks] = useState<any[]>([]);
@@ -20,17 +30,21 @@ export default function MyPage() {
   const [editingNickname, setEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState("");
   const [confirmTopic, setConfirmTopic] = useState<{ id: string; name: string } | null>(null);
-  const [customElapsed, setCustomElapsed] = useState(0);
+  const [pipelineStatus, setPipelineStatus] = useState<PipelineStatus | null>(null);
   const [feedbackType, setFeedbackType] = useState<FeedbackType>("suggestion");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
-  const customTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pipelineTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
 
-  useEffect(() => () => {
-    if (customTimerRef.current) clearInterval(customTimerRef.current);
-  }, []);
+  function clearPipelineTimers() {
+    if (pipelineTimerRef.current) { clearInterval(pipelineTimerRef.current); pipelineTimerRef.current = null; }
+    if (pollTimerRef.current) { clearInterval(pollTimerRef.current); pollTimerRef.current = null; }
+  }
+
+  useEffect(() => () => clearPipelineTimers(), []);
 
   useEffect(() => {
     const saved = localStorage.getItem("user_nickname") || "학습자";
@@ -42,6 +56,38 @@ export default function MyPage() {
     api.getTopics(TEMP_USER_ID).then(setTopics);
     api.getBookmarks(TEMP_USER_ID).then(setBookmarks);
   }, []);
+
+  function startPipelinePhase(topicName: string) {
+    const startedAt = Date.now();
+    setPipelineStatus({ topicName, phase: "pipeline", elapsed: 0, startedAt, done: false });
+
+    pipelineTimerRef.current = setInterval(() => {
+      setPipelineStatus(prev => prev ? { ...prev, elapsed: prev.elapsed + 1 } : null);
+    }, 1000);
+
+    // 15초마다 폴링 — topic name으로 조회 + startedAt 이후 생성된 것만 감지
+    const checkContent = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/content/?category=${encodeURIComponent(topicName)}&limit=5`);
+        const data: { created_at: string }[] = await res.json();
+        const hasNew = data.some(c => new Date(c.created_at).getTime() >= startedAt);
+        if (hasNew) {
+          clearPipelineTimers();
+          setPipelineStatus(prev => prev ? { ...prev, done: true } : null);
+          api.getTopics(TEMP_USER_ID).then(setTopics);
+          showToast(`'${topicName}' 브리핑이 준비됐어요!`, "success");
+          setTimeout(() => setPipelineStatus(null), 4000);
+        }
+      } catch {}
+    };
+    pollTimerRef.current = setInterval(checkContent, 15000);
+    // 최대 3분 후 강제 종료
+    setTimeout(() => {
+      clearPipelineTimers();
+      setPipelineStatus(prev => prev && !prev.done ? { ...prev, done: true } : prev);
+      setTimeout(() => setPipelineStatus(null), 4000);
+    }, 180000);
+  }
 
   async function handleSaveNickname() {
     const trimmed = nicknameInput.trim();
@@ -73,10 +119,15 @@ export default function MyPage() {
     }
     if (adding) return;
     setAdding(id);
+    setPipelineStatus({ topicName: label, phase: "curriculum", elapsed: 0, startedAt: Date.now(), done: false });
     try {
       await api.addTopic(TEMP_USER_ID, label, category);
       const updated = await api.getTopics(TEMP_USER_ID);
       setTopics(updated);
+      startPipelinePhase(label);
+    } catch {
+      showToast("추가 중 오류가 생겼어요. 다시 시도해주세요.", "error");
+      setPipelineStatus(null);
     } finally {
       setAdding(null);
     }
@@ -86,23 +137,17 @@ export default function MyPage() {
     const trimmed = customInput.trim();
     if (!trimmed || adding) return;
     setAdding("custom");
-    setCustomElapsed(0);
-    customTimerRef.current = setInterval(() => {
-      setCustomElapsed(s => s + 1);
-    }, 1000);
+    setPipelineStatus({ topicName: trimmed, phase: "curriculum", elapsed: 0, startedAt: Date.now(), done: false });
     try {
       await api.addTopic(TEMP_USER_ID, trimmed);
       const updated = await api.getTopics(TEMP_USER_ID);
       setTopics(updated);
       setCustomInput("");
-      showToast(`'${trimmed}' 커리큘럼이 완성됐어요!`, "success");
+      startPipelinePhase(trimmed);
     } catch {
       showToast("추가 중 오류가 생겼어요. 다시 시도해주세요.", "error");
+      setPipelineStatus(null);
     } finally {
-      if (customTimerRef.current) {
-        clearInterval(customTimerRef.current);
-        customTimerRef.current = null;
-      }
       setAdding(null);
     }
   }
@@ -254,30 +299,46 @@ export default function MyPage() {
                   {adding === "custom" ? "생성 중" : "추가"}
                 </button>
               </div>
-              {adding === "custom" && (
+              {pipelineStatus && (
                 <div className="mb-4 px-1">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
-                    <p className="text-[#10B981] text-xs flex-1">AI가 커리큘럼을 설계 중이에요</p>
-                    <span className="text-[#6B7280] text-xs tabular-nums">
-                      {customElapsed < 90 ? `약 ${90 - customElapsed}초 남음` : "거의 다 됐어요"}
-                    </span>
-                  </div>
-                  <div className="h-1 bg-[#F3F4F6] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] rounded-full transition-all duration-1000"
-                      style={{ width: `${Math.min((customElapsed / 90) * 100, 95)}%` }}
-                    />
-                  </div>
+                  {pipelineStatus.done ? (
+                    <div className="flex items-center gap-2 py-1">
+                      <span className="text-base">✅</span>
+                      <p className="text-[#10B981] text-xs font-medium">
+                        <span className="font-bold">'{pipelineStatus.topicName}'</span> 브리핑이 준비됐어요!
+                      </p>
+                    </div>
+                  ) : pipelineStatus.phase === "curriculum" ? (
+                    <div className="flex items-center gap-2 py-1">
+                      <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
+                      <p className="text-[#10B981] text-xs">
+                        <span className="font-bold">'{pipelineStatus.topicName}'</span> 커리큘럼 생성 중...
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
+                        <p className="text-[#10B981] text-xs flex-1">
+                          <span className="font-bold">'{pipelineStatus.topicName}'</span> 브리핑 수집 중...
+                        </p>
+                        <span className="text-[#6B7280] text-xs tabular-nums">
+                          {pipelineStatus.elapsed < PIPELINE_ESTIMATE
+                            ? `약 ${PIPELINE_ESTIMATE - pipelineStatus.elapsed}초 남음`
+                            : "거의 다 됐어요"}
+                        </span>
+                      </div>
+                      <div className="h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] rounded-full transition-all duration-1000"
+                          style={{ width: `${Math.min((pipelineStatus.elapsed / PIPELINE_ESTIMATE) * 100, 95)}%` }}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
-              {adding && adding !== "custom" && (
-                <div className="flex items-center gap-2 mb-4 px-1">
-                  <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
-                  <p className="text-[#10B981] text-xs">관심사 추가 중...</p>
-                </div>
-              )}
-              {!adding && <div className="mb-4" />}
+              {!pipelineStatus && <div className="mb-4" />}
 
               {/* 구분선 */}
               <div className="flex items-center gap-2 mb-3">
@@ -304,7 +365,7 @@ export default function MyPage() {
                       <span>{item.emoji}</span>
                       <span>{item.label}</span>
                       {already && <span className="text-[#10B981] text-xs">✓</span>}
-                      {adding === item.id && <span className="text-[#9CA3AF] text-xs">추가 중...</span>}
+                      {adding === item.id && <span className="text-[#9CA3AF] text-xs">생성 중...</span>}
                     </button>
                   );
                 })}

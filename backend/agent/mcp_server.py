@@ -6,6 +6,7 @@ FastMCP 서버 — BriefUp 파이프라인 도구 정의
 """
 
 import asyncio
+import re
 import time
 import uuid
 from datetime import date
@@ -23,10 +24,16 @@ mcp = FastMCP(
     name="BriefUp Pipeline",
     instructions=(
         "BriefUp 학습 콘텐츠 파이프라인 도구입니다. "
-        "collect_articles → summarize_article → generate_quizzes → save_content 순으로 처리하세요. "
-        "collect_articles와 summarize_article은 여러 항목을 동시에 호출할 수 있습니다."
+        "get_collection_plan → collect_articles → summarize_article → generate_quizzes → save_content 순으로 처리하세요. "
+        "get_collection_plan과 collect_articles는 여러 토픽을 동시에 호출할 수 있습니다."
     ),
 )
+
+
+def _slugify(name: str) -> str:
+    slug = name.lower().strip()
+    slug = re.sub(r"[\s/,]+", "-", slug)
+    return re.sub(r"-+", "-", slug).strip("-")
 
 # ── 세션 스토어 ───────────────────────────────────────────────
 # 에이전트 한 번의 실행 동안 아티클 데이터를 보관.
@@ -121,6 +128,97 @@ async def get_active_topics() -> dict:
 
 
 @mcp.tool()
+async def get_collection_plan(topic_name: str, category: str) -> dict:
+    """
+    커리큘럼 기반으로 오늘 수집할 챕터와 검색 힌트를 반환합니다.
+    collect_articles 호출 전에 반드시 호출하세요.
+    반환된 arxiv_query / web_query를 collect_articles에 그대로 사용하세요.
+
+    Args:
+        topic_name: 토픽명 (예: RAG, 심리학)
+        category: 카테고리 (예: AI/ML, 심리학)
+    """
+    # 1. 커리큘럼 조회 — DB 우선, 없으면 인메모리 카탈로그
+    chapters: list[dict] = []
+    topic_key = _slugify(topic_name)
+
+    try:
+        # DB에서 topic_name 또는 topic_key로 조회
+        db_res = await asyncio.to_thread(
+            lambda: supabase.table("topic_curricula")
+                .select("chapters")
+                .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
+                .limit(1)
+                .execute()
+        )
+        if db_res.data:
+            chapters = db_res.data[0].get("chapters") or []
+    except Exception as e:
+        print(f"  [get_collection_plan] DB 조회 오류: {e}")
+
+    # DB에 없으면 인메모리 카탈로그 시도
+    if not chapters:
+        try:
+            from agent.curriculum_catalog import CURRICULUM_CATALOG
+            catalog_entry = CURRICULUM_CATALOG.get(topic_key)
+            if not catalog_entry:
+                # alias 매칭
+                for v in CURRICULUM_CATALOG.values():
+                    if topic_name in v.get("topic_names", []):
+                        catalog_entry = v
+                        break
+            if catalog_entry:
+                chapters = catalog_entry.get("chapters", [])
+        except Exception as e:
+            print(f"  [get_collection_plan] 카탈로그 조회 오류: {e}")
+
+    # 챕터가 없으면 기본 쿼리 반환
+    if not chapters:
+        return {
+            "topic_name": topic_name,
+            "chapter_index": 1,
+            "chapter_total": 0,
+            "chapter_title": topic_name,
+            "chapter_level": "기본",
+            "arxiv_query": None,
+            "web_query": f"{topic_name} introduction explained 2024",
+            "concepts": [],
+            "note": "커리큘럼 없음 — 기본 쿼리 사용",
+        }
+
+    # 2. 이 토픽의 기수집 날짜 수로 오늘 챕터 결정
+    try:
+        count_res = await asyncio.to_thread(
+            lambda: supabase.table("contents")
+                .select("collected_at")
+                .eq("topic_category", topic_name)
+                .execute()
+        )
+        collected_dates = {r["collected_at"] for r in (count_res.data or []) if r.get("collected_at")}
+    except Exception:
+        collected_dates = set()
+
+    chapter_index = len(collected_dates) % len(chapters)
+    chapter = chapters[chapter_index]
+    hints = chapter.get("search_hints") or {}
+
+    web_q = hints.get("web_query") or f"{topic_name} {chapter.get('title', '')} explained 2024"
+    arxiv_q = hints.get("arxiv_query")  # None이면 None 그대로
+
+    print(f"  [get_collection_plan] {topic_name} → 챕터 {chapter_index+1}/{len(chapters)}: {chapter.get('title','')[:40]}")
+    return {
+        "topic_name": topic_name,
+        "chapter_index": chapter_index + 1,
+        "chapter_total": len(chapters),
+        "chapter_title": chapter.get("title", ""),
+        "chapter_level": chapter.get("level", ""),
+        "arxiv_query": arxiv_q,
+        "web_query": web_q,
+        "concepts": chapter.get("concepts", []),
+    }
+
+
+@mcp.tool()
 async def collect_articles(
     topic_name: str,
     category: str,
@@ -141,6 +239,8 @@ async def collect_articles(
     """
     logger = _log()
     t = time.monotonic()
+    retry_no = _session["retry_counts"].get(topic_name, 0)
+    _session["retry_counts"][topic_name] = retry_no + 1
     try:
         trad_items = await collect_for_topic(topic_name, category, arxiv_query=arxiv_query)
 
@@ -201,10 +301,6 @@ async def collect_articles(
             })
 
         collected_count = len(raw_contents)
-        # 재시도 횟수 추적
-        retry_no = _session["retry_counts"].get(topic_name, 0)
-        _session["retry_counts"][topic_name] = retry_no + 1
-
         if logger:
             step_order = logger.log_step(
                 tool_name="collect",
@@ -221,8 +317,9 @@ async def collect_articles(
                 category=category,
                 failure_type="quality_rejected" if collected_count == 0 else None,
             )
-            # collect step_order 보관 → 이 토픽의 summarize 단계에서 parent로 참조
-            _session["collect_step_orders"][topic_name] = step_order
+            # collect step_order 보관 → article_id prefix와 동일한 키로 저장
+            topic_prefix = topic_name[:8].lower().replace(" ", "_").replace("/", "_")
+            _session["collect_step_orders"][topic_prefix] = step_order
 
         insufficient = collected_count <= 2
         can_retry = _session["retry_counts"].get(topic_name, 0) <= 1
@@ -250,7 +347,14 @@ async def collect_articles(
                 failure_type="technical",
             )
         _session["run_stats"]["total_failed"] += 1
-        return {"topic_name": topic_name, "articles": [], "error": str(e)}
+        return {
+            "topic_name": topic_name,
+            "articles": [],
+            "collected_count": 0,
+            "needs_retry": False,
+            "retry_hint": None,
+            "error": str(e),
+        }
 
 
 @mcp.tool()
@@ -292,9 +396,20 @@ async def summarize_article(article_id: str, category: str) -> dict:
         # 빈 요약 조기 차단 — 충실도 검사에 빈 prompt 전달 방지
         if not summary or len(summary.strip()) < 50:
             _session["run_stats"]["total_failed"] += 1
+            if logger:
+                logger.log_step(
+                    tool_name="summarize",
+                    inputs={"article_id": article_id, "category": category},
+                    duration_ms=int((time.monotonic() - t) * 1000),
+                    status="failed",
+                    error_message="summary too short or empty",
+                    category=category,
+                    failure_type="quality_rejected",
+                    parent_step_order=parent_order,
+                )
             return {
                 "success": False,
-                "error": "GPT-5 returned empty or too-short summary (token budget or content policy)",
+                "error": "summary too short or empty",
             }
 
         # Claude Haiku로 충실도 검증 (교차 검증)
@@ -585,9 +700,10 @@ async def save_reflection(
             duration_ms=0,
             status="success",
         )
-    print(f"\n[Reflection] {quality_assessment}")
+    import sys
+    print(f"\n[Reflection] {quality_assessment}", file=sys.stderr)
     for s in next_run_suggestions[:3]:
-        print(f"  → {s}")
+        print(f"  → {s}", file=sys.stderr)
     return {"saved": True, "suggestions_count": len(next_run_suggestions[:3])}
 
 
