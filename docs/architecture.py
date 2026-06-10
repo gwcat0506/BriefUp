@@ -1,6 +1,6 @@
 """
-BriefUp Agent Architecture Diagram
-Publication-quality figure (NeurIPS/ICLR style)
+BriefUp Agent Architecture — 2-Phase Narrative Diagram
+사용자 중심 흐름 + ReAct 루프 (Retry · Memory · Reflection)
 Output: architecture.svg + architecture.png (300dpi)
 """
 
@@ -8,306 +8,318 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
-import matplotlib.font_manager as fm
+from matplotlib.patches import FancyBboxPatch
 import os
 
-# ── 한글 폰트 설정 ─────────────────────────────────────────────
 plt.rcParams["font.family"] = ["Apple SD Gothic Neo", "AppleGothic", "DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 
-# ── 색상 팔레트 ────────────────────────────────────────────────
-C_ENTRY     = "#F1F5F9"
-C_ORCH      = "#DBEAFE"
-C_TOOLS     = "#DCFCE7"
-C_EXT       = "#FEF9C3"
-C_SESSION   = "#F3E8FF"
-C_OBS       = "#FFE4E6"
-C_BORDER    = "#94A3B8"
-C_ARROW     = "#374151"
-C_TEXT      = "#1E293B"
-C_SUB       = "#6B7280"
-C_DASH_BG   = "#F8FAFC"
+# ── 색상 ──────────────────────────────────────────────────────
+C_BG       = "white"
+C_PHASE1   = "#EFF6FF"   # 연파랑 — 설정
+C_PHASE2   = "#F0FDF4"   # 연초록 — 에이전트 루프
+C_PHASE3   = "#FAF5FF"   # 연보라 — 사용자 출력
+C_CLAUDE   = "#DBEAFE"   # 파랑 — Claude
+C_GPT      = "#DCFCE7"   # 초록 — GPT-5
+C_TOOL     = "#FEF9C3"   # 노랑 — Tool 호출
+C_MEMORY   = "#F3E8FF"   # 보라 — Memory
+C_REFLECT  = "#FEF3C7"   # 황금 — Reflection
+C_PASS     = "#BBF7D0"   # 진초록 — 통과
+C_FAIL     = "#FECACA"   # 빨강 — 탈락
+C_DIAMOND  = "#FDE68A"   # 다이아몬드
+C_BORDER   = "#94A3B8"
+C_TEXT     = "#1E293B"
+C_SUB      = "#64748B"
+BLUE       = "#2563EB"
+GREEN      = "#16A34A"
+PURPLE     = "#7C3AED"
+AMBER      = "#D97706"
+RED        = "#DC2626"
 
-fig, ax = plt.subplots(figsize=(16, 13))
-ax.set_xlim(0, 16)
-ax.set_ylim(0, 13)
+fig, ax = plt.subplots(figsize=(22, 16))
+ax.set_xlim(0, 22)
+ax.set_ylim(0, 16)
 ax.axis("off")
-fig.patch.set_facecolor("white")
+fig.patch.set_facecolor(C_BG)
 
 
 # ── 헬퍼 ──────────────────────────────────────────────────────
 
-def box(ax, x, y, w, h, color, label, sublabel="", fontsize=9.5,
-        border=C_BORDER, lw=1.2, radius=0.25):
-    rect = FancyBboxPatch(
-        (x, y), w, h,
-        boxstyle=f"round,pad=0,rounding_size={radius}",
-        facecolor=color, edgecolor=border, linewidth=lw, zorder=3
-    )
-    ax.add_patch(rect)
+def rbox(ax, x, y, w, h, fc, label, sub="", fs=9.5, bc=C_BORDER,
+         lw=1.3, r=0.25, bold=True, sub_fs=8.0):
+    ax.add_patch(FancyBboxPatch((x, y), w, h,
+        boxstyle=f"round,pad=0,rounding_size={r}",
+        facecolor=fc, edgecolor=bc, linewidth=lw, zorder=3))
     cy = y + h / 2
-    if sublabel:
-        ax.text(x + w / 2, cy + 0.13, label, ha="center", va="center",
-                fontsize=fontsize, fontweight="bold", color=C_TEXT, zorder=4)
-        ax.text(x + w / 2, cy - 0.18, sublabel, ha="center", va="center",
-                fontsize=7.5, color=C_SUB, zorder=4)
+    fw = "bold" if bold else "normal"
+    if sub:
+        ax.text(x+w/2, cy+0.18, label, ha="center", va="center",
+                fontsize=fs, fontweight=fw, color=C_TEXT, zorder=4)
+        ax.text(x+w/2, cy-0.20, sub, ha="center", va="center",
+                fontsize=sub_fs, color=C_SUB, zorder=4)
     else:
-        ax.text(x + w / 2, cy, label, ha="center", va="center",
-                fontsize=fontsize, fontweight="bold", color=C_TEXT, zorder=4)
+        ax.text(x+w/2, cy, label, ha="center", va="center",
+                fontsize=fs, fontweight=fw, color=C_TEXT, zorder=4)
 
 
-def layer_bg(ax, x, y, w, h, title, color=C_DASH_BG, border="#CBD5E1"):
-    rect = FancyBboxPatch(
-        (x, y), w, h,
-        boxstyle="round,pad=0,rounding_size=0.35",
-        facecolor=color, edgecolor=border, linewidth=1.0,
-        linestyle="--", zorder=1
-    )
-    ax.add_patch(rect)
-    ax.text(x + 0.18, y + h - 0.22, title, ha="left", va="top",
-            fontsize=8, color="#64748B", fontstyle="italic", zorder=4)
+def diamond(ax, cx, cy, hw, hh, fc=C_DIAMOND, bc=AMBER, label="", fs=8.0):
+    xs = [cx, cx+hw, cx, cx-hw, cx]
+    ys = [cy+hh, cy, cy-hh, cy, cy+hh]
+    ax.fill(xs, ys, facecolor=fc, edgecolor=bc, linewidth=1.4, zorder=3)
+    ax.text(cx, cy, label, ha="center", va="center",
+            fontsize=fs, fontweight="bold", color=C_TEXT, zorder=4)
 
 
-def arrow(ax, x1, y1, x2, y2, label="", color=C_ARROW, lw=1.4, rad=0.0, ls="solid"):
-    ax.annotate(
-        "", xy=(x2, y2), xytext=(x1, y1),
-        arrowprops=dict(
-            arrowstyle="-|>",
-            color=color,
-            lw=lw,
-            connectionstyle=f"arc3,rad={rad}",
-            linestyle=ls,
-        ),
-        zorder=5,
-    )
+def arr(ax, x1, y1, x2, y2, color=C_TEXT, lw=1.5, rad=0.0, ls="solid", label="", label_dx=0.1):
+    ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
+        arrowprops=dict(arrowstyle="-|>", color=color, lw=lw,
+                        connectionstyle=f"arc3,rad={rad}", linestyle=ls), zorder=5)
     if label:
-        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
-        ax.text(mx + 0.08, my, label, ha="left", va="center",
-                fontsize=7, color=C_SUB, fontstyle="italic", zorder=6)
+        mx, my = (x1+x2)/2 + label_dx, (y1+y2)/2
+        ax.text(mx, my, label, ha="left", va="center",
+                fontsize=7.5, color=color, fontstyle="italic", zorder=6)
 
 
-def barrow(ax, x1, y1, x2, y2, label="", color=C_ARROW, lw=1.4):
-    ax.annotate(
-        "", xy=(x2, y2), xytext=(x1, y1),
-        arrowprops=dict(arrowstyle="<->", color=color, lw=lw),
-        zorder=5,
-    )
-    if label:
-        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
-        ax.text(mx + 0.08, my, label, ha="left", va="center",
-                fontsize=7.5, color=C_SUB, fontstyle="italic", zorder=6)
+def phase_bg(ax, x, y, w, h, color, border, label, label_color):
+    ax.add_patch(FancyBboxPatch((x, y), w, h,
+        boxstyle="round,pad=0,rounding_size=0.4",
+        facecolor=color, edgecolor=border, linewidth=1.5,
+        linestyle="--", zorder=1))
+    ax.text(x+0.22, y+h-0.18, label, ha="left", va="top",
+            fontsize=9.5, fontweight="bold", color=label_color, zorder=4)
+
+
+def badge(ax, x, y, text, color, fs=7.5):
+    ax.text(x, y, text, ha="center", va="center", fontsize=fs,
+            fontweight="bold", color="white", zorder=7,
+            bbox=dict(boxstyle="round,pad=0.28", facecolor=color, edgecolor="none"))
+
+
+def num_badge(ax, x, y, n, color=BLUE):
+    ax.text(x, y, str(n), ha="center", va="center", fontsize=8.5,
+            fontweight="bold", color="white", zorder=8,
+            bbox=dict(boxstyle="circle,pad=0.25", facecolor=color, edgecolor="none"))
+
+
+def pill_tag(ax, x, y, text, color, fs=7.5):
+    ax.text(x, y, text, ha="center", va="center", fontsize=fs,
+            color="white", fontweight="bold", zorder=6,
+            bbox=dict(boxstyle="round,pad=0.22", facecolor=color, edgecolor="none"))
 
 
 # ═══════════════════════════════════════════════════════════════
 # 제목
 # ═══════════════════════════════════════════════════════════════
-ax.text(8, 12.65,
-        "BriefUp: Multi-Model Content Curation Agent Architecture",
-        ha="center", va="center", fontsize=13.5, fontweight="bold", color=C_TEXT)
-ax.text(8, 12.28,
-        "Claude Haiku (Orchestration)  ·  GPT-5 (Generation)  ·  Cross-Model Verification",
-        ha="center", va="center", fontsize=9, color=C_SUB)
+ax.text(11, 15.62, "BriefUp: Adaptive Multi-Model Content Curation Agent",
+        ha="center", va="center", fontsize=15, fontweight="bold", color=C_TEXT)
+ax.text(11, 15.24,
+        "ReAct Loop  ·  Adaptive Retry  ·  Cross-run Memory  ·  Cross-Model Verification  ·  Reflection",
+        ha="center", va="center", fontsize=9.5, color=C_SUB)
 
 
 # ═══════════════════════════════════════════════════════════════
-# LAYER 0 — 진입점
+# PHASE 1 — 일회성 설정 (좌측)
 # ═══════════════════════════════════════════════════════════════
-layer_bg(ax, 0.3, 11.45, 10.8, 0.70, "Layer 0  ·  Entry Points")
+phase_bg(ax, 0.3, 1.2, 4.2, 13.8, C_PHASE1, BLUE, "Phase 1  ·  일회성 설정", BLUE)
 
-box(ax, 0.65, 11.58, 3.0, 0.47, C_ENTRY, "Scheduler",
-    sublabel="python -m agent.scheduler", fontsize=9)
-box(ax, 4.20, 11.58, 3.5, 0.47, C_ENTRY, "REST API",
-    sublabel="POST /api/content/run-pipeline", fontsize=9)
-box(ax, 8.10, 11.58, 2.6, 0.47, C_ENTRY, "Manual Topics",
-    sublabel="topics=[{name, category}]", fontsize=9)
+# 사용자
+ax.text(2.4, 14.58, "[User]", ha="center", va="center", fontsize=10,
+        fontweight="bold", color=BLUE, zorder=4)
+rbox(ax, 0.8, 13.9, 3.2, 0.55, C_CLAUDE, "관심사 입력",
+     sub='"AI/ML 배우고 싶어"', fs=9.5, bc=BLUE)
 
+arr(ax, 2.4, 13.9, 2.4, 13.35)
 
-# ═══════════════════════════════════════════════════════════════
-# LAYER 1 — 오케스트레이션
-# ═══════════════════════════════════════════════════════════════
-layer_bg(ax, 0.3, 9.92, 10.8, 1.38, "Layer 1  ·  Orchestration")
+rbox(ax, 0.8, 12.75, 3.2, 0.55, C_TOOL, "토픽 분류",
+     sub="classifier.py", fs=9.5, bc=AMBER)
 
-box(ax, 0.65, 10.08, 10.0, 1.1, C_ORCH,
-    "Claude Haiku 4.5 Agent   (agent_runner.py)",
-    sublabel="MAX_ITERATIONS=50  ·  asyncio.gather (parallel execution)  ·  message history",
-    fontsize=10.5, lw=1.8)
+arr(ax, 2.4, 12.75, 2.4, 12.20)
 
-# 진입점 → 오케스트레이션
-for xc in [2.15, 5.95, 9.40]:
-    arrow(ax, xc, 11.58, xc, 11.18)
+# 커리큘럼 설계
+rbox(ax, 0.8, 11.15, 3.2, 1.0, C_CLAUDE,
+     "Claude: 커리큘럼 설계",
+     sub="curriculum_gen.py", fs=9.5, bc=BLUE, lw=2.0)
+ax.text(2.4, 11.55, "챕터 1 → 2 → 3 → ...", ha="center", va="center",
+        fontsize=8.0, color=C_SUB)
 
+arr(ax, 2.4, 11.15, 2.4, 10.60)
 
-# ═══════════════════════════════════════════════════════════════
-# LAYER 2 — 파이프라인 도구
-# ═══════════════════════════════════════════════════════════════
-layer_bg(ax, 0.3, 3.80, 10.8, 5.95,
-         "Layer 2  ·  Pipeline Tools  (FastMCP in-process)")
+rbox(ax, 0.8, 10.05, 3.2, 0.50, C_PASS, "학습 로드맵 완성", fs=9.5, bc=GREEN)
 
-# MCP 프로토콜 화살표
-barrow(ax, 5.65, 10.08, 5.65, 9.75,
-       label="MCP Protocol  (FastMCP)", lw=1.6)
+# 구분선
+ax.plot([0.3, 4.5], [9.75, 9.75], color="#CBD5E1", lw=1.2, linestyle=":")
+ax.text(2.4, 9.50, "매일 자동 실행 ↓", ha="center", va="center",
+        fontsize=8.0, color=C_SUB, fontstyle="italic")
 
-# ── T1 ────────────────────────────────────────────────────────
-box(ax, 0.65, 9.00, 4.5, 0.55, C_TOOLS,
-    "T1 · get_active_topics()",
-    sublabel="Fetch active user topics from DB", fontsize=9)
-box(ax, 5.75, 9.00, 1.7, 0.55, C_EXT, "Supabase", fontsize=8.5)
-arrow(ax, 5.15, 9.275, 5.75, 9.275)
-ax.text(5.35, 9.43, "DB read", fontsize=7, color=C_SUB, fontstyle="italic")
+arr(ax, 2.4, 10.05, 2.4, 9.20)
 
-# T1 ← 오케스트레이션
-arrow(ax, 2.90, 10.08, 2.90, 9.55)
+rbox(ax, 0.8, 8.55, 3.2, 0.60, C_TOOL, "스케줄러 (매일 자동)",
+     sub="python -m agent.scheduler", fs=9.5, bc=AMBER)
 
-# ── T2 ────────────────────────────────────────────────────────
-box(ax, 0.65, 7.80, 4.5, 0.65, C_TOOLS,
-    "T2 · collect_articles()",
-    sublabel="Parallel across topics  ·  cross-run URL dedup", fontsize=9)
-arrow(ax, 2.90, 9.00, 2.90, 8.45)
-
-box(ax, 5.75, 8.55, 2.3, 0.40, C_EXT, "arXiv API", fontsize=8.5)
-box(ax, 5.75, 8.10, 2.3, 0.40, C_EXT, "RSS Feeds (by category)", fontsize=8)
-box(ax, 5.75, 7.60, 2.3, 0.55, C_EXT, "Tavily Web Search",
-    sublabel="trust_score ≥ 0.65", fontsize=8)
-for ya, yb in [(8.10, 8.75), (8.10, 8.30), (8.10, 7.87)]:
-    arrow(ax, 5.15, ya, 5.75, yb)
-
-# ── T3 ────────────────────────────────────────────────────────
-box(ax, 0.65, 6.55, 4.5, 0.65, C_TOOLS,
-    "T3 · summarize_article()",
-    sublabel="Parallel within same topic  ·  GPT-5 → Claude cross-verify", fontsize=9)
-arrow(ax, 2.90, 7.80, 2.90, 7.20)
-
-box(ax, 5.75, 6.70, 2.0, 0.38, C_EXT,  "GPT-5  (generate)", fontsize=8.5)
-box(ax, 8.15, 6.70, 2.4, 0.38, C_ORCH, "Claude Haiku  (verify)", fontsize=8)
-ax.annotate("", xy=(8.15, 6.89), xytext=(7.75, 6.89),
-            arrowprops=dict(arrowstyle="-|>", color=C_ARROW, lw=1.2), zorder=5)
-ax.text(7.4, 6.57, "faithfulness ≥ 0.70", ha="center", va="top",
-        fontsize=7, color=C_SUB, fontstyle="italic")
-arrow(ax, 5.15, 6.87, 5.75, 6.89)
-
-# ── T4 ────────────────────────────────────────────────────────
-box(ax, 0.65, 5.35, 4.5, 0.65, C_TOOLS,
-    "T4 · generate_quizzes()",
-    sublabel="3 quizzes  ·  verified_count > 0 to proceed", fontsize=9)
-arrow(ax, 2.90, 6.55, 2.90, 6.00)
-
-box(ax, 5.75, 5.50, 2.0, 0.38, C_EXT,  "GPT-5  (generate)", fontsize=8.5)
-box(ax, 8.15, 5.50, 2.4, 0.38, C_ORCH, "Claude Haiku  (cross-verify)", fontsize=8)
-ax.annotate("", xy=(8.15, 5.69), xytext=(7.75, 5.69),
-            arrowprops=dict(arrowstyle="-|>", color=C_ARROW, lw=1.2), zorder=5)
-ax.text(7.4, 5.37, "policy_rejected if all fail", ha="center", va="top",
-        fontsize=7, color=C_SUB, fontstyle="italic")
-arrow(ax, 5.15, 5.67, 5.75, 5.69)
-
-# ── T5 ────────────────────────────────────────────────────────
-box(ax, 0.65, 4.15, 4.5, 0.65, C_TOOLS,
-    "T5 · save_content()",
-    sublabel="contents + quizzes → Supabase", fontsize=9)
-arrow(ax, 2.90, 5.35, 2.90, 4.80)
-
-box(ax, 5.75, 4.30, 1.7, 0.45, C_EXT, "Supabase", fontsize=8.5)
-arrow(ax, 5.15, 4.475, 5.75, 4.525)
-ax.text(5.35, 4.78, "INSERT", fontsize=7, color=C_SUB, fontstyle="italic")
+# 스케줄러 → Phase 2 연결 화살표
+arr(ax, 4.5, 8.85, 5.0, 8.85, color=BLUE, lw=2.0)
 
 
 # ═══════════════════════════════════════════════════════════════
-# SESSION STORE (오른쪽 플로팅)
+# PHASE 2 — Agent Loop (중앙 우측)
 # ═══════════════════════════════════════════════════════════════
-layer_bg(ax, 11.3, 5.6, 4.38, 4.05,
-         "Session Store", color="#FAF5FF", border="#A78BFA")
+phase_bg(ax, 4.8, 1.2, 12.4, 13.8, C_PHASE2, GREEN, "Phase 2  ·  매일 자동 실행  —  ReAct Loop", GREEN)
 
-box(ax, 11.55, 9.05, 3.85, 0.45, C_SESSION,
-    '_session["articles"]', fontsize=8.5, border="#A78BFA")
+# ── Memory 박스 (상단) ─────────────────────────────────────────
+rbox(ax, 5.3, 13.75, 11.4, 0.88, C_MEMORY,
+     "Cross-run Memory  —  이전 실행 기록",
+     sub="충실도 · 퀴즈통과율 · 비용 · 지난 반성 · 다음 제안",
+     fs=10.0, bc=PURPLE, lw=2.0)
 
-ax.text(11.65, 8.95,
-        "article_id → {\n  title, text  ← full text (isolated)\n"
-        "  source, url\n  summary?    ← after T3 pass\n"
-        "  quizzes?    ← after T4 pass\n}",
-        ha="left", va="top", fontsize=7.8, color=C_TEXT,
-        fontfamily="monospace", linespacing=1.55, zorder=4)
+arr(ax, 11.0, 13.75, 11.0, 13.30, color=PURPLE, lw=1.8,
+    label="컨텍스트 주입", label_dx=0.1)
 
-box(ax, 11.55, 5.73, 3.85, 0.52, C_SESSION,
-    "collect_step_orders",
-    sublabel="parent-child span hierarchy (Observability)",
-    fontsize=8.5, border="#A78BFA")
+# ① 챕터 결정
+num_badge(ax, 5.65, 12.85, "①")
+rbox(ax, 5.9, 12.53, 5.0, 0.65, C_TOOL,
+     "오늘의 챕터 결정",
+     sub="get_collection_plan()  ·  커리큘럼 진도 추적", fs=9.5, bc=AMBER)
 
-# collect → session (full text)
-ax.annotate("", xy=(11.3, 8.85), xytext=(9.0, 8.12),
-            arrowprops=dict(arrowstyle="-|>", color="#7C3AED", lw=1.2,
-                            connectionstyle="arc3,rad=-0.3"), zorder=5)
-ax.text(10.5, 8.65, "store full text", ha="center", va="bottom",
-        fontsize=7, color="#7C3AED", fontstyle="italic")
+arr(ax, 8.4, 12.53, 8.4, 12.0, color=GREEN, lw=1.8)
 
-# session → summarize (text_preview only)
-ax.annotate("", xy=(5.15, 6.60), xytext=(11.3, 8.3),
-            arrowprops=dict(arrowstyle="-|>", color="#7C3AED", lw=1.2,
-                            connectionstyle="arc3,rad=0.22"), zorder=5)
-ax.text(7.9, 7.5, "expose text_preview only\n(token isolation)",
-        ha="center", va="center", fontsize=7, color="#7C3AED",
-        fontstyle="italic")
+# ② 아티클 수집
+num_badge(ax, 5.65, 11.60, "②")
+rbox(ax, 5.9, 11.28, 5.0, 0.65, C_TOOL,
+     "아티클 수집",
+     sub="collect_articles()  ·  arXiv · RSS · Tavily 웹검색", fs=9.5, bc=AMBER)
+
+# 소스 태그
+for i, (tag, color) in enumerate([("arXiv", "#3B82F6"), ("웹검색", "#8B5CF6"), ("RSS", "#059669")]):
+    pill_tag(ax, 11.6, 11.77 - i*0.35, tag, color, fs=7.8)
+
+arr(ax, 8.4, 11.28, 8.4, 10.65, color=GREEN, lw=1.8)
+
+# ── 다이아몬드: 수집 충분? ─────────────────────────────────────
+diamond(ax, 8.4, 10.28, 1.1, 0.38, label="수집 충분?\n(≥ 3개)", fs=7.8)
+
+# YES → 아래
+arr(ax, 8.4, 9.90, 8.4, 9.45, color=GREEN, lw=1.8)
+badge(ax, 8.4, 9.68, "YES", GREEN, fs=7.5)
+
+# NO → retry 화살표 (오른쪽 돌아 위로)
+ax.annotate("", xy=(8.4, 11.28), xytext=(10.8, 10.28),
+    arrowprops=dict(arrowstyle="-|>", color=RED, lw=1.5,
+                    connectionstyle="arc3,rad=-0.3", linestyle="dashed"), zorder=5)
+ax.text(10.85, 10.78, "🔄 검색어 조정 후\n재시도 (최대 1회)", ha="left", va="center",
+        fontsize=7.8, color=RED, fontstyle="italic", zorder=6)
+badge(ax, 10.5, 10.28, "NO / retry", RED, fs=7.5)
+
+# ③ Cross-Model Verification 박스
+num_badge(ax, 5.65, 9.05, "③")
+ax.add_patch(FancyBboxPatch((5.9, 7.35), 10.8, 2.0,
+    boxstyle="round,pad=0,rounding_size=0.3",
+    facecolor="#F8FAFC", edgecolor=BLUE, linewidth=1.8, zorder=2))
+ax.text(11.3, 9.17, "Cross-Model Verification", ha="center", va="center",
+        fontsize=9.5, fontweight="bold", color=BLUE, zorder=4)
+
+# 행 A: 요약
+rbox(ax, 6.1, 8.60, 3.2, 0.58, C_GPT, "GPT-4o-mini: 요약 생성",
+     sub="summarize_article()", fs=9.0, bc=GREEN, lw=1.5)
+arr(ax, 9.3, 8.89, 10.1, 8.89, color=C_TEXT, lw=1.4)
+rbox(ax, 10.1, 8.60, 3.6, 0.58, C_CLAUDE, "Claude: 충실도 검증",
+     sub="faithfulness ≥ 0.70", fs=9.0, bc=BLUE, lw=1.5)
+arr(ax, 13.7, 8.89, 14.4, 9.15, color=GREEN, lw=1.3)
+rbox(ax, 14.4, 8.72, 1.9, 0.45, C_PASS, "✓ 통과", fs=8.5, bc=GREEN)
+arr(ax, 13.7, 8.89, 14.4, 8.62, color=RED, lw=1.3)
+rbox(ax, 14.4, 8.45, 1.9, 0.45, C_FAIL, "✗ 탈락", fs=8.5, bc=RED)
+
+# 행 B: 퀴즈
+rbox(ax, 6.1, 7.48, 3.2, 0.58, C_GPT, "GPT-4o-mini: 퀴즈 생성",
+     sub="generate_quizzes()", fs=9.0, bc=GREEN, lw=1.5)
+arr(ax, 9.3, 7.77, 10.1, 7.77, color=C_TEXT, lw=1.4)
+rbox(ax, 10.1, 7.48, 3.6, 0.58, C_CLAUDE, "Claude: 퀴즈 검증",
+     sub="verified_count > 0", fs=9.0, bc=BLUE, lw=1.5)
+arr(ax, 13.7, 7.77, 14.4, 8.03, color=GREEN, lw=1.3)
+arr(ax, 13.7, 7.77, 14.4, 7.50, color=RED, lw=1.3)
+
+arr(ax, 8.4, 7.35, 8.4, 6.88, color=GREEN, lw=1.8)
+
+# ④ 저장
+num_badge(ax, 5.65, 6.50, "④")
+rbox(ax, 5.9, 6.18, 5.0, 0.65, C_PASS,
+     "검증된 콘텐츠 저장",
+     sub="save_content()  ·  요약 + 퀴즈 → DB", fs=9.5, bc=GREEN, lw=1.8)
+
+arr(ax, 8.4, 6.18, 8.4, 5.65, color=AMBER, lw=1.8)
+
+# ⑤ Reflection
+num_badge(ax, 5.65, 5.27, "⑤")
+rbox(ax, 5.9, 4.95, 5.0, 0.65, C_REFLECT,
+     "Claude: 실행 반성 (Reflection)",
+     sub="save_reflection()  ·  품질 평가 + 다음 전략 메모", fs=9.5, bc=AMBER, lw=2.0)
+
+# Reflection → Memory 피드백 화살표
+ax.annotate("", xy=(16.2, 13.75), xytext=(16.2, 4.95),
+    arrowprops=dict(arrowstyle="-|>", color=PURPLE, lw=1.8,
+                    connectionstyle="arc3,rad=0.0", linestyle="dashed"), zorder=5)
+ax.text(16.40, 9.35, "다음 실행에\n반영", ha="left", va="center",
+        fontsize=8.0, color=PURPLE, fontstyle="italic", zorder=6)
+ax.plot([10.9, 16.2], [5.275, 5.275], color=PURPLE, lw=1.8,
+        linestyle="dashed", zorder=5)
+ax.plot([16.2, 16.2], [5.275, 14.19], color=PURPLE, lw=1.8,
+        linestyle="dashed", zorder=5)
+ax.annotate("", xy=(16.7, 14.19), xytext=(16.2, 14.19),
+    arrowprops=dict(arrowstyle="-|>", color=PURPLE, lw=1.8), zorder=5)
 
 
 # ═══════════════════════════════════════════════════════════════
-# LAYER 3 — 관측 계층
+# PHASE 3 — 사용자 출력 (하단)
 # ═══════════════════════════════════════════════════════════════
-layer_bg(ax, 0.3, 2.30, 10.8, 1.38, "Layer 3  ·  Observability")
+phase_bg(ax, 0.3, 0.18, 16.9, 0.95, C_PHASE3, PURPLE, "", PURPLE)
 
-box(ax, 0.65, 2.45, 4.8, 1.05, C_OBS,
-    "PipelineLogger  (core/logger.py)",
-    sublabel="pipeline_runs  ·  pipeline_logs  ·  failure_type  ·  cost_usd",
-    fontsize=9.5, lw=1.4)
+ax.text(0.6, 0.88, "Phase 3  ·  사용자 수신", ha="left", va="center",
+        fontsize=9.5, fontweight="bold", color=PURPLE)
 
-ax.text(6.0, 3.32, "failure_type classification:", ha="left", va="center",
-        fontsize=8, fontweight="bold", color=C_TEXT)
-failure_types = [
-    ("technical",        "#EF4444"),
-    ("policy_rejected",  "#F97316"),
-    ("quality_rejected", "#EAB308"),
-    ("not_found",        "#8B5CF6"),
+output_cards = [
+    (1.8,  "오늘의 브리핑"),
+    (6.2,  "퀴즈 3문제"),
+    (10.6, "개념 레벨업"),
+    (14.5, "스트릭"),
 ]
-for i, (ft, col) in enumerate(failure_types):
-    ax.text(6.0 + i * 2.4, 2.95, f"● {ft}",
-            ha="left", va="center", fontsize=7.5, color=col)
+for cx, label in output_cards:
+    rbox(ax, cx, 0.25, 3.5, 0.58, C_PHASE3, label, fs=9.5, bc=PURPLE, lw=1.4)
 
-ax.text(6.0, 2.60,
-        "quiz_pass_rate  ·  avg_faithfulness  ·  run_quality: success / partial / failed  ·  cost_usd",
-        ha="left", va="center", fontsize=7.5, color=C_SUB)
-
-# T5 → Observability
-arrow(ax, 2.90, 4.15, 2.90, 3.50)
-
-# 오케스트레이션 → 로거 (token 집계, 점선)
-ax.annotate("", xy=(1.5, 3.50), xytext=(3.2, 10.08),
-            arrowprops=dict(arrowstyle="-|>", color=C_ARROW, lw=1.0,
-                            connectionstyle="arc3,rad=0.42",
-                            linestyle="dashed"), zorder=5)
-ax.text(0.68, 6.8, "token\nusage", ha="center", va="center",
-        fontsize=7, color=C_SUB, fontstyle="italic", rotation=85)
+# Phase 2 → Phase 3 화살표
+arr(ax, 8.4, 4.95, 8.4, 1.20, color=PURPLE, lw=1.8)
 
 
 # ═══════════════════════════════════════════════════════════════
 # 범례
 # ═══════════════════════════════════════════════════════════════
 legend_items = [
-    (C_ORCH,    "Orchestration  (Claude Haiku 4.5)"),
-    (C_TOOLS,   "Pipeline Tools  (MCP)"),
-    (C_EXT,     "External APIs"),
-    (C_SESSION, "Session Store  (Token Isolation)"),
-    (C_OBS,     "Observability Layer"),
-    (C_ENTRY,   "Entry Points"),
+    (C_CLAUDE,  BLUE,   "Claude (Orchestrator + Verifier)"),
+    (C_GPT,     GREEN,  "GPT-5 (Generator)"),
+    (C_TOOL,    AMBER,  "Tool 호출"),
+    (C_MEMORY,  PURPLE, "Cross-run Memory"),
+    (C_REFLECT, AMBER,  "Reflection"),
+    (C_DIAMOND, AMBER,  "Decision Point"),
 ]
-lx, ly = 11.45, 5.30
-ax.text(lx, ly + 0.12, "Legend", ha="left", va="bottom",
-        fontsize=8.5, fontweight="bold", color=C_TEXT)
-for i, (col, label) in enumerate(legend_items):
-    yi = ly - i * 0.43
-    rect = FancyBboxPatch((lx, yi - 0.15), 0.33, 0.28,
-                          boxstyle="round,pad=0,rounding_size=0.06",
-                          facecolor=col, edgecolor=C_BORDER, linewidth=0.8, zorder=6)
-    ax.add_patch(rect)
-    ax.text(lx + 0.44, yi, label, ha="left", va="center",
-            fontsize=8, color=C_TEXT, zorder=6)
+lx = 17.3
+ly = 14.5
+ax.text(lx + 1.5, ly + 0.55, "Legend", ha="center", va="bottom",
+        fontsize=9.5, fontweight="bold", color=C_TEXT)
+for i, (fc, bc, label) in enumerate(legend_items):
+    yi = ly - i * 0.65
+    ax.add_patch(FancyBboxPatch((lx, yi - 0.18), 0.42, 0.34,
+        boxstyle="round,pad=0,rounding_size=0.06",
+        facecolor=fc, edgecolor=bc, linewidth=1.0, zorder=6))
+    ax.text(lx + 0.58, yi, label, ha="left", va="center",
+            fontsize=8.5, color=C_TEXT, zorder=6)
+
+# 점선 = 피드백 루프 범례
+ax.plot([lx, lx + 0.42], [ly - 4.3, ly - 4.3],
+        color=PURPLE, lw=1.8, linestyle="dashed", zorder=6)
+ax.text(lx + 0.58, ly - 4.3, "Feedback Loop", ha="left", va="center",
+        fontsize=8.5, color=C_TEXT, zorder=6)
+ax.plot([lx, lx + 0.42], [ly - 4.95, ly - 4.95],
+        color=RED, lw=1.8, linestyle="dashed", zorder=6)
+ax.text(lx + 0.58, ly - 4.95, "Retry Arrow", ha="left", va="center",
+        fontsize=8.5, color=C_TEXT, zorder=6)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -318,8 +330,8 @@ svg_path = os.path.join(out_dir, "architecture.svg")
 png_path = os.path.join(out_dir, "architecture.png")
 
 plt.tight_layout(pad=0.3)
-fig.savefig(svg_path, format="svg", bbox_inches="tight", facecolor="white")
-fig.savefig(png_path, format="png", dpi=300, bbox_inches="tight", facecolor="white")
+fig.savefig(svg_path, format="svg", bbox_inches="tight", facecolor=C_BG)
+fig.savefig(png_path, format="png", dpi=300, bbox_inches="tight", facecolor=C_BG)
 plt.close()
 
 print(f"SVG: {svg_path}")

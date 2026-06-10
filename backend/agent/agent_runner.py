@@ -276,7 +276,7 @@ async def run_agent_pipeline(topics: list[dict] | None = None) -> dict:
 
         print(
             f"\n[비용] Claude {tokens['claude_input']}in/{tokens['claude_output']}out | "
-            f"GPT-5 {tokens['openai_input']}in/{tokens['openai_output']}out | "
+            f"GPT-4o-mini {tokens['openai_input']}in/{tokens['openai_output']}out | "
             f"총 ${cost_usd:.4f}"
         )
         print(
