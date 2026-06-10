@@ -171,15 +171,12 @@ Render Free 티어의 로그 소실 문제를 DB 영속 로그로 대응.
 
 ## 기술 스택
 
-| 파트 | 기술 |
-|------|------|
-| Frontend | Next.js 14 (App Router), Tailwind CSS, PWA |
-| Backend | Python 3.11, FastAPI, asyncio |
-| DB | Supabase (PostgreSQL) |
-| AI 오케스트레이션 | Claude Haiku 4.5 + FastMCP |
-| AI 콘텐츠 생성 | GPT-4o-mini |
-| 웹 검색 | Tavily API |
-| 배포 | Vercel (프론트) + Render Free (백엔드) |
+| Category | Tech |
+|----------|------|
+| Frontend | Next.js / TypeScript / Vercel |
+| Backend | FastAPI / Python / Render |
+| Database | Supabase / PostgreSQL |
+| Agent | Claude + FastMCP |
 
 ---
 
