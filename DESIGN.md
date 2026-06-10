@@ -97,7 +97,7 @@ _GPT_OUT   = 0.60 / 1_000_000   # GPT-4o-mini output
 
 - **arxiv_query**: 학술 논문에 적합한 영문 쿼리
 - **web_query**: 웹 검색에 적합한 영문 쿼리 (더 쉬운 설명 찾기)
-- 챕터 순서대로 진행 → 매일 다른 챕터 커버 (7일 내 다룬 챕터는 건너뜀)
+- 챕터 순서대로 진행 → `기수집 날짜 수 % 전체 챕터 수`로 오늘 챕터 자동 결정
 
 ### 3-tier 수집 소스
 
@@ -155,7 +155,7 @@ PASS → 저장
 FAIL → 폐기
 ```
 
-목표 통과율: 90% 이상 (benchmark.py로 측정).
+실측 통과율: 약 30~40%. 엄격한 기준(불확실하면 탈락)을 의도적으로 유지한 결과다.
 
 ### 검증 실패 시 탈락 처리 (이전 버전과 다름)
 
@@ -277,7 +277,7 @@ async def get_collection_plan(topic_name: str, category: str) -> dict:
     """
 ```
 
-collect_articles 전에 항상 이 도구를 먼저 호출해 오늘 어떤 챕터를 다룰지, 어떤 쿼리로 검색할지 계획을 잡습니다. 7일 내 이미 다룬 챕터는 자동 건너뜁니다.
+collect_articles 전에 항상 이 도구를 먼저 호출해 오늘 어떤 챕터를 다룰지, 어떤 쿼리로 검색할지 계획을 잡습니다. 기수집 날짜 수를 기준으로 다음 챕터를 자동으로 결정합니다.
 
 ---
 
@@ -327,17 +327,19 @@ curriculum = await _generate_curriculum(topic_name, category, topic_key)
 ### 챕터 순환 로직
 
 ```python
-# 최근 7일간 이미 다룬 챕터 조회
-covered_ids = {row["source"].replace("chapter:", "") for row in recent.data}
+# contents 테이블에서 이 토픽의 기수집 날짜 수 조회
+count_res = supabase.table("contents")
+    .select("collected_at")
+    .eq("topic_category", topic_name)
+    .execute()
 
-# 아직 안 다룬 챕터 중 가장 앞선 것 선택, 없으면 첫 챕터로 순환
-today_chapter = next(
-    (ch for ch in chapters if ch["id"] not in covered_ids),
-    chapters[0],
-)
+collected_dates = {r["collected_at"] for r in count_res.data}
+
+# 수집이 쌓일수록 자동으로 다음 챕터로 진행
+chapter_index = len(collected_dates) % len(chapters)
 ```
 
-같은 챕터를 매일 반복하지 않고 순서대로 돌아가며 커버합니다. 모든 챕터를 다루면 다시 처음부터 시작합니다.
+수집 횟수가 쌓일수록 자동으로 다음 챕터로 진행합니다. 전체 챕터를 소화하면 처음으로 순환합니다.
 
 ### curriculum_catalog.py — 단일 소스 오브 트루스 (하드코딩)
 
