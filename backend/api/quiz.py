@@ -52,7 +52,7 @@ async def get_review_quizzes(user_id: str):
     quizzes_q = supabase.table("quizzes")\
         .select("*, contents(title, source)")\
         .in_("concept", weak_concepts)\
-        .limit(2)
+        .limit(5)
 
     if answered_ids:
         quizzes_q = quizzes_q.not_.in_("id", answered_ids)
@@ -69,7 +69,7 @@ async def get_review_quizzes(user_id: str):
 
 @router.get("/today/{user_id}")
 async def get_today_quizzes(user_id: str):
-    """오늘의 퀴즈 2문제 반환 (복습 우선)"""
+    """오늘의 퀴즈 반환 (토픽당 2문제, 최대 10문제)"""
     # 유저 관심사 토픽명 가져오기 (contents.topic_category = topic_name으로 저장됨)
     topics = supabase.table("topics").select("name").eq("user_id", user_id).eq("is_active", True).execute()
     if not topics.data:
@@ -90,13 +90,28 @@ async def get_today_quizzes(user_id: str):
     answered = supabase.table("quiz_results").select("quiz_id").eq("user_id", user_id).execute()
     answered_ids = [r["quiz_id"] for r in answered.data]
 
-    # 퀴즈 2문제 가져오기
-    quizzes_q = supabase.table("quizzes").select("*, contents(title, source)").in_("content_id", content_ids).limit(2)
-    if answered_ids:
-        quizzes_q = quizzes_q.not_.in_("id", answered_ids)
+    # 토픽별 2문제씩, 최대 10문제 (난이도 균형: difficulty 오름차순)
+    import random
+    result = []
+    seen_content_ids: set = set()
+    for topic in topic_names:
+        topic_contents = supabase.table("contents").select("id").eq("topic_category", topic).eq("collected_at", today).execute()
+        topic_content_ids = [c["id"] for c in topic_contents.data]
+        if not topic_content_ids:
+            continue
+        q = supabase.table("quizzes").select("*, contents(title, source)") \
+            .in_("content_id", topic_content_ids) \
+            .order("difficulty") \
+            .limit(2)
+        if answered_ids:
+            q = q.not_.in_("id", answered_ids)
+        rows = q.execute().data
+        result.extend(rows)
+        if len(result) >= 10:
+            break
 
-    quizzes = quizzes_q.execute()
-    return quizzes.data
+    random.shuffle(result)
+    return result[:10]
 
 @router.post("/answer")
 async def submit_answer(body: QuizAnswer):
