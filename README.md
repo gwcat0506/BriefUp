@@ -12,18 +12,7 @@
 
 ## 실제 구현 화면
 
-<table>
-<tr>
-<td align="center"><b>오늘의 학습 현황</b></td>
-<td align="center"><b>관심사 설정</b></td>
-<td align="center"><b>AI 피드백</b></td>
-</tr>
-<tr>
-<td><img src="docs/mockup_home.png" width="220"/></td>
-<td><img src="docs/mockup_mypage.png" width="220"/></td>
-<td><img src="docs/mockup_feedback.png" width="220"/></td>
-</tr>
-</table>
+![Mockup](docs/mockup_all.png)
 
 ---
 
