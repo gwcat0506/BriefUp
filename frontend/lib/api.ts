@@ -8,16 +8,34 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 // 임시 유저 ID (로그인 없는 MVP용 — 나중에 Supabase Auth로 교체)
 export const TEMP_USER_ID = "00000000-0000-0000-0000-000000000001";
 
-async function fetcher<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API 오류: ${res.status}`);
+// Render 콜드 스타트 대응: 앱 첫 로드 시 백엔드 사전 워밍업
+let warmed = false;
+export function warmupBackend() {
+  if (warmed || API_URL.includes("localhost")) return;
+  warmed = true;
+  fetch(`${API_URL}/health`, { method: "GET" }).catch(() => {});
+}
+
+async function fetcher<T>(path: string, options?: RequestInit, timeoutMs = 15000): Promise<T> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${API_URL}${path}`, {
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+      ...options,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `API 오류: ${res.status}`);
+    }
+    return res.json();
+  } catch (e: any) {
+    if (e.name === "AbortError") throw new Error("서버 응답이 너무 느려요. 잠시 후 다시 시도해주세요.");
+    throw e;
+  } finally {
+    clearTimeout(timer);
   }
-  return res.json();
 }
 
 // ── 콘텐츠 ──────────────────────────────────────────

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api, HomeSummary, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID } from "@/lib/api";
+import { api, HomeSummary, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID, warmupBackend } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -94,7 +94,7 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadData(true); }, []);
+  useEffect(() => { warmupBackend(); loadData(true); }, []);
 
   useEffect(() => {
     const handleFocus = () => loadData();

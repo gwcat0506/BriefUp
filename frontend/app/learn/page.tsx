@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
-import { api, TEMP_USER_ID } from "@/lib/api";
+import { api, TEMP_USER_ID, warmupBackend } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -78,7 +78,7 @@ function LoadingScreen() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAFAF8] px-8">
       <div className="text-6xl mb-5">📖</div>
-      <p className="text-[#1C1C1E] font-bold text-lg mb-1">지식 카드 만드는 중이에요 ✨</p>
+      <p className="text-[#1C1C1E] font-bold text-lg mb-1">학습 콘텐츠 생성 중이에요</p>
       <p className="text-[#9CA3AF] text-sm mb-8">{step.label}...</p>
 
       {/* 진행 바 */}
@@ -130,8 +130,13 @@ function LearnContent() {
   useEffect(() => {
     if (!chapterId) { setError("챕터 ID가 없어요."); setLoading(false); return; }
 
-    fetch(`${API_URL}/api/chapter/${chapterId}`)
+    warmupBackend();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 60000); // 학습 카드는 GPT 생성 포함 60초
+
+    fetch(`${API_URL}/api/chapter/${chapterId}`, { signal: controller.signal })
       .then(async (r) => {
+        clearTimeout(timer);
         const data = await r.json();
         if (!r.ok) throw new Error(data.detail || `오류: ${r.status}`);
         setContentRow(data.content);
@@ -153,8 +158,13 @@ function LearnContent() {
           setBookmarked(bm.bookmarked);
         }
       })
-      .catch((e) => setError(e.message))
+      .catch((e) => {
+        clearTimeout(timer);
+        setError(e.name === "AbortError" ? "서버 응답이 너무 느려요. 잠시 후 다시 시도해주세요." : e.message);
+      })
       .finally(() => setLoading(false));
+
+    return () => { clearTimeout(timer); controller.abort(); };
   }, [chapterId]);
 
   const currentCard = cards[cardIdx];
@@ -278,7 +288,7 @@ function LearnContent() {
       <div className="flex-1 px-5 py-6 flex flex-col">
         <div
           key={cardIdx}
-          className="flex-1 rounded-3xl p-6 border-2 flex flex-col justify-between select-none"
+          className="rounded-3xl p-6 border-2 flex flex-col select-none"
           style={{
             backgroundColor: style.bg,
             borderColor: style.border,
@@ -290,49 +300,51 @@ function LearnContent() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* 카드 상단 */}
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <span className="text-4xl">{currentCard.emoji}</span>
-              <div>
-                <p className="text-xs font-medium mb-0.5" style={{ color: style.titleColor }}>
-                  {currentCard.type === "hook" ? "공감하기" :
-                   currentCard.type === "concept" ? "개념 이해" :
-                   currentCard.type === "example" ? "실제 사례" :
-                   currentCard.type === "insight" ? "핵심 인사이트" : "정리"}
-                </p>
-                <h2 className="text-[#1C1C1E] font-bold text-lg leading-tight">
-                  {currentCard.title}
-                </h2>
-              </div>
-            </div>
-
-            {/* 내용 */}
-            {currentCard.content && (
-              <p className="text-[#374151] text-base leading-relaxed whitespace-pre-line">
-                {currentCard.content}
+          {/* 카드 헤더 */}
+          <div className="flex items-center gap-3 mb-5">
+            <span className="text-4xl">{currentCard.emoji}</span>
+            <div>
+              <p className="text-xs font-medium mb-0.5" style={{ color: style.titleColor }}>
+                {currentCard.type === "hook" ? "공감하기" :
+                 currentCard.type === "concept" ? "개념 이해" :
+                 currentCard.type === "example" ? "실제 사례" :
+                 currentCard.type === "insight" ? "핵심 인사이트" : "정리"}
               </p>
-            )}
-
-            {/* summary 카드 포인트 */}
-            {currentCard.points && (
-              <div className="flex flex-col gap-3 mt-2">
-                {currentCard.points.map((pt, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <span
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 text-white"
-                      style={{ backgroundColor: style.titleColor }}
-                    >
-                      {i + 1}
-                    </span>
-                    <p className="text-[#374151] text-sm leading-relaxed flex-1">{pt}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+              <h2 className="text-[#1C1C1E] font-bold text-lg leading-tight">
+                {currentCard.title}
+              </h2>
+            </div>
           </div>
 
-          {/* 카드 하단 — 탭 인디케이터 */}
+          {/* 내용 — \n 기준 단락 분리 */}
+          {currentCard.content && (
+            <div className="flex flex-col gap-3 overflow-y-auto max-h-[52vh]">
+              {currentCard.content.split("\n").filter(Boolean).map((para, i) => (
+                <p key={i} className="text-[#374151] text-[15px] leading-relaxed">
+                  {para}
+                </p>
+              ))}
+            </div>
+          )}
+
+          {/* summary 카드 포인트 */}
+          {currentCard.points && (
+            <div className="flex flex-col gap-3 overflow-y-auto max-h-[52vh]">
+              {currentCard.points.map((pt, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 text-white"
+                    style={{ backgroundColor: style.titleColor }}
+                  >
+                    {i + 1}
+                  </span>
+                  <p className="text-[#374151] text-sm leading-relaxed flex-1">{pt}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 탭 인디케이터 */}
           <div className="flex gap-1.5 justify-center mt-6">
             {cards.map((_, i) => (
               <div

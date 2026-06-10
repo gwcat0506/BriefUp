@@ -198,8 +198,8 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
 
     # GPT로 학습 카드 즉시 생성
     response = await client.chat.completions.create(
-        model="gpt-5",
-        max_completion_tokens=3000,
+        model="gpt-4o-mini",
+        max_tokens=3000,
         messages=[{
             "role": "user",
             "content": LEARN_PROMPT.format(
@@ -238,7 +238,7 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
         c.get("content", "") + " " + " ".join(c.get("points", []))
         for c in cards_data.get("cards", [])
     )
-    await _generate_and_save_quizzes(plain_text, content_id)
+    asyncio.create_task(_generate_and_save_quizzes(plain_text, content_id))
 
     return {"content": saved.data[0], "cards": cards_data, "from_cache": False}
 
