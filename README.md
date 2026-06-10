@@ -102,15 +102,6 @@ Claude가 여러 tool_calls를 한 응답에서 동시에 반환하면 `asyncio.
 [iteration 4~] 아티클별 summarize → quizzes → save (아티클 간 병렬)
 ```
 
-### 자율 판단 권한
-
-| 상황 | Claude의 행동 |
-|------|-------------|
-| collect_articles 결과 품질 낮음 | 해당 아티클 건너뜀 |
-| summarize_article 실패 | 해당 아티클 건너뜀 |
-| generate_quizzes verified_count = 0 | save_content 호출 안 함 |
-| 토픽 수집 아티클 0개 | 기록 후 다음 토픽으로 |
-
 ### 세션 스토어 (토큰 절감)
 
 원문 텍스트는 `_session["articles"]`에만 보관. Claude에는 `article_id + 메타데이터`만 노출.  
@@ -158,97 +149,6 @@ Claude는 `search_hints.arxiv_query`, `search_hints.web_query`를
 
 ---
 
-## 파이프라인 상세
-
-### STEP 1 — 콘텐츠 수집 (`agent/collector.py` + `agent/web_search.py`)
-
-3-tier 수집 후 URL 기준 중복 제거:
-
-**Tier 1: arxiv**
-- `arxiv_query` 파라미터 우선 사용 (Claude가 작성한 영문 쿼리)
-- 없으면 `topic_name` 그대로 사용
-
-**Tier 2: RSS** (`agent/collector.py`)
-
-| 카테고리 | 소스 |
-|----------|------|
-| AI/ML | HuggingFace Blog, TLDR AI |
-| 철학 | Philosophy Bites, Philosophers Mag |
-| 경제 | Freakonomics, Economist |
-| 심리학 | Psychology Today |
-
-**Tier 3: 웹 검색** (`agent/web_search.py`)
-- Tavily API로 `web_query` 검색 (`TAVILY_API_KEY` 없으면 자동 스킵)
-- **신뢰도 점수** = Tavily 관련성 60% + 도메인 점수 40%
-  - arxiv.org, nature.com → 1.0 / openai.com, anthropic.com → 0.9 / MIT, Stanford → 0.85
-  - medium.com, substack.com → 0.5 / 약어 사전류 블랙리스트 → 0.0
-  - 임계값 0.65 미만 제거
-
-**품질 필터:**
-- 본문 150자 미만 버림
-- arxiv·Tavily 소스는 관련성 필터 스킵 (이미 관련 쿼리로 수집됨)
-- RSS 소스는 query 키워드 포함 여부 확인
-- 오늘 이미 DB에 있는 URL 제거
-
----
-
-### STEP 2 — 요약 생성 (`agent/summarizer.py`)
-
-```
-원문 본문 (최대 3,000자) → GPT-4o-mini → 3~5문장 한국어 요약
-
-규칙:
-- 원문에 없는 내용 절대 추가 금지
-- 마지막 문장은 "핵심 포인트: ~" 형식
-- 전문용어는 영어 그대로 (RAG, LLM 등)
-```
-
----
-
-### STEP 3 — 퀴즈 생성 (`agent/quiz_gen.py`)
-
-```
-원문 본문 (최대 3,000자) → GPT-4o-mini → 4지선다 퀴즈 2개 (JSON)
-
-퀴즈 필드: question, options, answer, explanation, concept, difficulty
-원칙: 이해 중심 (암기식 금지), 일상 비유 사용, 한국어
-```
-
----
-
-### STEP 4 — 자체 검증 (`agent/verifier.py`)
-
-생성된 퀴즈를 GPT-4o-mini가 원문 기준으로 재검증.
-
-```
-검증 기준 (모두 PASS여야 저장):
-1. 정답이 원문에서 명확히 찾을 수 있는가?
-2. 오답 보기들이 원문에서 틀린 내용인가?
-3. 해설이 원문 내용과 일치하는가?
-4. 문제가 명확하고 모호하지 않은가?
-
-FAIL → 해당 퀴즈 폐기 / verified_count=0 → save_content 호출 안 함
-```
-
-| 생성 방식 | 할루시네이션 비율 |
-|-----------|---------------|
-| 오픈엔디드 생성 | 40~80% |
-| 소스 기반 생성 | ~2% |
-| 소스 기반 + 자체 검증 | ~1% 목표 |
-
----
-
-### STEP 5 — 저장 (`agent/mcp_server.py`)
-
-검증 통과한 항목만 Supabase에 저장.
-
-```
-contents: topic_category, source, title, original_url, summary, collected_at
-quizzes:  content_id, question, options, answer, explanation, concept, difficulty
-```
-
----
-
 ## DB 스키마
 
 | 테이블 | 용도 |
@@ -268,38 +168,6 @@ quizzes:  content_id, question, options, answer, explanation, concept, difficult
 | `pipeline_logs` | 파이프라인 단계별 로그 |
 
 스키마 파일: `backend/schema_v2.sql`, `backend/schema_curricula.sql`
-
-### topic_curricula chapters JSONB 구조
-
-```json
-[
-  {
-    "id": "quantum-computing-1",
-    "title": "큐비트란 무엇인가?",
-    "description": "0과 1을 동시에 가지는 비트의 세계",
-    "level": "입문",
-    "duration": "7분",
-    "concepts": ["큐비트", "중첩", "얽힘"],
-    "search_hints": {
-      "arxiv_query": "qubit quantum computing basics 2024",
-      "web_query": "what is qubit quantum computing explained simply"
-    }
-  }
-]
-```
-
----
-
-## 파이프라인 로깅 (`core/logger.py`)
-
-Render Free 티어는 로그가 소실되므로 Supabase에 직접 기록.
-
-```
-pipeline_runs  — run_id, status, started_at, finished_at, stats(토큰/비용/저장수)
-pipeline_logs  — tool_name, category, inputs(메타만), output, duration_ms, status, error_message
-```
-
-원문 텍스트는 로그에 기록하지 않음. `/api/logs` 엔드포인트로 조회 가능.
 
 ---
 
@@ -465,17 +333,3 @@ npm run dev                     # http://localhost:3000
 | TEMP_USER_ID 하드코딩 | MVP. Supabase Auth 붙이면 이 상수만 교체 |
 | Render Free 콜드 스타트 폴백 | API 실패 시 하드코딩 기본 데이터로 빈 화면 방지 |
 
----
-
-## 의존성 주의사항
-
-- `httpx`: `fastmcp`(≥0.28.1)와 `openai`(≥1.52.0) 요구사항에 맞게 고정
-- `supabase`: 2.x 최신은 2.9.1 (2.12.0은 존재하지 않음)
-- `pydantic-settings`: `mcp` 때문에 ≥2.5.2 필요
-
----
-
-## Auth 현황
-
-현재 MVP: `TEMP_USER_ID = "00000000-0000-0000-0000-000000000001"` 하드코딩.  
-Supabase Auth 연동 예정. 유저 관련 로직 수정 시 이 상수를 참고.

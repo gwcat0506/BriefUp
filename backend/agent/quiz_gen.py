@@ -77,7 +77,7 @@ async def generate_quizzes(title: str, text: str, category: str) -> tuple[list[d
     """소스 기반 퀴즈 생성. (퀴즈 목록, {input, output} 토큰) 반환"""
     response = await client.chat.completions.create(
         model="gpt-5",
-        max_tokens=1800,
+        max_completion_tokens=5000,
         messages=[{
             "role": "user",
             "content": QUIZ_PROMPT.format(

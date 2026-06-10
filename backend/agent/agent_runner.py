@@ -300,8 +300,10 @@ async def run_agent_pipeline(topics: list[dict] | None = None) -> dict:
         )
 
         reflection_data = _session.get("reflection", {})
+        # DB status 컬럼은 running/success/failed만 허용 — "partial"은 failed로 매핑
+        db_status = run_quality if run_quality in ("success", "failed") else "failed"
         logger.finish_run(
-            status=run_quality,
+            status=db_status,
             stats={
                 **stats,
                 "agent_summary": agent_summary,

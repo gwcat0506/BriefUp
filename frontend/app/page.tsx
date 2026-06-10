@@ -24,7 +24,7 @@ const SLIDES = [
     emoji: "🔥",
     title: "매일 하면\n실력이 달라져요",
     desc: "학습을 완료할 때마다 연속 기록이 쌓이고\n레벨이 올라가요.",
-    sub: "하루 빠져도 OK — 보호권 1장이 기록을 지켜줘요 🛡️",
+    sub: "",
     bg: "from-orange-50 to-white",
     accent: "#F97316",
   },

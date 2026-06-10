@@ -5,6 +5,7 @@ Tavily API → 도메인/관련성 기반 필터 → collector.py 동일 형식 
 """
 
 import os
+import re
 from urllib.parse import urlparse
 from tavily import AsyncTavilyClient
 
@@ -83,6 +84,50 @@ _TLD_SCORES: dict[str, float] = {
 }
 
 DEFAULT_DOMAIN_SCORE = 0.5  # 화이트리스트 밖 일반 도메인 기본값 상향
+
+# 최소 본문 길이 (클리닝 후 기준)
+_MIN_CONTENT_LEN = 300
+# 본문 밀도 임계치 — 알파뉴메릭 비율이 이 미만이면 HTML/네비게이션으로 간주
+_MIN_ALPHA_DENSITY = 0.45
+
+
+def _clean_and_extract(raw: str) -> str:
+    """
+    raw_content에서 실제 본문 텍스트를 추출한다.
+    1. HTML 태그 제거
+    2. 마크다운 링크 [text](url) → text (URL 제거해 네비게이션 링크 뭉치 정리)
+    3. 마크다운 헤딩·불릿 기호 제거
+    4. 3단어 미만 짧은 줄(메뉴 항목) 제거
+    5. 중복 공백/개행 정리 후 앞 3000자 반환
+    """
+    # HTML 태그 제거
+    text = re.sub(r"<[^>]+>", " ", raw)
+    # 마크다운 링크 → 텍스트만 유지 ([Main page](...) → "Main page")
+    text = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", text)
+    # 마크다운 헤딩·불릿 기호 제거
+    text = re.sub(r"^#+\s*", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*[*\-]\s+", "", text, flags=re.MULTILINE)
+    # 중복 공백 정리
+    text = re.sub(r"[ \t]+", " ", text)
+
+    # 줄 단위로 쪼개서 짧은 줄(네비게이션/메뉴) 제거
+    lines = []
+    for line in text.splitlines():
+        line = line.strip()
+        if len(line.split()) >= 4:  # 3단어 이하 줄은 메뉴 항목으로 간주
+            lines.append(line)
+
+    cleaned = "\n".join(lines)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
+    return cleaned[:3000]
+
+
+def _is_content_rich(text: str) -> bool:
+    """알파뉴메릭 밀도가 낮으면 HTML/트래킹 코드로 간주."""
+    if not text:
+        return False
+    alpha_num = sum(1 for c in text if c.isalnum())
+    return alpha_num / len(text) >= _MIN_ALPHA_DENSITY
 
 
 def _get_domain_score(url: str) -> float:
@@ -181,11 +226,17 @@ async def search_web(
         if trust_score < trust_threshold:
             continue
 
-        # raw_content(전문) 우선, 없으면 content(스니펫)
-        text = (r.get("raw_content") or r.get("content") or "").strip()[:3000]
+        # content(Tavily 큐레이션 발췌) 우선 — 실제 본문 집중.
+        # raw_content는 페이지 앞부분 네비게이션을 포함하므로 보조용으로만 사용.
+        snippet = (r.get("content") or "").strip()
+        raw = r.get("raw_content") or ""
+        cleaned_raw = _clean_and_extract(raw) if raw else ""
 
-        # collector.py와 동일한 최소 길이 기준
-        if len(text) < 150:
+        if len(snippet) >= _MIN_CONTENT_LEN:
+            text = snippet
+        elif len(cleaned_raw) >= _MIN_CONTENT_LEN and _is_content_rich(cleaned_raw):
+            text = cleaned_raw
+        else:
             continue
 
         filtered.append({

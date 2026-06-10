@@ -48,6 +48,10 @@ _session: dict = {
     "logger": None,
     # collect 단계 step_order 보관 → summarize의 parent_step_order 연결에 사용
     "collect_step_orders": {},  # topic_name → step_order
+    # 토픽별 재시도 횟수 (최대 1회 제한)
+    "retry_counts": {},         # topic_name → int
+    # Claude의 실행 반성 (save_reflection 도구로 기록)
+    "reflection": {},           # {quality_assessment, next_run_suggestions}
 }
 
 # 충실도 통과 기준
@@ -57,6 +61,8 @@ FAITHFULNESS_THRESHOLD = 0.7
 def reset_session(logger: PipelineLogger) -> None:
     _session["articles"].clear()
     _session["collect_step_orders"].clear()
+    _session["retry_counts"].clear()
+    _session["reflection"].clear()
     _session["run_stats"] = {
         "total_contents": 0, "total_quizzes": 0, "total_failed": 0,
         "total_generated_quizzes": 0,
@@ -195,15 +201,19 @@ async def collect_articles(
             })
 
         collected_count = len(raw_contents)
+        # 재시도 횟수 추적
+        retry_no = _session["retry_counts"].get(topic_name, 0)
+        _session["retry_counts"][topic_name] = retry_no + 1
+
         if logger:
             step_order = logger.log_step(
                 tool_name="collect",
-                inputs={"topic_name": topic_name, "category": category},
+                inputs={"topic_name": topic_name, "category": category,
+                        "retry": retry_no},
                 output={
                     "trad": len(trad_items), "web": len(web_items),
                     "total": collected_count,
                     "dedup_filtered": _session["run_stats"]["quality"]["dedup_filtered"],
-                    # 0건이면 quality_rejected로 분류 (기술 실패 아님)
                     **({"failure_type": "quality_rejected"} if collected_count == 0 else {}),
                 },
                 duration_ms=int((time.monotonic() - t) * 1000),
@@ -213,7 +223,20 @@ async def collect_articles(
             )
             # collect step_order 보관 → 이 토픽의 summarize 단계에서 parent로 참조
             _session["collect_step_orders"][topic_name] = step_order
-        return {"topic_name": topic_name, "articles": articles_meta}
+
+        insufficient = collected_count <= 2
+        can_retry = _session["retry_counts"].get(topic_name, 0) <= 1
+        return {
+            "topic_name": topic_name,
+            "articles": articles_meta,
+            "collected_count": collected_count,
+            # Claude에게 재시도 필요 여부를 명시적으로 전달
+            "needs_retry": insufficient and can_retry,
+            "retry_hint": (
+                "수집량이 부족합니다. arxiv_query와 web_query를 더 넓게 조정 후 재시도하세요."
+                if insufficient and can_retry else None
+            ),
+        }
 
     except Exception as e:
         if logger:
@@ -265,6 +288,14 @@ async def summarize_article(article_id: str, category: str) -> dict:
         # GPT-5로 요약 생성
         summary, gen_usage = await _summarize(article["title"], article["text"], category)
         _add_openai_tokens(gen_usage["input"], gen_usage["output"])
+
+        # 빈 요약 조기 차단 — 충실도 검사에 빈 prompt 전달 방지
+        if not summary or len(summary.strip()) < 50:
+            _session["run_stats"]["total_failed"] += 1
+            return {
+                "success": False,
+                "error": "GPT-5 returned empty or too-short summary (token budget or content policy)",
+            }
 
         # Claude Haiku로 충실도 검증 (교차 검증)
         is_faithful, faith_score, issues, faith_usage = await check_faithfulness(
@@ -519,6 +550,45 @@ def _insert_quizzes(quizzes: list[dict], content_id: str) -> int:
         except Exception as e:
             print(f"    [퀴즈 저장 오류] {e}")
     return count
+
+
+@mcp.tool()
+async def save_reflection(
+    quality_assessment: str,
+    next_run_suggestions: list[str],
+) -> dict:
+    """
+    모든 save_content 완료 후 반드시 호출하세요.
+    Claude가 이번 실행 품질을 평가하고 다음 실행을 위한 전략을 기록합니다.
+    이 메모는 다음 실행 초반에 Claude에게 다시 제공됩니다.
+
+    Args:
+        quality_assessment: 이번 실행 전체 품질 한 문장 평가
+            예) "AI/ML 토픽 충실도 양호, 철학 토픽 수집량 저조"
+        next_run_suggestions: 다음 실행을 위한 구체적 제안 (최대 3개)
+            예) ["철학 web_query에서 한국어 제거 권장",
+                 "AI/ML arxiv_query에 survey 2024 추가"]
+    """
+    logger = _log()
+    _session["reflection"] = {
+        "quality_assessment": quality_assessment,
+        "next_run_suggestions": next_run_suggestions[:3],
+    }
+    if logger:
+        logger.log_step(
+            tool_name="reflection",
+            inputs={},
+            output={
+                "assessment": quality_assessment,
+                "suggestions": next_run_suggestions[:3],
+            },
+            duration_ms=0,
+            status="success",
+        )
+    print(f"\n[Reflection] {quality_assessment}")
+    for s in next_run_suggestions[:3]:
+        print(f"  → {s}")
+    return {"saved": True, "suggestions_count": len(next_run_suggestions[:3])}
 
 
 if __name__ == "__main__":
