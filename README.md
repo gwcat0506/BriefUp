@@ -62,7 +62,7 @@ Agent 실행   →   Plan → Collect → Generate → Verify → Reflect
 
 ## 전체 Agent Workflow
 
-![Architecture](docs/architecture.png)
+![Workflow](docs/workflow_diagram.png)
 
 ### 3단계 구조
 
