@@ -6,6 +6,7 @@ import BottomNav from "@/components/layout/BottomNav";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { SUGGESTED_TOPICS as SUGGESTED } from "@/lib/topics";
+import ProgressBar from "@/components/ui/ProgressBar";
 
 type Tab = "settings" | "bookmarks" | "feedback";
 type FeedbackType = "positive" | "negative" | "suggestion";
@@ -68,8 +69,7 @@ export default function MyPage() {
     // 15초마다 폴링 — topic name으로 조회 + startedAt 이후 생성된 것만 감지
     const checkContent = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/content/?category=${encodeURIComponent(topicName)}&limit=5`);
-        const data: { created_at: string }[] = await res.json();
+        const data = await api.getContentsByCategory(topicName, 5);
         const hasNew = data.some(c => new Date(c.created_at).getTime() >= startedAt);
         if (hasNew) {
           clearPipelineTimers();
@@ -328,12 +328,7 @@ export default function MyPage() {
                             : "거의 다 됐어요"}
                         </span>
                       </div>
-                      <div className="h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] rounded-full transition-all duration-1000"
-                          style={{ width: `${Math.min((pipelineStatus.elapsed / PIPELINE_ESTIMATE) * 100, 95)}%` }}
-                        />
-                      </div>
+                      <ProgressBar pct={Math.min((pipelineStatus.elapsed / PIPELINE_ESTIMATE) * 100, 95)} height="sm" duration={1000} />
                     </>
                   )}
                 </div>

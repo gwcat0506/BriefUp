@@ -144,9 +144,36 @@ export const api = {
 
   submitFeedback: (body: { user_id: string; feedback_type: "positive" | "negative" | "suggestion"; message: string; topic_name?: string; content_id?: string }) =>
     fetcher(`/api/user/feedback`, { method: "POST", body: JSON.stringify(body) }),
+
+  // 챕터 학습 카드 (GPT 생성 포함 — 60초 timeout)
+  getChapterContent: (chapterId: string) =>
+    fetcher<{ content: Content; cards: CardsData; from_cache: boolean }>(
+      `/api/chapter/${chapterId}`,
+      undefined,
+      60000,
+    ),
+
+  // 카테고리별 콘텐츠 목록
+  getContentsByCategory: (category: string, limit = 5) =>
+    fetcher<{ created_at: string }[]>(
+      `/api/content/?category=${encodeURIComponent(category)}&limit=${limit}`,
+    ),
 };
 
 // ── 타입 ──────────────────────────────────────────
+export interface Card {
+  type: "hook" | "concept" | "example" | "insight" | "summary";
+  emoji: string;
+  title: string;
+  content?: string;
+  points?: string[];
+}
+
+export interface CardsData {
+  chapter_title: string;
+  cards: Card[];
+}
+
 export interface Content {
   id: string;
   title: string;

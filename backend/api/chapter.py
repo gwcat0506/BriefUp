@@ -11,10 +11,12 @@ from datetime import date
 
 logger = logging.getLogger(__name__)
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from openai import AsyncOpenAI
 
+from core.config import GPT_4O_MINI_MODEL
 from core.supabase import supabase
+from core.utils import extract_json
 
 router = APIRouter()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -165,7 +167,7 @@ async def get_all_chapters():
 
 
 @router.get("/{chapter_id}")
-async def get_chapter_content(chapter_id: str, refresh: bool = False):
+async def get_chapter_content(chapter_id: str, refresh: bool = False, background_tasks: BackgroundTasks = None):
     """
     챕터 학습 콘텐츠 반환.
     DB에 캐시된 것 있으면 반환, 없으면 GPT로 즉시 생성.
@@ -198,7 +200,7 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
 
     # GPT로 학습 카드 즉시 생성
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=GPT_4O_MINI_MODEL,
         max_tokens=3000,
         messages=[{
             "role": "user",
@@ -210,16 +212,12 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
             )
         }]
     )
-    raw = response.choices[0].message.content
-    logger.info("[chapter] GPT raw response: %r", raw)
-    raw = (raw or "").strip()
-    if "```json" in raw:
-        raw = raw.split("```json")[1].split("```")[0].strip()
-    elif "```" in raw:
-        raw = raw.split("```")[1].split("```")[0].strip()
-    logger.info("[chapter] parsed raw (first 300): %r", raw[:300])
+    raw = (response.choices[0].message.content or "").strip()
+    logger.info("[chapter] GPT raw response (first 300): %r", raw[:300])
 
-    cards_data = json.loads(raw)
+    cards_data = extract_json(raw)
+    if not cards_data:
+        raise HTTPException(status_code=500, detail="학습 카드 생성에 실패했어요. 다시 시도해주세요.")
     summary_json = json.dumps(cards_data, ensure_ascii=False)
 
     # DB 저장 (캐시)
@@ -238,7 +236,10 @@ async def get_chapter_content(chapter_id: str, refresh: bool = False):
         c.get("content", "") + " " + " ".join(c.get("points", []))
         for c in cards_data.get("cards", [])
     )
-    asyncio.create_task(_generate_and_save_quizzes(plain_text, content_id))
+    if background_tasks is not None:
+        background_tasks.add_task(_generate_and_save_quizzes, plain_text, content_id)
+    else:
+        asyncio.create_task(_generate_and_save_quizzes(plain_text, content_id))
 
     return {"content": saved.data[0], "cards": cards_data, "from_cache": False}
 
@@ -247,20 +248,15 @@ async def _generate_and_save_quizzes(explanation: str, content_id: str):
     """챕터 설명 기반 퀴즈 생성 + 저장"""
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=GPT_4O_MINI_MODEL,
             max_tokens=2000,
             messages=[{
                 "role": "user",
                 "content": QUIZ_FROM_CHAPTER_PROMPT.format(content=explanation[:3000])
             }]
         )
-        raw = response.choices[0].message.content.strip()
-        if "```json" in raw:
-            raw = raw.split("```json")[1].split("```")[0].strip()
-        elif "```" in raw:
-            raw = raw.split("```")[1].split("```")[0].strip()
-
-        data = json.loads(raw)
+        raw = (response.choices[0].message.content or "").strip()
+        data = extract_json(raw) or {}
         for quiz in data.get("quizzes", []):
             supabase.table("quizzes").insert({
                 "content_id": content_id,

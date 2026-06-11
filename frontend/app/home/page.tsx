@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SkeletonCard, SkeletonStat } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
+import ProgressBar from "@/components/ui/ProgressBar";
 
 // ── localStorage SWR 캐시 ────────────────────────────────────────
 const CACHE_KEY = `home_summary_v1_${TEMP_USER_ID}`;
@@ -157,12 +158,7 @@ export default function HomePage() {
                   </div>
                   <span className="text-[#1C1C1E] font-bold text-sm">{xpInfo?.char_name ?? "알"}</span>
                 </div>
-                <div className="w-full bg-[#F3F4F6] rounded-full h-2.5 mb-1.5 overflow-hidden">
-                  <div
-                    className="h-2.5 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-1000"
-                    style={{ width: `${xpInfo?.progress_pct ?? 0}%` }}
-                  />
-                </div>
+                <ProgressBar pct={xpInfo?.progress_pct ?? 0} height="md" duration={1000} className="mb-1.5" />
                 <div className="flex justify-between items-center">
                   <p className="text-[#9CA3AF] text-xs">{xpInfo?.xp_in_level ?? 0} / {xpInfo?.xp_needed ?? 50} XP</p>
                   <p className="text-[#9CA3AF] text-xs">다음 레벨까지 {(xpInfo?.xp_needed ?? 50) - (xpInfo?.xp_in_level ?? 0)} XP</p>
@@ -291,12 +287,7 @@ export default function HomePage() {
                           <span className="text-sm font-semibold text-[#1C1C1E] truncate">{track.title}</span>
                           <span className="ml-auto text-xs text-[#9CA3AF] flex-shrink-0">{completedCount}/{track.totalChapters} 완료</span>
                         </div>
-                        <div className="w-full bg-[#F3F4F6] rounded-full h-1.5 overflow-hidden">
-                          <div
-                            className="h-1.5 rounded-full transition-all duration-700"
-                            style={{ width: `${pct}%`, background: track.color }}
-                          />
-                        </div>
+                        <ProgressBar pct={pct} height="sm" color={track.color} duration={700} />
                       </div>
 
                       {/* 다음 챕터 */}

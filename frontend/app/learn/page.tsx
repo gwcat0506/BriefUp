@@ -3,22 +3,8 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
-import { api, TEMP_USER_ID, warmupBackend } from "@/lib/api";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-interface Card {
-  type: "hook" | "concept" | "example" | "insight" | "summary";
-  emoji: string;
-  title: string;
-  content?: string;
-  points?: string[];
-}
-
-interface CardsData {
-  chapter_title: string;
-  cards: Card[];
-}
+import { api, TEMP_USER_ID, warmupBackend, Card, CardsData } from "@/lib/api";
+import ProgressBar from "@/components/ui/ProgressBar";
 
 interface ContentRow {
   id: string;
@@ -82,12 +68,7 @@ function LoadingScreen() {
       <p className="text-[#9CA3AF] text-sm mb-8">{step.label}...</p>
 
       {/* 진행 바 */}
-      <div className="w-full max-w-xs bg-[#F3F4F6] rounded-full h-2.5 overflow-hidden mb-3">
-        <div
-          className="h-2.5 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-300"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+      <ProgressBar pct={pct} height="md" duration={300} className="max-w-xs mb-3" />
       <p className="text-[#10B981] text-xs font-bold mb-8">{Math.round(pct)}%</p>
 
       {/* 학습 팁 */}
@@ -131,40 +112,28 @@ function LearnContent() {
     if (!chapterId) { setError("챕터 ID가 없어요."); setLoading(false); return; }
 
     warmupBackend();
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 60000); // 학습 카드는 GPT 생성 포함 60초
 
-    fetch(`${API_URL}/api/chapter/${chapterId}`, { signal: controller.signal })
-      .then(async (r) => {
-        clearTimeout(timer);
-        const data = await r.json();
-        if (!r.ok) throw new Error(data.detail || `오류: ${r.status}`);
+    api.getChapterContent(chapterId)
+      .then(async (data) => {
         setContentRow(data.content);
         if (data.cards?.cards) {
           setCards(data.cards.cards);
         } else {
           throw new Error("카드 데이터가 없어요.");
         }
-        // 학습 시작 기록
         await api.updateProgress({
           user_id: TEMP_USER_ID,
           chapter_id: chapterId,
           track,
           status: "started",
         });
-        // 북마크 여부 확인
         if (data.content?.id) {
           const bm = await api.checkBookmark(TEMP_USER_ID, data.content.id);
           setBookmarked(bm.bookmarked);
         }
       })
-      .catch((e) => {
-        clearTimeout(timer);
-        setError(e.name === "AbortError" ? "서버 응답이 너무 느려요. 잠시 후 다시 시도해주세요." : e.message);
-      })
+      .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-
-    return () => { clearTimeout(timer); controller.abort(); };
   }, [chapterId]);
 
   const currentCard = cards[cardIdx];
@@ -276,12 +245,7 @@ function LearnContent() {
             </button>
           </div>
         </div>
-        <div className="w-full bg-[#F3F4F6] rounded-full h-2 overflow-hidden">
-          <div
-            className="h-2 rounded-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <ProgressBar pct={progress} height="md" duration={500} />
       </div>
 
       {/* 카드 */}

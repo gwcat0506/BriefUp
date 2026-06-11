@@ -5,50 +5,11 @@ GPT-4o-mini가 생성한 퀴즈를 Claude Haiku가 재검증 — 동일 모델 b
 
 import os
 import json
-import re
 import anthropic
+from core.config import CLAUDE_HAIKU_MODEL as MODEL
+from core.utils import extract_json as _extract_json
 
 claude = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-MODEL = "claude-haiku-4-5-20251001"
-
-# ── JSON 추출 헬퍼 ──────────────────────────────────────────────
-
-def _extract_json(text: str) -> dict | None:
-    """Claude 응답에서 JSON 객체를 추출. 코드블록·앞뒤 텍스트를 제거."""
-    text = text.strip()
-    # 코드블록 추출
-    if "```" in text:
-        parts = text.split("```")
-        for part in parts[1::2]:
-            candidate = part.strip()
-            if candidate.startswith("json"):
-                candidate = candidate[4:].strip()
-            try:
-                return json.loads(candidate)
-            except Exception:
-                continue
-
-    # 첫 번째 { ... } 블록 추출 (중첩 허용)
-    start = text.find("{")
-    if start == -1:
-        return None
-    depth = 0
-    for i, ch in enumerate(text[start:], start):
-        if ch == "{":
-            depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0:
-                try:
-                    return json.loads(text[start:i+1])
-                except Exception:
-                    break
-
-    # 마지막 시도: 직접 파싱
-    try:
-        return json.loads(text)
-    except Exception:
-        return None
 
 
 # ── 요약 충실도 검증 ────────────────────────────────────────────

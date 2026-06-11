@@ -10,12 +10,11 @@ import os
 import anthropic
 from fastmcp import Client
 
+from core.config import CLAUDE_HAIKU_MODEL as MODEL
 from core.logger import PipelineLogger
 from agent.mcp_server import mcp, _session, reset_session
 
 claude = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
-MODEL = "claude-haiku-4-5-20251001"
 
 # 가격 (per token) — Claude Haiku 4.5, GPT-4o-mini
 _HAIKU_IN  = 1.00 / 1_000_000

@@ -34,18 +34,20 @@ async def get_today_content_for_user(user_id: str):
                 seen_keys.add(key)
                 lookup_keys.append(key)
 
-    for key in lookup_keys:
+    if lookup_keys:
         res = (
             supabase.table("contents")
             .select("*")
-            .eq("topic_category", key)
+            .in_("topic_category", lookup_keys)
             .eq("collected_at", today)
             .order("created_at", desc=True)
-            .limit(3)
             .execute()
         )
+        topic_count: dict[str, int] = {}
         for item in (res.data or []):
-            if item["id"] not in seen_ids:
+            cat = item["topic_category"]
+            if topic_count.get(cat, 0) < 3 and item["id"] not in seen_ids:
+                topic_count[cat] = topic_count.get(cat, 0) + 1
                 seen_ids.add(item["id"])
                 all_contents.append(item)
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1286.4pt" height="774.6pt" viewBox="0 0 1286.4 774.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1186.2pt" height="908.28pt" viewBox="0 0 1186.2 908.28" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-06-09T09:55:37.403475</dc:date>
+    <dc:date>2026-06-10T01:34:56.540215</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -21,48 +21,48 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 774.6 
-L 1286.4 774.6 
-L 1286.4 0 
+   <path d="M 0 908.28 
+L 1186.2 908.28 
+L 1186.2 0 
 L 0 0 
 z
 " style="fill: #ffffff"/>
   </g>
   <g id="axes_1">
    <g id="line2d_1">
-    <path d="M 16.056774 96.665 
-L 441.181935 96.665 
-" clip-path="url(#p331f878633)" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
+    <path d="M 14.9 185.868 
+L 384.5 185.868 
+" clip-path="url(#p1b38f46972)" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
    </g>
    <g id="patch_2">
-    <path d="M 33.770323 548.88 
-L 423.468387 548.88 
-Q 436.753548 548.88 436.753548 530.67 
-L 436.753548 479.075 
-Q 436.753548 460.865 423.468387 460.865 
-L 33.770323 460.865 
-Q 20.485161 460.865 20.485161 479.075 
-L 20.485161 530.67 
-Q 20.485161 548.88 33.770323 548.88 
+    <path d="M 30.3 612.756 
+L 369.1 612.756 
+Q 380.65 612.756 380.65 596.124 
+L 380.65 537.912 
+Q 380.65 521.28 369.1 521.28 
+L 30.3 521.28 
+Q 18.75 521.28 18.75 537.912 
+L 18.75 596.124 
+Q 18.75 612.756 30.3 612.756 
 z
-" clip-path="url(#p331f878633)" style="fill: #f0fdf4; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #16a34a; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#p1b38f46972)" style="fill: #f0fdf4; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #16a34a; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
-    <path d="M 42.627097 233.24 
-L 193.192258 233.24 
-Q 206.477419 233.24 206.477419 215.03 
-L 206.477419 160.4 
-Q 206.477419 142.19 193.192258 142.19 
-L 42.627097 142.19 
-Q 29.341935 142.19 29.341935 160.4 
-L 29.341935 215.03 
-Q 29.341935 233.24 42.627097 233.24 
+    <path d="M 34.15 316.152 
+L 165.05 316.152 
+Q 176.6 316.152 176.6 299.52 
+L 176.6 238.536 
+Q 176.6 221.904 165.05 221.904 
+L 34.15 221.904 
+Q 22.6 221.904 22.6 238.536 
+L 22.6 299.52 
+Q 22.6 316.152 34.15 316.152 
 z
-" clip-path="url(#p331f878633)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 2; stroke-linejoin: miter"/>
+" clip-path="url(#p1b38f46972)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 2; stroke-linejoin: miter"/>
    </g>
    <g id="text_1">
     <!-- 역할 -->
-    <g style="fill: #2563eb" transform="translate(111.084677 178.61) scale(0.075 -0.075)">
+    <g style="fill: #2563eb" transform="translate(92.32 259.6032) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-c5ed" d="M 1862 1914 
 Q 1523 1914 1257 2026 
@@ -209,7 +209,7 @@ z
    </g>
    <g id="text_2">
     <!-- ① 에이전트 루프 제어 -->
-    <g style="fill: #1e293b" transform="translate(83.043677 187.7486) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(61.605 267.9468) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-2460" d="M 5325 1958 
 Q 5325 2483 5142 2931 
@@ -570,7 +570,7 @@ z
      <use xlink:href="#NanumSquareR-c5b4" transform="translate(802.999832 0)"/>
     </g>
     <!-- ② 요약 충실도 검증 -->
-    <g style="fill: #1e293b" transform="translate(86.592677 198.731) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(65.4725 280.5353) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-2461" d="M 5325 1958 
 Q 5325 2483 5142 2931 
@@ -1036,7 +1036,7 @@ z
      <use xlink:href="#NanumSquareR-c99d" transform="translate(711.999847 0)"/>
     </g>
     <!-- ③ 퀴즈 교차 검증 -->
-    <g style="fill: #1e293b" transform="translate(90.141677 209.7134) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(69.34 293.1238) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-2462" d="M 5325 1958 
 Q 5325 2483 5142 2931 
@@ -1286,28 +1286,28 @@ z
     </g>
    </g>
    <g id="patch_4">
-    <path d="M 255.189677 233.24 
-L 405.754839 233.24 
-Q 419.04 233.24 419.04 215.03 
-L 419.04 160.4 
-Q 419.04 142.19 405.754839 142.19 
-L 255.189677 142.19 
-Q 241.904516 142.19 241.904516 160.4 
-L 241.904516 215.03 
-Q 241.904516 233.24 255.189677 233.24 
+    <path d="M 226.65 316.152 
+L 365.25 316.152 
+Q 376.8 316.152 376.8 299.52 
+L 376.8 238.536 
+Q 376.8 221.904 365.25 221.904 
+L 226.65 221.904 
+Q 215.1 221.904 215.1 238.536 
+L 215.1 299.52 
+Q 215.1 316.152 226.65 316.152 
 z
-" clip-path="url(#p331f878633)" style="fill: #dcfce7; stroke: #16a34a; stroke-width: 2; stroke-linejoin: miter"/>
+" clip-path="url(#p1b38f46972)" style="fill: #dcfce7; stroke: #16a34a; stroke-width: 2; stroke-linejoin: miter"/>
    </g>
    <g id="text_3">
     <!-- 역할 -->
-    <g style="fill: #16a34a" transform="translate(323.647258 178.61) scale(0.075 -0.075)">
+    <g style="fill: #16a34a" transform="translate(288.67 259.6032) scale(0.08 -0.08)">
      <use xlink:href="#NanumSquareR-c5ed"/>
      <use xlink:href="#NanumSquareR-d560" transform="translate(90.999985 0)"/>
     </g>
    </g>
    <g id="text_4">
     <!-- ① 아티클 요약 생성 -->
-    <g style="fill: #1e293b" transform="translate(299.155258 187.7486) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(261.8225 267.9468) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-c544" d="M 3309 2272 
 Q 3309 1466 2928 1021 
@@ -1591,7 +1591,7 @@ z
      <use xlink:href="#NanumSquareR-c131" transform="translate(711.999847 0)"/>
     </g>
     <!-- ② 퀴즈 3문제 생성 -->
-    <g style="fill: #1e293b" transform="translate(300.364258 198.731) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(263.14 280.5353) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-33" d="M 538 3802 
 Q 621 3942 742 4070 
@@ -1688,7 +1688,7 @@ z
      <use xlink:href="#NanumSquareR-c131" transform="translate(680.999847 0)"/>
     </g>
     <!-- ③ 토픽 분류 -->
-    <g style="fill: #1e293b" transform="translate(310.777258 209.7134) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(274.4875 293.1238) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-d1a0" d="M 4883 1498 
 L 3136 1498 
@@ -1827,34 +1827,34 @@ z
     </g>
    </g>
    <g id="patch_5">
-    <path d="M 73.625806 360.71 
-L 179.907097 360.71 
-Q 193.192258 360.71 193.192258 342.5 
-L 193.192258 339.465 
-Q 193.192258 321.255 179.907097 321.255 
-L 73.625806 321.255 
-Q 60.340645 321.255 60.340645 339.465 
-L 60.340645 342.5 
-Q 60.340645 360.71 73.625806 360.71 
+    <path d="M 49.55 418.716 
+L 157.35 418.716 
+Q 168.9 418.716 168.9 402.084 
+L 168.9 396.54 
+Q 168.9 379.908 157.35 379.908 
+L 49.55 379.908 
+Q 38 379.908 38 396.54 
+L 38 402.084 
+Q 38 418.716 49.55 418.716 
 z
-" clip-path="url(#p331f878633)" style="fill: #dcfce7; stroke: #16a34a; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#p1b38f46972)" style="fill: #dcfce7; stroke: #16a34a; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="patch_6">
-    <path d="M 264.046452 360.71 
-L 370.327742 360.71 
-Q 383.612903 360.71 383.612903 342.5 
-L 383.612903 339.465 
-Q 383.612903 321.255 370.327742 321.255 
-L 264.046452 321.255 
-Q 250.76129 321.255 250.76129 339.465 
-L 250.76129 342.5 
-Q 250.76129 360.71 264.046452 360.71 
+    <path d="M 230.5 418.716 
+L 346 418.716 
+Q 357.55 418.716 357.55 402.084 
+L 357.55 396.54 
+Q 357.55 379.908 346 379.908 
+L 230.5 379.908 
+Q 218.95 379.908 218.95 396.54 
+L 218.95 402.084 
+Q 218.95 418.716 230.5 418.716 
 z
-" clip-path="url(#p331f878633)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#p1b38f46972)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_5">
     <!-- 검증 요청 -->
-    <g style="fill: #6b7280" transform="translate(207.389274 329.146) scale(0.075 -0.075)">
+    <g style="fill: #6b7280" transform="translate(178.365 388.224) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-ccad" d="M 3347 1344 
 Q 3718 1344 4041 1270 
@@ -1952,34 +1952,34 @@ z
     </g>
    </g>
    <g id="patch_7">
-    <path d="M 277.331613 445.69 
-L 352.614194 445.69 
-Q 365.899355 445.69 365.899355 427.48 
-L 365.899355 430.515 
-Q 365.899355 412.305 352.614194 412.305 
-L 277.331613 412.305 
-Q 264.046452 412.305 264.046452 430.515 
-L 264.046452 427.48 
-Q 264.046452 445.69 277.331613 445.69 
+    <path d="M 242.05 501.876 
+L 322.9 501.876 
+Q 334.45 501.876 334.45 485.244 
+L 334.45 485.244 
+Q 334.45 468.612 322.9 468.612 
+L 242.05 468.612 
+Q 230.5 468.612 230.5 485.244 
+L 230.5 485.244 
+Q 230.5 501.876 242.05 501.876 
 z
-" clip-path="url(#p331f878633)" style="fill: #bbf7d0; stroke: #16a34a; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#p1b38f46972)" style="fill: #bbf7d0; stroke: #16a34a; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="patch_8">
-    <path d="M 166.621935 445.69 
-L 241.904516 445.69 
-Q 255.189677 445.69 255.189677 427.48 
-L 255.189677 430.515 
-Q 255.189677 412.305 241.904516 412.305 
-L 166.621935 412.305 
-Q 153.336774 412.305 153.336774 430.515 
-L 153.336774 427.48 
-Q 153.336774 445.69 166.621935 445.69 
+    <path d="M 126.55 501.876 
+L 207.4 501.876 
+Q 218.95 501.876 218.95 485.244 
+L 218.95 485.244 
+Q 218.95 468.612 207.4 468.612 
+L 126.55 468.612 
+Q 115 468.612 115 485.244 
+L 115 485.244 
+Q 115 501.876 126.55 501.876 
 z
-" clip-path="url(#p331f878633)" style="fill: #fecaca; stroke: #ef4444; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#p1b38f46972)" style="fill: #fecaca; stroke: #ef4444; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_6">
     <!-- 충실도 ≥ 0.70 -->
-    <g style="fill: #16a34a" transform="translate(295.155847 449.0315) scale(0.075 -0.075)">
+    <g style="fill: #16a34a" transform="translate(258.975 500.6208) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-2265" d="M 416 1062 
 L 416 1472 
@@ -2052,7 +2052,7 @@ z
      <use xlink:href="#NanumSquareR-30" transform="translate(527.499863 0)"/>
     </g>
     <!-- 검증 통과 수 &gt; 0 -->
-    <g style="fill: #16a34a" transform="translate(291.874597 459.044) scale(0.075 -0.075)">
+    <g style="fill: #16a34a" transform="translate(255.475 511.3008) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-d1b5" d="M 2682 1862 
 L 2682 2458 
@@ -2225,7 +2225,7 @@ z
    </g>
    <g id="text_7">
     <!-- failure_type = -->
-    <g style="fill: #ef4444" transform="translate(180.938226 448.963531) scale(0.075 -0.075)">
+    <g style="fill: #ef4444" transform="translate(142.095 500.5483) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-66" d="M 794 2912 
 L 205 2912 
@@ -2494,7 +2494,7 @@ z
      <use xlink:href="#NanumSquareR-3d" transform="translate(561.999847 0)"/>
     </g>
     <!-- policy_rejected -->
-    <g style="fill: #ef4444" transform="translate(178.65307 459.044) scale(0.075 -0.075)">
+    <g style="fill: #ef4444" transform="translate(139.6575 511.3008) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-6f" d="M 1818 3347 
 Q 2515 3347 2899 2937 
@@ -2626,7 +2626,7 @@ z
    </g>
    <g id="text_8">
     <!-- 설계 근거 -->
-    <g style="fill: #16a34a" transform="translate(33.770323 471.184) scale(0.085 -0.085)">
+    <g style="fill: #16a34a" transform="translate(30.3 533.4768) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-c124" d="M 1453 -934 
 L 1453 672 
@@ -2785,7 +2785,7 @@ z
    </g>
    <g id="text_9">
     <!-- • 동일 모델이 생성과 검증을 모두 하면 같은 오류를 반복 (Blind Spot) -->
-    <g style="fill: #1e293b" transform="translate(33.770323 494.25) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(30.3 555.6528) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-2022" transform="scale(0.015625)"/>
       <path id="NanumSquareR-b3d9" d="M 2912 1242 
@@ -3598,7 +3598,7 @@ z
    </g>
    <g id="text_10">
     <!-- • Claude Haiku: Tool Use 지시 이해에 강함 → 에이전트 역할 최적 -->
-    <g style="fill: #1e293b" transform="translate(33.770323 518.53) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(30.3 579.492) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-43" d="M 2189 4518 
 Q 2650 4518 3005 4400 
@@ -4207,7 +4207,7 @@ z
    </g>
    <g id="text_11">
     <!-- • GPT-5: 한국어 생성 품질 + 구조화 출력에 강함 → 생성 역할 최적 -->
-    <g style="fill: #1e293b" transform="translate(33.770323 539.775) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(30.3 600.5592) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-47" d="M 2208 4518 
 Q 2694 4518 3052 4400 
@@ -4797,7 +4797,7 @@ z
    </g>
    <g id="text_12">
     <!-- Claude Haiku 4.5 -->
-    <g style="fill: #1e293b" transform="translate(78.508896 179.846) scale(0.1 -0.1)">
+    <g style="fill: #1e293b" transform="translate(58.22918 261.6213) scale(0.105 -0.105)">
      <defs>
       <path id="NanumSquareB-43" d="M 3866 352 
 Q 3520 19 3110 -109 
@@ -5097,7 +5097,7 @@ z
    </g>
    <g id="text_13">
     <!-- 오케스트레이션 + 검증 -->
-    <g style="fill: #6b7280" transform="translate(84.465677 202.833) scale(0.072 -0.072)">
+    <g style="fill: #6b7280" transform="translate(62.44 283.1848) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-cf00" d="M 371 742 
 Q 851 1056 1174 1296 
@@ -5274,7 +5274,7 @@ z
    </g>
    <g id="text_14">
     <!-- GPT-5 -->
-    <g style="fill: #1e293b" transform="translate(316.177727 179.846) scale(0.1 -0.1)">
+    <g style="fill: #1e293b" transform="translate(280.940742 261.6213) scale(0.105 -0.105)">
      <defs>
       <path id="NanumSquareB-47" d="M 3923 179 
 Q 3616 -32 3203 -134 
@@ -5361,7 +5361,7 @@ z
    </g>
    <g id="text_15">
     <!-- 콘텐츠 생성 전담 -->
-    <g style="fill: #6b7280" transform="translate(305.740258 202.833) scale(0.072 -0.072)">
+    <g style="fill: #6b7280" transform="translate(268.47 283.1848) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-cf58" d="M 909 3571 
 L 4371 3622 
@@ -5545,7 +5545,7 @@ z
    </g>
    <g id="text_16">
     <!-- GPT-5: 요약/퀴즈 생성 -->
-    <g style="fill: #1e293b" transform="translate(85.923952 343.065) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(60.205 401.517) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-3a" d="M 768 819 
 L 1498 819 
@@ -5941,7 +5941,7 @@ z
    </g>
    <g id="text_17">
     <!-- Claude: 검증 판정 -->
-    <g style="fill: #1e293b" transform="translate(284.478698 343.065) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(253.617578 401.517) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-ac80" d="M 5133 1402 
 L 5133 -890 
@@ -6199,7 +6199,7 @@ z
    </g>
    <g id="text_18">
     <!-- 저장 진행 -->
-    <g style="fill: #1e293b" transform="translate(298.440403 431.08) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(264.97 487.449) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-c800" d="M 2035 2022 
 Q 1990 1914 1900 1798 
@@ -6479,7 +6479,7 @@ z
    </g>
    <g id="text_19">
     <!-- 스킵 (탈락) -->
-    <g style="fill: #1e293b" transform="translate(184.86596 431.08) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(146.436719 487.449) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-c2a4" d="M 5619 429 
 L 5619 -109 
@@ -6688,7 +6688,7 @@ z
    </g>
    <g id="text_20">
     <!-- (A) -->
-    <g style="fill: #2563eb" transform="translate(20.485161 70.235) scale(0.16 -0.16)">
+    <g style="fill: #2563eb" transform="translate(18.75 160.6498) scale(0.17 -0.17)">
      <defs>
       <path id="NanumSquareB-41" d="M 4179 -166 
 L 3514 -166 
@@ -6722,7 +6722,7 @@ z
    </g>
    <g id="text_21">
     <!-- 이중 모델 역할 분리 -->
-    <g style="fill: #0f172a" transform="translate(51.483871 66.0975) scale(0.115 -0.115)">
+    <g style="fill: #0f172a" transform="translate(47.625 157.3297) scale(0.125 -0.125)">
      <defs>
       <path id="NanumSquareB-c774" d="M 4461 -896 
 L 4461 5005 
@@ -7137,7 +7137,7 @@ z
    </g>
    <g id="text_22">
     <!-- 역할별 최적 모델 선택 + 교차 검증 -->
-    <g style="fill: #6b7280" transform="translate(51.483871 90.734) scale(0.08 -0.08)">
+    <g style="fill: #6b7280" transform="translate(47.625 179.6345) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-bcc4" d="M 3213 2266 
 L 582 2266 
@@ -7297,81 +7297,71 @@ z
     </g>
    </g>
    <g id="patch_9">
-    <path d="M 195.191573 340.9825 
-Q 221.977574 340.9825 246.974721 340.9825 
+    <path d="M 170.9009 399.312 
+Q 193.926871 399.312 215.163988 399.312 
 " style="fill: none; stroke: #1e293b; stroke-width: 1.6; stroke-linecap: round"/>
-    <path d="M 242.974721 338.9825 
-L 246.974721 340.9825 
-L 242.974721 342.9825 
+    <path d="M 211.163988 397.312 
+L 215.163988 399.312 
+L 211.163988 401.312 
 z
 " style="fill: #1e293b; stroke: #1e293b; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_10">
-    <path d="M 317.187097 362.71061 
-Q 317.187097 384.991427 317.187097 405.595192 
-" style="fill: none; stroke: #16a34a; stroke-width: 1.5; stroke-linecap: round"/>
-    <path d="M 319.187097 401.595192 
-L 317.187097 405.595192 
-L 315.187097 401.595192 
+    <path d="M 288.25 420.714973 
+Q 288.25 442.27633 288.25 462.048833 
+" style="fill: none; stroke: #16a34a; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 290.25 458.048833 
+L 288.25 462.048833 
+L 286.25 458.048833 
 z
-" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.5; stroke-linecap: round"/>
+" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_11">
-    <path d="M 280.08057 361.793293 
-Q 244.120193 384.989043 209.569116 407.275743 
-" style="fill: none; stroke: #ef4444; stroke-width: 1.5; stroke-linecap: round"/>
-    <path d="M 214.014599 406.788221 
-L 209.569116 407.275743 
-L 211.846389 403.426843 
+    <path d="M 228.996564 420.030433 
+Q 203.551419 442.27676 179.453 463.345663 
+" style="fill: none; stroke: #ef4444; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 183.780772 462.218549 
+L 179.453 463.345663 
+L 181.147973 459.207177 
 z
-" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.5; stroke-linecap: round"/>
+" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_12">
-    <path d="M 117.909677 235.241073 
-Q 117.909677 277.249248 117.909677 317.915782 
+    <path d="M 99.6 318.148266 
+Q 99.6 348.027327 99.6 376.564747 
 " style="fill: none; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #16a34a; stroke-width: 1.2; stroke-linecap: round"/>
-    <path d="M 119.909677 313.915782 
-L 117.909677 317.915782 
-L 115.909677 313.915782 
+    <path d="M 101.6 372.564747 
+L 99.6 376.564747 
+L 97.6 372.564747 
 z
 " style="fill: #16a34a; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #16a34a; stroke-width: 1.2; stroke-linecap: round"/>
    </g>
    <g id="patch_13">
-    <path d="M 330.472258 235.241073 
-Q 330.472258 277.249248 330.472258 317.915782 
+    <path d="M 295.95 318.148266 
+Q 295.95 348.027327 295.95 376.564747 
 " style="fill: none; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #2563eb; stroke-width: 1.2; stroke-linecap: round"/>
-    <path d="M 332.472258 313.915782 
-L 330.472258 317.915782 
-L 328.472258 313.915782 
+    <path d="M 297.95 372.564747 
+L 295.95 376.564747 
+L 293.95 372.564747 
 z
 " style="fill: #2563eb; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #2563eb; stroke-width: 1.2; stroke-linecap: round"/>
    </g>
-   <g id="patch_14">
-    <path d="M 102.95144 361.805729 
-Q 49.765403 397.039629 34.51886 457.8368 
-" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #16a34a; stroke-linecap: round"/>
-    <path d="M 37.43177 454.443431 
-L 34.51886 457.8368 
-L 33.55191 453.470451 
-z
-" style="fill: #16a34a; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #16a34a; stroke-linecap: round"/>
-   </g>
    <g id="text_23">
-    <g id="patch_15">
-     <path d="M 84.72042 245.0475 
-L 151.098935 245.0475 
-Q 153.198935 245.0475 153.198935 242.9475 
-L 153.198935 235.6725 
-Q 153.198935 233.5725 151.098935 233.5725 
-L 84.72042 233.5725 
-Q 82.62042 233.5725 82.62042 235.6725 
-L 82.62042 242.9475 
-Q 82.62042 245.0475 84.72042 245.0475 
+    <g id="patch_14">
+     <path d="M 134.643945 236.1075 
+L 183.906055 236.1075 
+Q 186.156055 236.1075 186.156055 233.8575 
+L 186.156055 226.5825 
+Q 186.156055 224.3325 183.906055 224.3325 
+L 134.643945 224.3325 
+Q 132.393945 224.3325 132.393945 226.5825 
+L 132.393945 233.8575 
+Q 132.393945 236.1075 134.643945 236.1075 
 z
 " style="fill: #2563eb"/>
     </g>
-    <!-- $1 / 1M tokens (in) -->
-    <g style="fill: #ffffff" transform="translate(84.72042 241.1475) scale(0.075 -0.075)">
+    <!-- $1/1M tokens -->
+    <g style="fill: #ffffff" transform="translate(134.643945 232.0575) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareB-24" d="M 1830 -134 
 Q 1421 -109 1033 28 
@@ -7582,79 +7572,65 @@ z
      </defs>
      <use xlink:href="#NanumSquareB-24"/>
      <use xlink:href="#NanumSquareB-31" transform="translate(62.799988 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(123.799973 0)"/>
-     <use xlink:href="#NanumSquareB-2f" transform="translate(148.799957 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(192.499954 0)"/>
-     <use xlink:href="#NanumSquareB-31" transform="translate(217.499939 0)"/>
-     <use xlink:href="#NanumSquareB-4d" transform="translate(278.499924 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(363.499908 0)"/>
-     <use xlink:href="#NanumSquareB-74" transform="translate(388.499893 0)"/>
-     <use xlink:href="#NanumSquareB-6f" transform="translate(427.399887 0)"/>
-     <use xlink:href="#NanumSquareB-6b" transform="translate(486.199875 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(540.924866 0)"/>
-     <use xlink:href="#NanumSquareB-6e" transform="translate(597.124863 0)"/>
-     <use xlink:href="#NanumSquareB-73" transform="translate(657.024857 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(706.824844 0)"/>
-     <use xlink:href="#NanumSquareB-28" transform="translate(731.824829 0)"/>
-     <use xlink:href="#NanumSquareB-69" transform="translate(765.524826 0)"/>
-     <use xlink:href="#NanumSquareB-6e" transform="translate(791.42482 0)"/>
-     <use xlink:href="#NanumSquareB-29" transform="translate(851.324814 0)"/>
+     <use xlink:href="#NanumSquareB-2f" transform="translate(123.799973 0)"/>
+     <use xlink:href="#NanumSquareB-31" transform="translate(167.499969 0)"/>
+     <use xlink:href="#NanumSquareB-4d" transform="translate(228.499954 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(313.499939 0)"/>
+     <use xlink:href="#NanumSquareB-74" transform="translate(338.499924 0)"/>
+     <use xlink:href="#NanumSquareB-6f" transform="translate(377.399918 0)"/>
+     <use xlink:href="#NanumSquareB-6b" transform="translate(436.199905 0)"/>
+     <use xlink:href="#NanumSquareB-65" transform="translate(490.924896 0)"/>
+     <use xlink:href="#NanumSquareB-6e" transform="translate(547.124893 0)"/>
+     <use xlink:href="#NanumSquareB-73" transform="translate(607.024887 0)"/>
     </g>
    </g>
    <g id="text_24">
-    <g id="patch_16">
-     <path d="M 294.9955 245.0475 
-L 365.949016 245.0475 
-Q 368.049016 245.0475 368.049016 242.9475 
-L 368.049016 235.6725 
-Q 368.049016 233.5725 365.949016 233.5725 
-L 294.9955 233.5725 
-Q 292.8955 233.5725 292.8955 235.6725 
-L 292.8955 242.9475 
-Q 292.8955 245.0475 294.9955 245.0475 
+    <g id="patch_15">
+     <path d="M 332.556445 236.1075 
+L 386.393555 236.1075 
+Q 388.643555 236.1075 388.643555 233.8575 
+L 388.643555 226.5825 
+Q 388.643555 224.3325 386.393555 224.3325 
+L 332.556445 224.3325 
+Q 330.306445 224.3325 330.306445 226.5825 
+L 330.306445 233.8575 
+Q 330.306445 236.1075 332.556445 236.1075 
 z
 " style="fill: #16a34a"/>
     </g>
-    <!-- $15 / 1M tokens (in) -->
-    <g style="fill: #ffffff" transform="translate(294.9955 241.1475) scale(0.075 -0.075)">
+    <!-- $15/1M tokens -->
+    <g style="fill: #ffffff" transform="translate(332.556445 232.0575) scale(0.075 -0.075)">
      <use xlink:href="#NanumSquareB-24"/>
      <use xlink:href="#NanumSquareB-31" transform="translate(62.799988 0)"/>
      <use xlink:href="#NanumSquareB-35" transform="translate(123.799973 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(184.799957 0)"/>
-     <use xlink:href="#NanumSquareB-2f" transform="translate(209.799942 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(253.499939 0)"/>
-     <use xlink:href="#NanumSquareB-31" transform="translate(278.499924 0)"/>
-     <use xlink:href="#NanumSquareB-4d" transform="translate(339.499908 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(424.499893 0)"/>
-     <use xlink:href="#NanumSquareB-74" transform="translate(449.499878 0)"/>
-     <use xlink:href="#NanumSquareB-6f" transform="translate(488.399872 0)"/>
-     <use xlink:href="#NanumSquareB-6b" transform="translate(547.19986 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(601.92485 0)"/>
-     <use xlink:href="#NanumSquareB-6e" transform="translate(658.124847 0)"/>
-     <use xlink:href="#NanumSquareB-73" transform="translate(718.024841 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(767.824829 0)"/>
-     <use xlink:href="#NanumSquareB-28" transform="translate(792.824814 0)"/>
-     <use xlink:href="#NanumSquareB-69" transform="translate(826.524811 0)"/>
-     <use xlink:href="#NanumSquareB-6e" transform="translate(852.424805 0)"/>
-     <use xlink:href="#NanumSquareB-29" transform="translate(912.324799 0)"/>
+     <use xlink:href="#NanumSquareB-2f" transform="translate(184.799957 0)"/>
+     <use xlink:href="#NanumSquareB-31" transform="translate(228.499954 0)"/>
+     <use xlink:href="#NanumSquareB-4d" transform="translate(289.499939 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(374.499924 0)"/>
+     <use xlink:href="#NanumSquareB-74" transform="translate(399.499908 0)"/>
+     <use xlink:href="#NanumSquareB-6f" transform="translate(438.399902 0)"/>
+     <use xlink:href="#NanumSquareB-6b" transform="translate(497.19989 0)"/>
+     <use xlink:href="#NanumSquareB-65" transform="translate(551.924881 0)"/>
+     <use xlink:href="#NanumSquareB-6e" transform="translate(608.124878 0)"/>
+     <use xlink:href="#NanumSquareB-73" transform="translate(668.024872 0)"/>
     </g>
    </g>
    <g id="text_25">
-    <g id="patch_17">
-     <path d="M 306.330091 411.59 
-L 323.615716 411.59 
-Q 325.575716 411.59 325.575716 409.63 
-L 325.575716 402.84 
-Q 325.575716 400.88 323.615716 400.88 
-L 306.330091 400.88 
-Q 304.370091 400.88 304.370091 402.84 
-L 304.370091 409.63 
-Q 304.370091 411.59 306.330091 411.59 
+    <g id="patch_16">
+     <path d="M 273.214844 480.0435 
+L 291.735156 480.0435 
+Q 293.985156 480.0435 293.985156 477.7935 
+L 293.985156 470.5185 
+Q 293.985156 468.2685 291.735156 468.2685 
+L 273.214844 468.2685 
+Q 270.964844 468.2685 270.964844 470.5185 
+L 270.964844 477.7935 
+Q 270.964844 480.0435 273.214844 480.0435 
 z
 " style="fill: #16a34a"/>
     </g>
     <!-- PASS -->
-    <g style="fill: #ffffff" transform="translate(306.330091 407.95) scale(0.07 -0.07)">
+    <g style="fill: #ffffff" transform="translate(273.214844 475.9935) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareB-53" d="M 1997 339 
 Q 2490 339 2736 537 
@@ -7711,21 +7687,21 @@ z
     </g>
    </g>
    <g id="text_26">
-    <g id="patch_18">
-     <path d="M 243.726837 411.59 
-L 257.795743 411.59 
-Q 259.755743 411.59 259.755743 409.63 
-L 259.755743 402.84 
-Q 259.755743 400.88 257.795743 400.88 
-L 243.726837 400.88 
-Q 241.766837 400.88 241.766837 402.84 
-L 241.766837 409.63 
-Q 241.766837 411.59 243.726837 411.59 
+    <g id="patch_17">
+     <path d="M 211.413086 480.0435 
+L 226.486914 480.0435 
+Q 228.736914 480.0435 228.736914 477.7935 
+L 228.736914 470.5185 
+Q 228.736914 468.2685 226.486914 468.2685 
+L 211.413086 468.2685 
+Q 209.163086 468.2685 209.163086 470.5185 
+L 209.163086 477.7935 
+Q 209.163086 480.0435 211.413086 480.0435 
 z
 " style="fill: #ef4444"/>
     </g>
     <!-- FAIL -->
-    <g style="fill: #ffffff" transform="translate(243.726837 407.95) scale(0.07 -0.07)">
+    <g style="fill: #ffffff" transform="translate(211.413086 475.9935) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareB-46" d="M 3379 4448 
 L 3379 3904 
@@ -7766,57 +7742,57 @@ z
   </g>
   <g id="axes_2">
    <g id="line2d_2">
-    <path d="M 470.895484 96.665 
-L 896.020645 96.665 
-" clip-path="url(#p9ac453c9ed)" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
+    <path d="M 443.3 185.868 
+L 812.9 185.868 
+" clip-path="url(#pab83123161)" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 458.7 327.24 
+L 797.5 327.24 
+Q 809.05 327.24 809.05 310.608 
+L 809.05 221.904 
+Q 809.05 205.272 797.5 205.272 
+L 458.7 205.272 
+Q 447.15 205.272 447.15 221.904 
+L 447.15 310.608 
+Q 447.15 327.24 458.7 327.24 
+z
+" clip-path="url(#pab83123161)" style="fill: #fff1f2; stroke: #ef4444; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
    <g id="patch_19">
-    <path d="M 488.609032 245.38 
-L 878.307097 245.38 
-Q 891.592258 245.38 891.592258 227.17 
-L 891.592258 142.19 
-Q 891.592258 123.98 878.307097 123.98 
-L 488.609032 123.98 
-Q 475.323871 123.98 475.323871 142.19 
-L 475.323871 227.17 
-Q 475.323871 245.38 488.609032 245.38 
+    <path d="M 458.7 488.016 
+L 797.5 488.016 
+Q 809.05 488.016 809.05 471.384 
+L 809.05 357.732 
+Q 809.05 341.1 797.5 341.1 
+L 458.7 341.1 
+Q 447.15 341.1 447.15 357.732 
+L 447.15 471.384 
+Q 447.15 488.016 458.7 488.016 
 z
-" clip-path="url(#p9ac453c9ed)" style="fill: #fff1f2; stroke: #ef4444; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#pab83123161)" style="fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="patch_20">
-    <path d="M 488.609032 415.34 
-L 878.307097 415.34 
-Q 891.592258 415.34 891.592258 397.13 
-L 891.592258 278.765 
-Q 891.592258 260.555 878.307097 260.555 
-L 488.609032 260.555 
-Q 475.323871 260.555 475.323871 278.765 
-L 475.323871 397.13 
-Q 475.323871 415.34 488.609032 415.34 
+    <path d="M 458.7 626.616 
+L 797.5 626.616 
+Q 809.05 626.616 809.05 609.984 
+L 809.05 515.736 
+Q 809.05 499.104 797.5 499.104 
+L 458.7 499.104 
+Q 447.15 499.104 447.15 515.736 
+L 447.15 609.984 
+Q 447.15 626.616 458.7 626.616 
 z
-" clip-path="url(#p9ac453c9ed)" style="fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_21">
-    <path d="M 488.609032 557.985 
-L 878.307097 557.985 
-Q 891.592258 557.985 891.592258 539.775 
-L 891.592258 445.69 
-Q 891.592258 427.48 878.307097 427.48 
-L 488.609032 427.48 
-Q 475.323871 427.48 475.323871 445.69 
-L 475.323871 539.775 
-Q 475.323871 557.985 488.609032 557.985 
-z
-" clip-path="url(#p9ac453c9ed)" style="fill: #f8fafc; stroke: #cbd5e1; stroke-linejoin: miter"/>
+" clip-path="url(#pab83123161)" style="fill: #f8fafc; stroke: #cbd5e1; stroke-linejoin: miter"/>
    </g>
    <g id="line2d_3">
-    <path d="M 484.180645 469.97 
-L 882.735484 469.97 
-" clip-path="url(#p9ac453c9ed)" style="fill: none; stroke: #cbd5e1; stroke-width: 0.8; stroke-linecap: square"/>
+    <path d="M 454.85 543.456 
+L 801.35 543.456 
+" clip-path="url(#pab83123161)" style="fill: none; stroke: #cbd5e1; stroke-width: 0.8; stroke-linecap: square"/>
    </g>
    <g id="text_27">
     <!-- 문제: 원문 직접 전달 시 -->
-    <g style="fill: #ef4444" transform="translate(488.609032 137.334) scale(0.085 -0.085)">
+    <g style="fill: #ef4444" transform="translate(458.7 217.4688) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-bb38" d="M 4832 2611 
 L 992 2611 
@@ -8214,48 +8190,48 @@ z
      <use xlink:href="#NanumSquareB-c2dc" transform="translate(863.399811 0)"/>
     </g>
    </g>
-   <g id="patch_22">
-    <path d="M 497.465806 190.75 
-L 594.890323 190.75 
-Q 608.175484 190.75 608.175484 172.54 
-L 608.175484 163.435 
-Q 608.175484 145.225 594.890323 145.225 
-L 497.465806 145.225 
-Q 484.180645 145.225 484.180645 163.435 
-L 484.180645 172.54 
-Q 484.180645 190.75 497.465806 190.75 
+   <g id="patch_21">
+    <path d="M 466.4 282.888 
+L 551.1 282.888 
+Q 562.65 282.888 562.65 266.256 
+L 562.65 255.168 
+Q 562.65 238.536 551.1 238.536 
+L 466.4 238.536 
+Q 454.85 238.536 454.85 255.168 
+L 454.85 266.256 
+Q 454.85 282.888 466.4 282.888 
 z
-" clip-path="url(#p9ac453c9ed)" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#pab83123161)" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 605 282.888 
+L 678.15 282.888 
+Q 689.7 282.888 689.7 266.256 
+L 689.7 255.168 
+Q 689.7 238.536 678.15 238.536 
+L 605 238.536 
+Q 593.45 238.536 593.45 255.168 
+L 593.45 266.256 
+Q 593.45 282.888 605 282.888 
+z
+" clip-path="url(#pab83123161)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="patch_23">
-    <path d="M 656.887742 190.75 
-L 741.027097 190.75 
-Q 754.312258 190.75 754.312258 172.54 
-L 754.312258 163.435 
-Q 754.312258 145.225 741.027097 145.225 
-L 656.887742 145.225 
-Q 643.602581 145.225 643.602581 163.435 
-L 643.602581 172.54 
-Q 643.602581 190.75 656.887742 190.75 
+    <path d="M 724.35 282.888 
+L 789.8 282.888 
+Q 801.35 282.888 801.35 266.256 
+L 801.35 255.168 
+Q 801.35 238.536 789.8 238.536 
+L 724.35 238.536 
+Q 712.8 238.536 712.8 255.168 
+L 712.8 266.256 
+Q 712.8 282.888 724.35 282.888 
 z
-" clip-path="url(#p9ac453c9ed)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 1.5; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_24">
-    <path d="M 794.167742 190.75 
-L 865.021935 190.75 
-Q 878.307097 190.75 878.307097 172.54 
-L 878.307097 163.435 
-Q 878.307097 145.225 865.021935 145.225 
-L 794.167742 145.225 
-Q 780.882581 145.225 780.882581 163.435 
-L 780.882581 172.54 
-Q 780.882581 190.75 794.167742 190.75 
-z
-" clip-path="url(#p9ac453c9ed)" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#pab83123161)" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
    <g id="text_28">
-    <!-- N articles × 3,000 tokens = -->
-    <g style="fill: #ef4444" transform="translate(580.146064 202.89) scale(0.075 -0.075)">
+    <!-- N articles × 3,000 tokens -->
+    <g style="fill: #ef4444" transform="translate(532.6575 292.8672) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-4e" d="M 531 4448 
 L 1062 4448 
@@ -8322,14 +8298,24 @@ z
      <use xlink:href="#NanumSquareR-65" transform="translate(972.62471 0)"/>
      <use xlink:href="#NanumSquareR-6e" transform="translate(1027.124695 0)"/>
      <use xlink:href="#NanumSquareR-73" transform="translate(1085.324692 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(1134.824677 0)"/>
-     <use xlink:href="#NanumSquareR-3d" transform="translate(1159.824661 0)"/>
     </g>
    </g>
    <g id="text_29">
-    <!-- Claude 비용 수십 배 증가 -->
-    <g style="fill: #ef4444" transform="translate(586.243915 218.065) scale(0.075 -0.075)">
+    <!-- → Claude 비용 수십 배 증가 -->
+    <g style="fill: #ef4444" transform="translate(528.188867 310.608) scale(0.085 -0.085)">
      <defs>
+      <path id="NanumSquareB-2192" d="M 666 2387 
+L 4205 2387 
+L 3725 3200 
+L 3821 3309 
+L 5152 2202 
+L 3821 1094 
+L 3725 1203 
+L 4205 2010 
+L 666 2010 
+L 666 2387 
+z
+" transform="scale(0.015625)"/>
       <path id="NanumSquareB-be44" d="M 4461 -896 
 L 4461 5005 
 L 5094 5005 
@@ -8596,28 +8582,30 @@ L 326 909
 z
 " transform="scale(0.015625)"/>
      </defs>
-     <use xlink:href="#NanumSquareB-43"/>
-     <use xlink:href="#NanumSquareB-6c" transform="translate(64.399994 0)"/>
-     <use xlink:href="#NanumSquareB-61" transform="translate(89.699982 0)"/>
-     <use xlink:href="#NanumSquareB-75" transform="translate(144.899979 0)"/>
-     <use xlink:href="#NanumSquareB-64" transform="translate(204.399963 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(263.999954 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(320.199951 0)"/>
-     <use xlink:href="#NanumSquareB-be44" transform="translate(345.199936 0)"/>
-     <use xlink:href="#NanumSquareB-c6a9" transform="translate(436.199921 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(527.199905 0)"/>
-     <use xlink:href="#NanumSquareB-c218" transform="translate(552.19989 0)"/>
-     <use xlink:href="#NanumSquareB-c2ed" transform="translate(643.199875 0)"/>
-     <use xlink:href="#NanumSquareB-20" transform="translate(734.19986 0)"/>
-     <use xlink:href="#NanumSquareB-bc30" transform="translate(759.199844 0)"/>
+     <use xlink:href="#NanumSquareB-2192"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(90.999985 0)"/>
+     <use xlink:href="#NanumSquareB-43" transform="translate(115.999969 0)"/>
+     <use xlink:href="#NanumSquareB-6c" transform="translate(180.399963 0)"/>
+     <use xlink:href="#NanumSquareB-61" transform="translate(205.699951 0)"/>
+     <use xlink:href="#NanumSquareB-75" transform="translate(260.899948 0)"/>
+     <use xlink:href="#NanumSquareB-64" transform="translate(320.399933 0)"/>
+     <use xlink:href="#NanumSquareB-65" transform="translate(379.999924 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(436.199921 0)"/>
+     <use xlink:href="#NanumSquareB-be44" transform="translate(461.199905 0)"/>
+     <use xlink:href="#NanumSquareB-c6a9" transform="translate(552.19989 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(643.199875 0)"/>
+     <use xlink:href="#NanumSquareB-c218" transform="translate(668.19986 0)"/>
+     <use xlink:href="#NanumSquareB-c2ed" transform="translate(759.199844 0)"/>
      <use xlink:href="#NanumSquareB-20" transform="translate(850.199829 0)"/>
-     <use xlink:href="#NanumSquareB-c99d" transform="translate(875.199814 0)"/>
-     <use xlink:href="#NanumSquareB-ac00" transform="translate(966.199799 0)"/>
+     <use xlink:href="#NanumSquareB-bc30" transform="translate(875.199814 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(966.199799 0)"/>
+     <use xlink:href="#NanumSquareB-c99d" transform="translate(991.199783 0)"/>
+     <use xlink:href="#NanumSquareB-ac00" transform="translate(1082.199768 0)"/>
     </g>
    </g>
    <g id="text_30">
     <!-- 해결: 세션 스토어 격리 -->
-    <g style="fill: #16a34a" transform="translate(488.609032 274.516) scale(0.085 -0.085)">
+    <g style="fill: #16a34a" transform="translate(458.7 353.8512) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-d574" d="M 3520 4883 
 L 4141 4883 
@@ -8953,35 +8941,35 @@ z
      <use xlink:href="#NanumSquareB-b9ac" transform="translate(838.399826 0)"/>
     </g>
    </g>
-   <g id="patch_25">
-    <path d="M 497.465806 366.78 
-L 581.605161 366.78 
-Q 594.890323 366.78 594.890323 348.57 
-L 594.890323 339.465 
-Q 594.890323 321.255 581.605161 321.255 
-L 497.465806 321.255 
-Q 484.180645 321.255 484.180645 339.465 
-L 484.180645 348.57 
-Q 484.180645 366.78 497.465806 366.78 
+   <g id="patch_24">
+    <path d="M 466.4 439.2288 
+L 539.55 439.2288 
+Q 551.1 439.2288 551.1 422.5968 
+L 551.1 411.5088 
+Q 551.1 394.8768 539.55 394.8768 
+L 466.4 394.8768 
+Q 454.85 394.8768 454.85 411.5088 
+L 454.85 422.5968 
+Q 454.85 439.2288 466.4 439.2288 
 z
-" clip-path="url(#p9ac453c9ed)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#pab83123161)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
-   <g id="patch_26">
-    <path d="M 643.602581 397.13 
-L 741.027097 397.13 
-Q 754.312258 397.13 754.312258 378.92 
-L 754.312258 318.22 
-Q 754.312258 300.01 741.027097 300.01 
-L 643.602581 300.01 
-Q 630.317419 300.01 630.317419 318.22 
-L 630.317419 378.92 
-Q 630.317419 397.13 643.602581 397.13 
+   <g id="patch_25">
+    <path d="M 593.45 474.156 
+L 678.15 474.156 
+Q 689.7 474.156 689.7 457.524 
+L 689.7 393.768 
+Q 689.7 377.136 678.15 377.136 
+L 593.45 377.136 
+Q 581.9 377.136 581.9 393.768 
+L 581.9 457.524 
+Q 581.9 474.156 593.45 474.156 
 z
-" clip-path="url(#p9ac453c9ed)" style="fill: #f3e8ff; stroke: #7c3aed; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#pab83123161)" style="fill: #f3e8ff; stroke: #7c3aed; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_31">
     <!-- _session["articles"] -->
-    <g style="fill: #7c3aed" transform="translate(656.301089 313.364) scale(0.08 -0.08)">
+    <g style="fill: #7c3aed" transform="translate(597.535391 389.3328) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareB-5f" d="M 3200 -896 
 L 0 -896 
@@ -9098,7 +9086,7 @@ z
    </g>
    <g id="text_32">
     <!-- article_id → { -->
-    <g style="fill: #1e293b" transform="translate(670.020503 335.216) scale(0.075 -0.075)">
+    <g style="fill: #1e293b" transform="translate(612.019375 411.5088) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-7b" d="M 243 2195 
 Q 595 2202 758 2326 
@@ -9154,8 +9142,8 @@ z
     </g>
    </g>
    <g id="text_33">
-    <!--   text: "원문 전체"  ← 격리 -->
-    <g style="fill: #ef4444" transform="translate(652.747464 353.426) scale(0.072 -0.072)">
+    <!--   text: "원문"  ← 격리 -->
+    <g style="fill: #ef4444" transform="translate(601.008344 430.9128) scale(0.078 -0.078)">
      <defs>
       <path id="NanumSquareR-78" d="M 1901 1619 
 L 3117 -166 
@@ -9261,63 +9249,6 @@ Q 3718 2394 4134 2438
 L 4173 2048 
 z
 " transform="scale(0.015625)"/>
-      <path id="NanumSquareR-ccb4" d="M 339 4058 
-L 1478 4058 
-L 1478 4858 
-L 1926 4858 
-L 1926 4058 
-L 3008 4058 
-L 3008 3661 
-L 1926 3661 
-L 1926 3085 
-Q 1926 2861 1942 2701 
-Q 1958 2541 2000 2406 
-Q 2042 2272 2118 2147 
-Q 2195 2022 2317 1869 
-Q 2477 1670 2701 1424 
-Q 2925 1178 3194 909 
-L 2899 621 
-Q 2790 723 2678 848 
-Q 2566 973 2454 1094 
-Q 2342 1216 2243 1331 
-Q 2144 1446 2061 1536 
-Q 1920 1696 1827 1833 
-Q 1734 1971 1715 2022 
-L 1709 2022 
-Q 1696 1971 1616 1843 
-Q 1536 1715 1389 1542 
-Q 1210 1338 986 1091 
-Q 762 845 454 544 
-L 154 845 
-Q 294 979 435 1120 
-Q 576 1261 701 1395 
-Q 826 1530 931 1648 
-Q 1037 1766 1107 1862 
-Q 1222 2010 1296 2138 
-Q 1370 2266 1408 2406 
-Q 1446 2547 1462 2710 
-Q 1478 2874 1478 3085 
-L 1478 3661 
-L 339 3661 
-L 339 4058 
-z
-M 3686 2816 
-L 3686 4858 
-L 4134 4858 
-L 4134 -582 
-L 3686 -582 
-L 3686 2406 
-L 2669 2406 
-L 2669 2816 
-L 3686 2816 
-z
-M 5267 -870 
-L 4819 -870 
-L 4819 4979 
-L 5267 4979 
-L 5267 -870 
-z
-" transform="scale(0.015625)"/>
       <path id="NanumSquareR-2190" d="M 5152 2010 
 L 1613 2010 
 L 2093 1203 
@@ -9410,21 +9341,18 @@ z
      <use xlink:href="#NanumSquareR-22" transform="translate(287.499893 0)"/>
      <use xlink:href="#NanumSquareR-c6d0" transform="translate(324.799881 0)"/>
      <use xlink:href="#NanumSquareR-bb38" transform="translate(415.799866 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(506.79985 0)"/>
-     <use xlink:href="#NanumSquareR-c804" transform="translate(531.799835 0)"/>
-     <use xlink:href="#NanumSquareR-ccb4" transform="translate(622.79982 0)"/>
-     <use xlink:href="#NanumSquareR-22" transform="translate(713.799805 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(751.099792 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(776.099777 0)"/>
-     <use xlink:href="#NanumSquareR-2190" transform="translate(801.099762 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(892.099747 0)"/>
-     <use xlink:href="#NanumSquareR-aca9" transform="translate(917.099731 0)"/>
-     <use xlink:href="#NanumSquareR-b9ac" transform="translate(1008.099716 0)"/>
+     <use xlink:href="#NanumSquareR-22" transform="translate(506.79985 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(544.099838 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(569.099823 0)"/>
+     <use xlink:href="#NanumSquareR-2190" transform="translate(594.099808 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(685.099792 0)"/>
+     <use xlink:href="#NanumSquareR-aca9" transform="translate(710.099777 0)"/>
+     <use xlink:href="#NanumSquareR-b9ac" transform="translate(801.099762 0)"/>
     </g>
    </g>
    <g id="text_34">
     <!--   preview: 앞 300자  ← 공개 -->
-    <g style="fill: #16a34a" transform="translate(649.311714 371.636) scale(0.072 -0.072)">
+    <g style="fill: #16a34a" transform="translate(589.213281 450.3168) scale(0.078 -0.078)">
      <defs>
       <path id="NanumSquareR-76" d="M 1370 -166 
 L 109 3283 
@@ -9696,22 +9624,22 @@ z
      <use xlink:href="#NanumSquareR-ac1c" transform="translate(1103.524704 0)"/>
     </g>
    </g>
-   <g id="patch_27">
-    <path d="M 803.024516 351.605 
-L 869.450323 351.605 
-Q 882.735484 351.605 882.735484 333.395 
-L 882.735484 315.185 
-Q 882.735484 296.975 869.450323 296.975 
-L 803.024516 296.975 
-Q 789.739355 296.975 789.739355 315.185 
-L 789.739355 333.395 
-Q 789.739355 351.605 803.024516 351.605 
+   <g id="patch_26">
+    <path d="M 732.05 432.576 
+L 789.8 432.576 
+Q 801.35 432.576 801.35 415.944 
+L 801.35 393.768 
+Q 801.35 377.136 789.8 377.136 
+L 732.05 377.136 
+Q 720.5 377.136 720.5 393.768 
+L 720.5 415.944 
+Q 720.5 432.576 732.05 432.576 
 z
-" clip-path="url(#p9ac453c9ed)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#pab83123161)" style="fill: #dbeafe; stroke: #2563eb; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_35">
     <!-- preview만 수신 -->
-    <g style="fill: #16a34a" transform="translate(813.416326 352.898) scale(0.07 -0.07)">
+    <g style="fill: #16a34a" transform="translate(736.473828 432.522) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareR-b9cc" d="M 3123 1856 
 L 512 1856 
@@ -9800,7 +9728,7 @@ z
      <use xlink:href="#NanumSquareR-c2e0" transform="translate(561.024887 0)"/>
     </g>
     <!-- (~300 tokens) -->
-    <g style="fill: #16a34a" transform="translate(813.906872 360.71) scale(0.07 -0.07)">
+    <g style="fill: #16a34a" transform="translate(736.999414 440.892) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareR-7e" d="M 2522 1549 
 Q 2291 1549 2137 1648 
@@ -9849,7 +9777,7 @@ z
    </g>
    <g id="text_36">
     <!-- preview only -->
-    <g style="fill: #16a34a" transform="translate(750.751002 300.677031) scale(0.075 -0.075)">
+    <g style="fill: #16a34a" transform="translate(682.406875 374.7883) scale(0.08 -0.08)">
      <use xlink:href="#NanumSquareR-70"/>
      <use xlink:href="#NanumSquareR-72" transform="translate(57.899994 0)"/>
      <use xlink:href="#NanumSquareR-65" transform="translate(96.624985 0)"/>
@@ -9864,7 +9792,7 @@ z
      <use xlink:href="#NanumSquareR-79" transform="translate(516.82489 0)"/>
     </g>
     <!-- (300 tokens) -->
-    <g style="fill: #16a34a" transform="translate(750.350221 309.115) scale(0.075 -0.075)">
+    <g style="fill: #16a34a" transform="translate(681.979375 383.7888) scale(0.08 -0.08)">
      <use xlink:href="#NanumSquareR-28"/>
      <use xlink:href="#NanumSquareR-33" transform="translate(31.299988 0)"/>
      <use xlink:href="#NanumSquareR-30" transform="translate(91.299973 0)"/>
@@ -9881,7 +9809,7 @@ z
    </g>
    <g id="text_37">
     <!-- 원문 전달 (요약/퀴즈 생성 시) -->
-    <g style="fill: #6b7280" transform="translate(701.171613 418.375) scale(0.07 -0.07)">
+    <g style="fill: #6b7280" transform="translate(643.5 493.56) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareR-b2ec" d="M 4826 1754 
 L 4826 243 
@@ -9956,7 +9884,7 @@ z
    </g>
    <g id="text_38">
     <!-- 토큰 비용 비교 (토픽 5개, 아티클 3개/토픽 기준) -->
-    <g style="fill: #1e293b" transform="translate(488.609032 440.834) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(458.7 511.3008) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-d070" d="M 5619 2131 
 L 5619 1594 
@@ -10381,7 +10309,7 @@ z
    </g>
    <g id="text_39">
     <!-- 방식 -->
-    <g style="fill: #1e293b" transform="translate(512.327742 460.865) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(477.46 533.4768) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-bc29" d="M 1331 301 
 Q 1331 531 1452 736 
@@ -10502,7 +10430,7 @@ z
    </g>
    <g id="text_40">
     <!-- Claude 입력 토큰 -->
-    <g style="fill: #1e293b" transform="translate(631.948004 460.865) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(583.510859 533.4768) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-c785" d="M 5094 1677 
 L 5094 -896 
@@ -10629,7 +10557,7 @@ z
    </g>
    <g id="text_41">
     <!-- 비용 절감 -->
-    <g style="fill: #1e293b" transform="translate(791.892903 460.865) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(726.095 533.4768) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-c808" d="M 1478 -934 
 L 1478 672 
@@ -10737,7 +10665,7 @@ z
    </g>
    <g id="text_42">
     <!-- 원문 직접 전달 -->
-    <g style="fill: #ef4444" transform="translate(495.767742 488.18) scale(0.08 -0.08)">
+    <g style="fill: #ef4444" transform="translate(458.83 564.5232) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareR-c9c1" d="M 2144 2963 
 Q 2125 2893 1987 2745 
@@ -10861,7 +10789,7 @@ z
    </g>
    <g id="text_43">
     <!-- ~45,000 tokens -->
-    <g style="fill: #ef4444" transform="translate(631.806754 488.18) scale(0.08 -0.08)">
+    <g style="fill: #ef4444" transform="translate(583.351953 564.5232) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-7e" d="M 2522 1485 
 Q 2285 1485 2125 1577 
@@ -10940,7 +10868,7 @@ z
    </g>
    <g id="text_44">
     <!-- — -->
-    <g style="fill: #ef4444" transform="translate(803.840403 488.18) scale(0.085 -0.085)">
+    <g style="fill: #ef4444" transform="translate(739.5625 564.5232) scale(0.095 -0.095)">
      <defs>
       <path id="NanumSquareB-2014" d="M 5440 1786 
 L 0 1786 
@@ -10955,7 +10883,7 @@ z
    </g>
    <g id="text_45">
     <!-- 세션 스토어 격리 -->
-    <g style="fill: #16a34a" transform="translate(492.127742 511.246) scale(0.08 -0.08)">
+    <g style="fill: #16a34a" transform="translate(454.735 589.4712) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareR-c138" d="M 3667 3021 
 L 3667 4858 
@@ -11018,7 +10946,7 @@ z
    </g>
    <g id="text_46">
     <!-- ~4,500 tokens -->
-    <g style="fill: #16a34a" transform="translate(634.246754 511.246) scale(0.08 -0.08)">
+    <g style="fill: #16a34a" transform="translate(586.096953 589.4712) scale(0.09 -0.09)">
      <use xlink:href="#NanumSquareB-7e"/>
      <use xlink:href="#NanumSquareB-34" transform="translate(59.999985 0)"/>
      <use xlink:href="#NanumSquareB-2c" transform="translate(120.999969 0)"/>
@@ -11036,7 +10964,7 @@ z
    </g>
    <g id="text_47">
     <!-- ~90%↓ -->
-    <g style="fill: #16a34a" transform="translate(792.055286 511.246) scale(0.085 -0.085)">
+    <g style="fill: #16a34a" transform="translate(726.390898 589.4712) scale(0.095 -0.095)">
      <defs>
       <path id="NanumSquareB-39" d="M 781 627 
 Q 998 499 1248 422 
@@ -11152,8 +11080,8 @@ z
     </g>
    </g>
    <g id="text_48">
-    <!-- * 실제 원문은 GPT-5 생성 시에만 전달 (Claude는 관련성 판단에 preview만 사용) -->
-    <g style="fill: #6b7280" transform="translate(488.609032 548.88) scale(0.07 -0.07)">
+    <!-- * 원문은 GPT-5 생성 시에만 전달 (Claude는 preview 300자만 사용) -->
+    <g style="fill: #6b7280" transform="translate(458.7 618.3) scale(0.078 -0.078)">
      <defs>
       <path id="NanumSquareR-2a" d="M 486 2611 
 L 288 2976 
@@ -11197,175 +11125,6 @@ L 1043 2765
 L 1043 4755 
 L 1498 4755 
 L 1498 3162 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareR-ad00" d="M 4864 3136 
-L 5741 3136 
-L 5741 2733 
-L 4864 2733 
-L 4864 640 
-L 4416 640 
-L 4416 4979 
-L 4864 4979 
-L 4864 3136 
-z
-M 1702 -403 
-L 5024 -403 
-L 5024 -800 
-L 1248 -800 
-L 1248 934 
-L 1702 934 
-L 1702 -403 
-z
-M 4006 1728 
-Q 3712 1690 3360 1664 
-Q 3008 1638 2557 1619 
-Q 2106 1600 1536 1590 
-Q 966 1581 237 1581 
-L 237 1978 
-Q 602 1978 912 1978 
-Q 1222 1978 1504 1984 
-L 1504 3290 
-L 1952 3290 
-L 1952 1990 
-Q 2291 1997 2572 2006 
-Q 2854 2016 3094 2032 
-Q 3334 2048 3548 2067 
-Q 3763 2086 3968 2106 
-L 4006 1728 
-z
-M 3475 4672 
-L 3475 4096 
-Q 3475 3661 3430 3261 
-Q 3386 2861 3322 2598 
-L 2874 2656 
-Q 2944 2989 2985 3325 
-Q 3027 3661 3027 4006 
-L 3027 4275 
-L 627 4275 
-L 627 4672 
-L 3475 4672 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareR-b828" d="M 1043 1939 
-Q 1453 1939 1817 1942 
-Q 2182 1946 2508 1955 
-Q 2835 1965 3136 1987 
-Q 3437 2010 3731 2042 
-L 3776 1651 
-Q 3482 1619 3174 1596 
-Q 2867 1574 2499 1561 
-Q 2131 1549 1670 1545 
-Q 1210 1542 602 1542 
-L 602 3296 
-L 2541 3296 
-L 2541 4269 
-L 602 4269 
-L 602 4666 
-L 2982 4666 
-L 2982 2912 
-L 1043 2912 
-L 1043 1939 
-z
-M 4653 3008 
-L 4653 3718 
-L 3430 3718 
-L 3430 4109 
-L 4653 4109 
-L 4653 4979 
-L 5094 4979 
-L 5094 768 
-L 4653 768 
-L 4653 2618 
-L 3430 2618 
-L 3430 3008 
-L 4653 3008 
-z
-M 1965 -410 
-L 5242 -410 
-L 5242 -806 
-L 1510 -806 
-L 1510 934 
-L 1965 934 
-L 1965 -410 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareR-d310" d="M 3846 1901 
-Q 3046 1818 2131 1805 
-Q 1216 1792 314 1792 
-L 314 2176 
-L 928 2176 
-L 928 4211 
-L 352 4211 
-L 352 4595 
-L 3552 4595 
-L 3552 4211 
-L 2938 4211 
-L 2938 2208 
-Q 3162 2221 3379 2237 
-Q 3597 2253 3808 2278 
-L 3846 1901 
-z
-M 1363 2176 
-Q 1952 2176 2502 2195 
-L 2502 4211 
-L 1363 4211 
-L 1363 2176 
-z
-M 4832 3277 
-L 5728 3277 
-L 5728 2880 
-L 4832 2880 
-L 4832 794 
-L 4384 794 
-L 4384 4979 
-L 4832 4979 
-L 4832 3277 
-z
-M 1786 -403 
-L 5011 -403 
-L 5011 -800 
-L 1331 -800 
-L 1331 1101 
-L 1786 1101 
-L 1786 -403 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareR-b2e8" d="M 538 4595 
-L 3219 4595 
-L 3219 4192 
-L 992 4192 
-L 992 2246 
-Q 1472 2246 1833 2249 
-Q 2195 2253 2505 2269 
-Q 2816 2285 3107 2310 
-Q 3398 2336 3744 2374 
-L 3795 1978 
-Q 3558 1946 3347 1926 
-Q 3136 1907 2925 1891 
-Q 2714 1875 2480 1865 
-Q 2246 1856 1964 1853 
-Q 1683 1850 1334 1846 
-Q 986 1843 538 1843 
-L 538 4595 
-z
-M 4826 3386 
-L 5722 3386 
-L 5722 2989 
-L 4826 2989 
-L 4826 794 
-L 4378 794 
-L 4378 4979 
-L 4826 4979 
-L 4826 3386 
-z
-M 1779 -397 
-L 5005 -397 
-L 5005 -800 
-L 1325 -800 
-L 1325 1126 
-L 1779 1126 
-L 1779 -397 
 z
 " transform="scale(0.015625)"/>
       <path id="NanumSquareR-c0ac" d="M 4755 2797 
@@ -11505,63 +11264,116 @@ z
      </defs>
      <use xlink:href="#NanumSquareR-2a"/>
      <use xlink:href="#NanumSquareR-20" transform="translate(45.899994 0)"/>
-     <use xlink:href="#NanumSquareR-c2e4" transform="translate(70.899979 0)"/>
-     <use xlink:href="#NanumSquareR-c81c" transform="translate(161.899963 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(252.899948 0)"/>
-     <use xlink:href="#NanumSquareR-c6d0" transform="translate(277.899933 0)"/>
-     <use xlink:href="#NanumSquareR-bb38" transform="translate(368.899918 0)"/>
-     <use xlink:href="#NanumSquareR-c740" transform="translate(459.899902 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(550.899887 0)"/>
-     <use xlink:href="#NanumSquareR-47" transform="translate(575.899872 0)"/>
-     <use xlink:href="#NanumSquareR-50" transform="translate(641.499863 0)"/>
-     <use xlink:href="#NanumSquareR-54" transform="translate(701.29985 0)"/>
-     <use xlink:href="#NanumSquareR-2d" transform="translate(755.399841 0)"/>
-     <use xlink:href="#NanumSquareR-35" transform="translate(796.599838 0)"/>
+     <use xlink:href="#NanumSquareR-c6d0" transform="translate(70.899979 0)"/>
+     <use xlink:href="#NanumSquareR-bb38" transform="translate(161.899963 0)"/>
+     <use xlink:href="#NanumSquareR-c740" transform="translate(252.899948 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(343.899933 0)"/>
+     <use xlink:href="#NanumSquareR-47" transform="translate(368.899918 0)"/>
+     <use xlink:href="#NanumSquareR-50" transform="translate(434.499908 0)"/>
+     <use xlink:href="#NanumSquareR-54" transform="translate(494.299896 0)"/>
+     <use xlink:href="#NanumSquareR-2d" transform="translate(548.399887 0)"/>
+     <use xlink:href="#NanumSquareR-35" transform="translate(589.599884 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(649.599869 0)"/>
+     <use xlink:href="#NanumSquareR-c0dd" transform="translate(674.599854 0)"/>
+     <use xlink:href="#NanumSquareR-c131" transform="translate(765.599838 0)"/>
      <use xlink:href="#NanumSquareR-20" transform="translate(856.599823 0)"/>
-     <use xlink:href="#NanumSquareR-c0dd" transform="translate(881.599808 0)"/>
-     <use xlink:href="#NanumSquareR-c131" transform="translate(972.599792 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(1063.599777 0)"/>
-     <use xlink:href="#NanumSquareR-c2dc" transform="translate(1088.599762 0)"/>
-     <use xlink:href="#NanumSquareR-c5d0" transform="translate(1179.599747 0)"/>
-     <use xlink:href="#NanumSquareR-b9cc" transform="translate(1270.599731 0)"/>
+     <use xlink:href="#NanumSquareR-c2dc" transform="translate(881.599808 0)"/>
+     <use xlink:href="#NanumSquareR-c5d0" transform="translate(972.599792 0)"/>
+     <use xlink:href="#NanumSquareR-b9cc" transform="translate(1063.599777 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(1154.599762 0)"/>
+     <use xlink:href="#NanumSquareR-c804" transform="translate(1179.599747 0)"/>
+     <use xlink:href="#NanumSquareR-b2ec" transform="translate(1270.599731 0)"/>
      <use xlink:href="#NanumSquareR-20" transform="translate(1361.599716 0)"/>
-     <use xlink:href="#NanumSquareR-c804" transform="translate(1386.599701 0)"/>
-     <use xlink:href="#NanumSquareR-b2ec" transform="translate(1477.599686 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(1568.59967 0)"/>
-     <use xlink:href="#NanumSquareR-28" transform="translate(1593.599655 0)"/>
-     <use xlink:href="#NanumSquareR-43" transform="translate(1624.899643 0)"/>
-     <use xlink:href="#NanumSquareR-6c" transform="translate(1687.899628 0)"/>
-     <use xlink:href="#NanumSquareR-61" transform="translate(1710.699615 0)"/>
-     <use xlink:href="#NanumSquareR-75" transform="translate(1763.999603 0)"/>
-     <use xlink:href="#NanumSquareR-64" transform="translate(1821.799591 0)"/>
-     <use xlink:href="#NanumSquareR-65" transform="translate(1879.699585 0)"/>
-     <use xlink:href="#NanumSquareR-b294" transform="translate(1934.19957 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(2025.199554 0)"/>
-     <use xlink:href="#NanumSquareR-ad00" transform="translate(2050.199539 0)"/>
-     <use xlink:href="#NanumSquareR-b828" transform="translate(2141.199524 0)"/>
-     <use xlink:href="#NanumSquareR-c131" transform="translate(2232.199509 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(2323.199493 0)"/>
-     <use xlink:href="#NanumSquareR-d310" transform="translate(2348.199478 0)"/>
-     <use xlink:href="#NanumSquareR-b2e8" transform="translate(2439.199463 0)"/>
-     <use xlink:href="#NanumSquareR-c5d0" transform="translate(2530.199448 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(2621.199432 0)"/>
-     <use xlink:href="#NanumSquareR-70" transform="translate(2646.199417 0)"/>
-     <use xlink:href="#NanumSquareR-72" transform="translate(2704.099411 0)"/>
-     <use xlink:href="#NanumSquareR-65" transform="translate(2742.824402 0)"/>
-     <use xlink:href="#NanumSquareR-76" transform="translate(2796.824387 0)"/>
-     <use xlink:href="#NanumSquareR-69" transform="translate(2846.924377 0)"/>
-     <use xlink:href="#NanumSquareR-65" transform="translate(2870.324371 0)"/>
-     <use xlink:href="#NanumSquareR-77" transform="translate(2924.824356 0)"/>
-     <use xlink:href="#NanumSquareR-b9cc" transform="translate(3000.22435 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(3091.224335 0)"/>
-     <use xlink:href="#NanumSquareR-c0ac" transform="translate(3116.224319 0)"/>
-     <use xlink:href="#NanumSquareR-c6a9" transform="translate(3207.224304 0)"/>
-     <use xlink:href="#NanumSquareR-29" transform="translate(3298.224289 0)"/>
+     <use xlink:href="#NanumSquareR-28" transform="translate(1386.599701 0)"/>
+     <use xlink:href="#NanumSquareR-43" transform="translate(1417.899689 0)"/>
+     <use xlink:href="#NanumSquareR-6c" transform="translate(1480.899673 0)"/>
+     <use xlink:href="#NanumSquareR-61" transform="translate(1503.699661 0)"/>
+     <use xlink:href="#NanumSquareR-75" transform="translate(1556.999649 0)"/>
+     <use xlink:href="#NanumSquareR-64" transform="translate(1614.799637 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(1672.699631 0)"/>
+     <use xlink:href="#NanumSquareR-b294" transform="translate(1727.199615 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(1818.1996 0)"/>
+     <use xlink:href="#NanumSquareR-70" transform="translate(1843.199585 0)"/>
+     <use xlink:href="#NanumSquareR-72" transform="translate(1901.099579 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(1939.82457 0)"/>
+     <use xlink:href="#NanumSquareR-76" transform="translate(1993.824554 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(2043.924545 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(2067.324539 0)"/>
+     <use xlink:href="#NanumSquareR-77" transform="translate(2121.824524 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(2197.224518 0)"/>
+     <use xlink:href="#NanumSquareR-33" transform="translate(2222.224503 0)"/>
+     <use xlink:href="#NanumSquareR-30" transform="translate(2282.224487 0)"/>
+     <use xlink:href="#NanumSquareR-30" transform="translate(2342.224472 0)"/>
+     <use xlink:href="#NanumSquareR-c790" transform="translate(2402.224457 0)"/>
+     <use xlink:href="#NanumSquareR-b9cc" transform="translate(2493.224442 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(2584.224426 0)"/>
+     <use xlink:href="#NanumSquareR-c0ac" transform="translate(2609.224411 0)"/>
+     <use xlink:href="#NanumSquareR-c6a9" transform="translate(2700.224396 0)"/>
+     <use xlink:href="#NanumSquareR-29" transform="translate(2791.22438 0)"/>
     </g>
    </g>
    <g id="text_49">
     <!-- 원문 전체 -->
-    <g style="fill: #1e293b" transform="translate(530.618065 165.4835) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(492.2175 258.0515) scale(0.085 -0.085)">
+     <defs>
+      <path id="NanumSquareR-ccb4" d="M 339 4058 
+L 1478 4058 
+L 1478 4858 
+L 1926 4858 
+L 1926 4058 
+L 3008 4058 
+L 3008 3661 
+L 1926 3661 
+L 1926 3085 
+Q 1926 2861 1942 2701 
+Q 1958 2541 2000 2406 
+Q 2042 2272 2118 2147 
+Q 2195 2022 2317 1869 
+Q 2477 1670 2701 1424 
+Q 2925 1178 3194 909 
+L 2899 621 
+Q 2790 723 2678 848 
+Q 2566 973 2454 1094 
+Q 2342 1216 2243 1331 
+Q 2144 1446 2061 1536 
+Q 1920 1696 1827 1833 
+Q 1734 1971 1715 2022 
+L 1709 2022 
+Q 1696 1971 1616 1843 
+Q 1536 1715 1389 1542 
+Q 1210 1338 986 1091 
+Q 762 845 454 544 
+L 154 845 
+Q 294 979 435 1120 
+Q 576 1261 701 1395 
+Q 826 1530 931 1648 
+Q 1037 1766 1107 1862 
+Q 1222 2010 1296 2138 
+Q 1370 2266 1408 2406 
+Q 1446 2547 1462 2710 
+Q 1478 2874 1478 3085 
+L 1478 3661 
+L 339 3661 
+L 339 4058 
+z
+M 3686 2816 
+L 3686 4858 
+L 4134 4858 
+L 4134 -582 
+L 3686 -582 
+L 3686 2406 
+L 2669 2406 
+L 2669 2816 
+L 3686 2816 
+z
+M 5267 -870 
+L 4819 -870 
+L 4819 4979 
+L 5267 4979 
+L 5267 -870 
+z
+" transform="scale(0.015625)"/>
+     </defs>
      <use xlink:href="#NanumSquareR-c6d0"/>
      <use xlink:href="#NanumSquareR-bb38" transform="translate(90.999985 0)"/>
      <use xlink:href="#NanumSquareR-20" transform="translate(181.999969 0)"/>
@@ -11569,7 +11381,7 @@ z
      <use xlink:href="#NanumSquareR-ccb4" transform="translate(297.999939 0)"/>
     </g>
     <!-- (~3,000 tokens) -->
-    <g style="fill: #1e293b" transform="translate(517.27744 174.4115) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(478.043086 267.5375) scale(0.085 -0.085)">
      <use xlink:href="#NanumSquareR-28"/>
      <use xlink:href="#NanumSquareR-7e" transform="translate(31.299988 0)"/>
      <use xlink:href="#NanumSquareR-33" transform="translate(91.299973 0)"/>
@@ -11589,7 +11401,7 @@ z
    </g>
    <g id="text_50">
     <!-- Claude Haiku -->
-    <g style="fill: #1e293b" transform="translate(672.964021 165.327) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(614.052578 257.895) scale(0.09 -0.09)">
      <use xlink:href="#NanumSquareB-43"/>
      <use xlink:href="#NanumSquareB-6c" transform="translate(64.399994 0)"/>
      <use xlink:href="#NanumSquareB-61" transform="translate(89.699982 0)"/>
@@ -11604,7 +11416,7 @@ z
      <use xlink:href="#NanumSquareB-75" transform="translate(552.099899 0)"/>
     </g>
     <!-- 에이전트 -->
-    <g style="fill: #1e293b" transform="translate(683.487419 174.813) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(625.195 267.939) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-c5d0" d="M 1645 4563 
 Q 2285 4563 2614 4140 
@@ -11675,7 +11487,7 @@ z
    </g>
    <g id="text_51">
     <!-- 토큰 폭증 -->
-    <g style="fill: #1e293b" transform="translate(814.034839 165.4835) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(740.5425 258.0515) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-d070" d="M 4813 4698 
 L 4813 3789 
@@ -11754,7 +11566,7 @@ z
      <use xlink:href="#NanumSquareR-c99d" transform="translate(297.999939 0)"/>
     </g>
     <!-- 할루시네이션 -->
-    <g style="fill: #1e293b" transform="translate(807.754839 174.4115) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(733.87 267.5375) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-b124" d="M 3533 3072 
 L 3533 4858 
@@ -11796,7 +11608,7 @@ z
    </g>
    <g id="text_52">
     <!-- collect_articles() -->
-    <g style="fill: #1e293b" transform="translate(508.789859 341.5135) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(470.307773 414.3923) scale(0.085 -0.085)">
      <use xlink:href="#NanumSquareB-63"/>
      <use xlink:href="#NanumSquareB-6f" transform="translate(50.899994 0)"/>
      <use xlink:href="#NanumSquareB-6c" transform="translate(109.699982 0)"/>
@@ -11817,7 +11629,7 @@ z
      <use xlink:href="#NanumSquareB-29" transform="translate(734.899872 0)"/>
     </g>
     <!-- 수집 완료 -->
-    <g style="fill: #1e293b" transform="translate(523.975484 350.4415) scale(0.08 -0.08)">
+    <g style="fill: #1e293b" transform="translate(486.4425 423.8783) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareB-c9d1" d="M 5094 1690 
 L 5094 -896 
@@ -11976,7 +11788,7 @@ z
    </g>
    <g id="text_53">
     <!-- Claude Haiku -->
-    <g style="fill: #1e293b" transform="translate(810.244021 321.6295) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(733.402578 402.039) scale(0.09 -0.09)">
      <use xlink:href="#NanumSquareB-43"/>
      <use xlink:href="#NanumSquareB-6c" transform="translate(64.399994 0)"/>
      <use xlink:href="#NanumSquareB-61" transform="translate(89.699982 0)"/>
@@ -11991,7 +11803,7 @@ z
      <use xlink:href="#NanumSquareB-75" transform="translate(552.099899 0)"/>
     </g>
     <!-- 에이전트 -->
-    <g style="fill: #1e293b" transform="translate(820.767419 331.1155) scale(0.085 -0.085)">
+    <g style="fill: #1e293b" transform="translate(744.545 412.083) scale(0.09 -0.09)">
      <use xlink:href="#NanumSquareB-c5d0"/>
      <use xlink:href="#NanumSquareB-c774" transform="translate(90.999985 0)"/>
      <use xlink:href="#NanumSquareB-c804" transform="translate(181.999969 0)"/>
@@ -12000,7 +11812,7 @@ z
    </g>
    <g id="text_54">
     <!-- (B) -->
-    <g style="fill: #2563eb" transform="translate(475.323871 70.235) scale(0.16 -0.16)">
+    <g style="fill: #2563eb" transform="translate(447.15 160.6498) scale(0.17 -0.17)">
      <defs>
       <path id="NanumSquareB-42" d="M 525 4448 
 L 2163 4448 
@@ -12055,7 +11867,7 @@ z
    </g>
    <g id="text_55">
     <!-- 세션 스토어 토큰 격리 -->
-    <g style="fill: #0f172a" transform="translate(506.322581 66.0975) scale(0.115 -0.115)">
+    <g style="fill: #0f172a" transform="translate(476.025 157.3297) scale(0.125 -0.125)">
      <use xlink:href="#NanumSquareB-c138"/>
      <use xlink:href="#NanumSquareB-c158" transform="translate(90.999985 0)"/>
      <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
@@ -12072,7 +11884,7 @@ z
    </g>
    <g id="text_56">
     <!-- 원문을 Claude에 직접 노출하지 않는 이유 -->
-    <g style="fill: #6b7280" transform="translate(506.322581 90.734) scale(0.08 -0.08)">
+    <g style="fill: #6b7280" transform="translate(476.025 179.6345) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-b178" d="M 1434 4506 
 L 1434 2291 
@@ -12279,105 +12091,105 @@ z
      <use xlink:href="#NanumSquareR-c720" transform="translate(1617.299652 0)"/>
     </g>
    </g>
-   <g id="patch_28">
-    <path d="M 610.177772 167.9875 
-Q 625.888493 167.9875 639.922163 167.9875 
-" style="fill: none; stroke: #ef4444; stroke-width: 1.5; stroke-linecap: round"/>
-    <path d="M 635.922163 165.9875 
-L 639.922163 167.9875 
-L 635.922163 169.9875 
+   <g id="patch_27">
+    <path d="M 564.646436 260.712 
+Q 578.047899 260.712 589.660507 260.712 
+" style="fill: none; stroke: #ef4444; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 585.660507 258.712 
+L 589.660507 260.712 
+L 585.660507 262.712 
 z
-" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.5; stroke-linecap: round"/>
+" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_28">
+    <path d="M 691.699255 260.712 
+Q 701.248939 260.712 709.009769 260.712 
+" style="fill: none; stroke: #ef4444; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 705.009769 258.712 
+L 709.009769 260.712 
+L 705.009769 262.712 
+z
+" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_29">
-    <path d="M 756.313465 167.9875 
-Q 767.597803 167.9875 777.20509 167.9875 
-" style="fill: none; stroke: #ef4444; stroke-width: 1.5; stroke-linecap: round"/>
-    <path d="M 773.20509 165.9875 
-L 777.20509 167.9875 
-L 773.20509 169.9875 
+    <path d="M 553.096436 417.0528 
+Q 566.497899 417.0528 578.110507 417.0528 
+" style="fill: none; stroke: #7c3aed; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 574.110507 415.0528 
+L 578.110507 417.0528 
+L 574.110507 419.0528 
 z
-" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.5; stroke-linecap: round"/>
+" style="fill: #7c3aed; stroke: #7c3aed; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_30">
-    <path d="M 596.892611 344.0175 
-Q 612.603332 344.0175 626.637002 344.0175 
-" style="fill: none; stroke: #7c3aed; stroke-width: 1.5; stroke-linecap: round"/>
-    <path d="M 622.637002 342.0175 
-L 626.637002 344.0175 
-L 622.637002 346.0175 
+    <path d="M 691.696436 403.7472 
+Q 705.097899 403.7472 716.710507 403.7472 
+" style="fill: none; stroke: #16a34a; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 712.710507 401.7472 
+L 716.710507 403.7472 
+L 712.710507 405.7472 
 z
-" style="fill: #7c3aed; stroke: #7c3aed; stroke-width: 1.5; stroke-linecap: round"/>
+" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_31">
-    <path d="M 756.314546 324.29 
-Q 772.025267 324.29 786.058937 324.29 
-" style="fill: none; stroke: #16a34a; stroke-width: 1.5; stroke-linecap: round"/>
-    <path d="M 782.058937 322.29 
-L 786.058937 324.29 
-L 782.058937 326.29 
+    <path d="M 635.8 476.155616 
+Q 635.8 491.620567 635.8 505.632074 
+" style="fill: none; stroke-dasharray: 4.81,2.08; stroke-dashoffset: 0; stroke: #6b7280; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 637.8 501.632074 
+L 635.8 505.632074 
+L 633.8 501.632074 
 z
-" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.5; stroke-linecap: round"/>
-   </g>
-   <g id="patch_32">
-    <path d="M 692.314839 399.126165 
-Q 692.314839 415.340077 692.314839 430.212348 
-" style="fill: none; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #6b7280; stroke-width: 1.2; stroke-linecap: round"/>
-    <path d="M 694.314839 426.212348 
-L 692.314839 430.212348 
-L 690.314839 426.212348 
-z
-" style="fill: #6b7280; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #6b7280; stroke-width: 1.2; stroke-linecap: round"/>
+" style="fill: #6b7280; stroke-dasharray: 4.81,2.08; stroke-dashoffset: 0; stroke: #6b7280; stroke-width: 1.3; stroke-linecap: round"/>
    </g>
   </g>
   <g id="axes_3">
    <g id="line2d_4">
-    <path d="M 924.123871 96.665 
-L 1271.953548 96.665 
-" clip-path="url(#p4ca257693f)" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
+    <path d="M 870.3 185.868 
+L 1172.7 185.868 
+" clip-path="url(#p6ba7a9fa47)" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="patch_32">
+    <path d="M 882.9 712.548 
+L 1153.8 712.548 
+Q 1163.25 712.548 1163.25 695.916 
+L 1163.25 647.1288 
+Q 1163.25 630.4968 1153.8 630.4968 
+L 882.9 630.4968 
+Q 873.45 630.4968 873.45 647.1288 
+L 873.45 695.916 
+Q 873.45 712.548 882.9 712.548 
+z
+" clip-path="url(#p6ba7a9fa47)" style="fill: #f8fafc; stroke: #cbd5e1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_33">
-    <path d="M 938.616774 639.93 
-L 1250.214194 639.93 
-Q 1261.083871 639.93 1261.083871 621.72 
-L 1261.083871 567.09 
-Q 1261.083871 548.88 1250.214194 548.88 
-L 938.616774 548.88 
-Q 927.747097 548.88 927.747097 567.09 
-L 927.747097 621.72 
-Q 927.747097 639.93 938.616774 639.93 
+    <path d="M 882.9 809.568 
+L 1153.8 809.568 
+Q 1163.25 809.568 1163.25 792.936 
+L 1163.25 737.496 
+Q 1163.25 720.864 1153.8 720.864 
+L 882.9 720.864 
+Q 873.45 720.864 873.45 737.496 
+L 873.45 792.936 
+Q 873.45 809.568 882.9 809.568 
 z
-" clip-path="url(#p4ca257693f)" style="fill: #f8fafc; stroke: #cbd5e1; stroke-linejoin: miter"/>
+" clip-path="url(#p6ba7a9fa47)" style="fill: #f0fdf4; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #16a34a; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
    <g id="patch_34">
-    <path d="M 938.616774 746.155 
-L 1250.214194 746.155 
-Q 1261.083871 746.155 1261.083871 727.945 
-L 1261.083871 670.28 
-Q 1261.083871 652.07 1250.214194 652.07 
-L 938.616774 652.07 
-Q 927.747097 652.07 927.747097 670.28 
-L 927.747097 727.945 
-Q 927.747097 746.155 938.616774 746.155 
+    <path d="M 886.05 260.712 
+L 986.85 260.712 
+Q 996.3 260.712 996.3 244.08 
+L 996.3 226.3392 
+Q 996.3 209.7072 986.85 209.7072 
+L 886.05 209.7072 
+Q 876.6 209.7072 876.6 226.3392 
+L 876.6 244.08 
+Q 876.6 260.712 886.05 260.712 
 z
-" clip-path="url(#p4ca257693f)" style="fill: #f0fdf4; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #16a34a; stroke-width: 1.2; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_35">
-    <path d="M 942.24 148.26 
-L 1058.183226 148.26 
-Q 1069.052903 148.26 1069.052903 130.05 
-L 1069.052903 114.875 
-Q 1069.052903 96.665 1058.183226 96.665 
-L 942.24 96.665 
-Q 931.370323 96.665 931.370323 114.875 
-L 931.370323 130.05 
-Q 931.370323 148.26 942.24 148.26 
-z
-" clip-path="url(#p4ca257693f)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#p6ba7a9fa47)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_57">
     <!-- ✕ 저품질 제외 -->
-    <g style="fill: #ef4444" transform="translate(1190.430968 124.6035) scale(0.075 -0.075)">
+    <g style="fill: #ef4444" transform="translate(1102.77 237.1696) scale(0.08 -0.08)">
      <defs>
       <path id="DejaVuSans-2715" d="M 3122 2331 
 L 4550 903 
@@ -12511,22 +12323,57 @@ z
      <use xlink:href="#NanumSquareR-c678" transform="translate(497.788971 0)"/>
     </g>
    </g>
-   <g id="patch_36">
-    <path d="M 942.24 281.8 
-L 1058.183226 281.8 
-Q 1069.052903 281.8 1069.052903 263.59 
-L 1069.052903 248.415 
-Q 1069.052903 230.205 1058.183226 230.205 
-L 942.24 230.205 
-Q 931.370323 230.205 931.370323 248.415 
-L 931.370323 263.59 
-Q 931.370323 281.8 942.24 281.8 
+   <g id="patch_35">
+    <path d="M 886.05 382.68 
+L 986.85 382.68 
+Q 996.3 382.68 996.3 366.048 
+L 996.3 348.3072 
+Q 996.3 331.6752 986.85 331.6752 
+L 886.05 331.6752 
+Q 876.6 331.6752 876.6 348.3072 
+L 876.6 366.048 
+Q 876.6 382.68 886.05 382.68 
 z
-" clip-path="url(#p4ca257693f)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.5; stroke-linejoin: miter"/>
+" clip-path="url(#p6ba7a9fa47)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_58">
     <!-- ✕ policy_rejected -->
-    <g style="fill: #ef4444" transform="translate(1190.430968 258.109516) scale(0.075 -0.075)">
+    <g style="fill: #ef4444" transform="translate(1102.77 359.10135) scale(0.08 -0.08)">
+     <use xlink:href="#DejaVuSans-2715"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(83.789062 0)"/>
+     <use xlink:href="#NanumSquareR-70" transform="translate(108.789047 0)"/>
+     <use xlink:href="#NanumSquareR-6f" transform="translate(166.189041 0)"/>
+     <use xlink:href="#NanumSquareR-6c" transform="translate(222.989029 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(245.789017 0)"/>
+     <use xlink:href="#NanumSquareR-63" transform="translate(269.189011 0)"/>
+     <use xlink:href="#NanumSquareR-79" transform="translate(321.589005 0)"/>
+     <use xlink:href="#NanumSquareR-5f" transform="translate(372.088989 0)"/>
+     <use xlink:href="#NanumSquareR-72" transform="translate(420.088974 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(458.813965 0)"/>
+     <use xlink:href="#NanumSquareR-6a" transform="translate(513.31395 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(537.613937 0)"/>
+     <use xlink:href="#NanumSquareR-63" transform="translate(591.613922 0)"/>
+     <use xlink:href="#NanumSquareR-74" transform="translate(641.013916 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(679.813904 0)"/>
+     <use xlink:href="#NanumSquareR-64" transform="translate(733.813889 0)"/>
+    </g>
+   </g>
+   <g id="patch_36">
+    <path d="M 886.05 504.648 
+L 986.85 504.648 
+Q 996.3 504.648 996.3 488.016 
+L 996.3 470.2752 
+Q 996.3 453.6432 986.85 453.6432 
+L 886.05 453.6432 
+Q 876.6 453.6432 876.6 470.2752 
+L 876.6 488.016 
+Q 876.6 504.648 886.05 504.648 
+z
+" clip-path="url(#p6ba7a9fa47)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_59">
+    <!-- ✕ policy_rejected -->
+    <g style="fill: #ef4444" transform="translate(1102.77 481.06935) scale(0.08 -0.08)">
      <use xlink:href="#DejaVuSans-2715"/>
      <use xlink:href="#NanumSquareR-20" transform="translate(83.789062 0)"/>
      <use xlink:href="#NanumSquareR-70" transform="translate(108.789047 0)"/>
@@ -12547,56 +12394,21 @@ z
     </g>
    </g>
    <g id="patch_37">
-    <path d="M 942.24 415.34 
-L 1058.183226 415.34 
-Q 1069.052903 415.34 1069.052903 397.13 
-L 1069.052903 381.955 
-Q 1069.052903 363.745 1058.183226 363.745 
-L 942.24 363.745 
-Q 931.370323 363.745 931.370323 381.955 
-L 931.370323 397.13 
-Q 931.370323 415.34 942.24 415.34 
+    <path d="M 886.05 618.3 
+L 986.85 618.3 
+Q 996.3 618.3 996.3 601.668 
+L 996.3 590.58 
+Q 996.3 573.948 986.85 573.948 
+L 886.05 573.948 
+Q 876.6 573.948 876.6 590.58 
+L 876.6 601.668 
+Q 876.6 618.3 886.05 618.3 
 z
-" clip-path="url(#p4ca257693f)" style="fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.5; stroke-linejoin: miter"/>
-   </g>
-   <g id="text_59">
-    <!-- ✕ policy_rejected -->
-    <g style="fill: #ef4444" transform="translate(1190.430968 391.649516) scale(0.075 -0.075)">
-     <use xlink:href="#DejaVuSans-2715"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(83.789062 0)"/>
-     <use xlink:href="#NanumSquareR-70" transform="translate(108.789047 0)"/>
-     <use xlink:href="#NanumSquareR-6f" transform="translate(166.189041 0)"/>
-     <use xlink:href="#NanumSquareR-6c" transform="translate(222.989029 0)"/>
-     <use xlink:href="#NanumSquareR-69" transform="translate(245.789017 0)"/>
-     <use xlink:href="#NanumSquareR-63" transform="translate(269.189011 0)"/>
-     <use xlink:href="#NanumSquareR-79" transform="translate(321.589005 0)"/>
-     <use xlink:href="#NanumSquareR-5f" transform="translate(372.088989 0)"/>
-     <use xlink:href="#NanumSquareR-72" transform="translate(420.088974 0)"/>
-     <use xlink:href="#NanumSquareR-65" transform="translate(458.813965 0)"/>
-     <use xlink:href="#NanumSquareR-6a" transform="translate(513.31395 0)"/>
-     <use xlink:href="#NanumSquareR-65" transform="translate(537.613937 0)"/>
-     <use xlink:href="#NanumSquareR-63" transform="translate(591.613922 0)"/>
-     <use xlink:href="#NanumSquareR-74" transform="translate(641.013916 0)"/>
-     <use xlink:href="#NanumSquareR-65" transform="translate(679.813904 0)"/>
-     <use xlink:href="#NanumSquareR-64" transform="translate(733.813889 0)"/>
-    </g>
-   </g>
-   <g id="patch_38">
-    <path d="M 942.24 536.74 
-L 1058.183226 536.74 
-Q 1069.052903 536.74 1069.052903 518.53 
-L 1069.052903 509.425 
-Q 1069.052903 491.215 1058.183226 491.215 
-L 942.24 491.215 
-Q 931.370323 491.215 931.370323 509.425 
-L 931.370323 518.53 
-Q 931.370323 536.74 942.24 536.74 
-z
-" clip-path="url(#p4ca257693f)" style="fill: #bbf7d0; stroke: #16a34a; stroke-width: 1.8; stroke-linejoin: miter"/>
+" clip-path="url(#p6ba7a9fa47)" style="fill: #bbf7d0; stroke: #16a34a; stroke-width: 1.8; stroke-linejoin: miter"/>
    </g>
    <g id="text_60">
-    <!-- 단계별 탈락 유형 -->
-    <g style="fill: #1e293b" transform="translate(938.616774 559.806) scale(0.085 -0.085)">
+    <!-- 단계별 탈락 수치 (실측) -->
+    <g style="fill: #1e293b" transform="translate(882.9 642.1392) scale(0.09 -0.09)">
      <defs>
       <path id="NanumSquareB-b2e8" d="M 3763 1952 
 Q 3424 1907 3129 1881 
@@ -12678,156 +12490,140 @@ L 1178 3456
 L 1178 2746 
 z
 " transform="scale(0.015625)"/>
-      <path id="NanumSquareB-c720" d="M 2912 4890 
-Q 3360 4890 3728 4797 
-Q 4096 4704 4355 4537 
-Q 4614 4371 4755 4137 
-Q 4896 3904 4896 3622 
-L 4896 3392 
-Q 4896 3110 4755 2876 
-Q 4614 2643 4355 2476 
-Q 4096 2310 3728 2217 
-Q 3360 2125 2912 2125 
-Q 2458 2125 2093 2217 
-Q 1728 2310 1469 2476 
-Q 1210 2643 1069 2876 
-Q 928 3110 928 3392 
-L 928 3622 
-Q 928 3904 1069 4137 
-Q 1210 4371 1469 4537 
-Q 1728 4704 2093 4797 
-Q 2458 4890 2912 4890 
+      <path id="NanumSquareB-ce58" d="M 2176 1914 
+Q 2131 1805 2041 1689 
+Q 1952 1574 1798 1408 
+Q 1600 1190 1357 944 
+Q 1114 698 787 397 
+L 371 826 
+Q 659 1088 899 1325 
+Q 1139 1562 1357 1805 
+Q 1517 1978 1613 2118 
+Q 1709 2259 1760 2393 
+Q 1811 2528 1830 2669 
+Q 1850 2810 1850 2989 
+L 1850 3597 
+L 531 3597 
+L 531 4147 
+L 1850 4147 
+L 1850 4986 
+L 2490 4986 
+L 2490 4147 
+L 3757 4147 
+L 3757 3597 
+L 2490 3597 
+L 2490 2989 
+Q 2490 2797 2509 2656 
+Q 2528 2515 2582 2387 
+Q 2637 2259 2739 2121 
+Q 2842 1984 3014 1798 
+Q 3219 1574 3433 1369 
+Q 3648 1165 3936 915 
+L 3520 486 
+Q 3194 787 2976 1001 
+Q 2758 1216 2573 1414 
+Q 2438 1562 2329 1690 
+Q 2221 1818 2182 1914 
+L 2176 1914 
 z
-M 3622 -883 
-L 3622 1043 
-L 2202 1043 
-L 2202 -883 
-L 1568 -883 
-L 1568 1043 
-L 205 1043 
-L 205 1581 
-L 5619 1581 
-L 5619 1043 
-L 4256 1043 
-L 4256 -883 
-L 3622 -883 
-z
-M 2912 2675 
-Q 3219 2675 3472 2729 
-Q 3725 2784 3901 2880 
-Q 4077 2976 4176 3110 
-Q 4275 3245 4275 3405 
-L 4275 3610 
-Q 4275 3770 4176 3904 
-Q 4077 4038 3901 4134 
-Q 3725 4230 3472 4284 
-Q 3219 4339 2912 4339 
-Q 2605 4339 2352 4284 
-Q 2099 4230 1923 4134 
-Q 1747 4038 1648 3904 
-Q 1549 3770 1549 3610 
-L 1549 3405 
-Q 1549 3245 1648 3110 
-Q 1747 2976 1923 2880 
-Q 2099 2784 2352 2729 
-Q 2605 2675 2912 2675 
+M 4518 -896 
+L 4518 5005 
+L 5152 5005 
+L 5152 -896 
+L 4518 -896 
 z
 " transform="scale(0.015625)"/>
-      <path id="NanumSquareB-d615" d="M 3347 1165 
-Q 3782 1165 4121 1088 
-Q 4461 1011 4691 873 
-Q 4922 736 5040 550 
-Q 5158 365 5158 154 
-L 5158 -51 
-Q 5158 -262 5040 -448 
-Q 4922 -634 4691 -771 
-Q 4461 -909 4121 -985 
-Q 3782 -1062 3347 -1062 
-Q 2912 -1062 2573 -985 
-Q 2234 -909 2003 -771 
-Q 1773 -634 1654 -448 
-Q 1536 -262 1536 -51 
-L 1536 154 
-Q 1536 365 1654 550 
-Q 1773 736 2003 873 
-Q 2234 1011 2573 1088 
-Q 2912 1165 3347 1165 
+      <path id="NanumSquareB-c2e4" d="M 4448 2067 
+L 4448 5005 
+L 5075 5005 
+L 5075 2067 
+L 4448 2067 
 z
-M 1946 1427 
-Q 1600 1427 1344 1513 
-Q 1088 1600 918 1744 
-Q 749 1888 662 2064 
-Q 576 2240 576 2426 
-L 576 2618 
-Q 576 2803 662 2982 
-Q 749 3162 918 3302 
-Q 1088 3443 1344 3529 
-Q 1600 3616 1946 3616 
-Q 2291 3616 2547 3529 
-Q 2803 3443 2972 3299 
-Q 3142 3155 3228 2976 
-Q 3315 2797 3315 2618 
-L 3315 2426 
-Q 3315 2240 3228 2064 
-Q 3142 1888 2972 1744 
-Q 2803 1600 2547 1513 
-Q 2291 1427 1946 1427 
+M 1421 -934 
+L 1421 678 
+L 4454 678 
+L 4454 1248 
+L 1389 1248 
+L 1389 1773 
+L 5075 1773 
+L 5075 166 
+L 2042 166 
+L 2042 -410 
+L 5242 -410 
+L 5242 -934 
+L 1421 -934 
 z
-M 4512 1280 
-L 4512 1926 
-L 3648 1926 
-L 3648 2470 
-L 4512 2470 
-L 4512 3040 
-L 3648 3040 
-L 3648 3584 
-L 4512 3584 
-L 4512 5005 
-L 5133 5005 
-L 5133 1280 
-L 4512 1280 
+M 2048 3238 
+Q 2029 3162 1913 3030 
+Q 1798 2899 1619 2739 
+Q 1414 2560 1142 2339 
+Q 870 2118 602 1933 
+L 237 2381 
+Q 544 2611 832 2838 
+Q 1120 3066 1293 3226 
+Q 1530 3443 1619 3657 
+Q 1709 3872 1709 4211 
+L 1709 4858 
+L 2349 4858 
+L 2349 4237 
+Q 2349 4090 2361 3971 
+Q 2374 3853 2409 3753 
+Q 2445 3654 2509 3561 
+Q 2573 3469 2682 3373 
+Q 2906 3168 3178 2973 
+Q 3450 2778 3725 2592 
+L 3360 2131 
+Q 3117 2310 2880 2483 
+Q 2643 2656 2419 2848 
+Q 2291 2957 2185 3062 
+Q 2080 3168 2054 3238 
+L 2048 3238 
 z
-M 3347 -550 
-Q 3923 -550 4230 -387 
-Q 4538 -224 4538 -13 
-L 4538 115 
-Q 4538 326 4230 489 
-Q 3923 653 3347 653 
-Q 2771 653 2464 489 
-Q 2157 326 2157 115 
-L 2157 -13 
-Q 2157 -224 2464 -387 
-Q 2771 -550 3347 -550 
+" transform="scale(0.015625)"/>
+      <path id="NanumSquareB-ce21" d="M 2906 3219 
+Q 2835 3091 2656 2998 
+Q 2477 2906 2272 2829 
+Q 1907 2694 1564 2582 
+Q 1222 2470 864 2368 
+L 672 2880 
+Q 1005 2970 1286 3059 
+Q 1568 3149 1888 3270 
+Q 2246 3405 2419 3552 
+Q 2592 3699 2592 3936 
+L 2592 3968 
+L 890 3968 
+L 890 4493 
+L 2592 4493 
+L 2592 5075 
+L 3226 5075 
+L 3226 4493 
+L 4934 4493 
+L 4934 3968 
+L 3226 3968 
+L 3226 3936 
+Q 3226 3699 3402 3558 
+Q 3578 3418 3936 3270 
+Q 4154 3181 4454 3085 
+Q 4755 2989 5152 2880 
+L 4960 2368 
+Q 4256 2566 3558 2829 
+Q 3354 2906 3168 2998 
+Q 2982 3091 2912 3219 
+L 2906 3219 
 z
-M 3667 3834 
-L 256 3834 
-L 256 4371 
-L 1626 4371 
-L 1626 5069 
-L 2253 5069 
-L 2253 4371 
-L 3667 4371 
-L 3667 3834 
+M 902 979 
+L 4864 979 
+L 4864 -966 
+L 4224 -966 
+L 4224 442 
+L 902 442 
+L 902 979 
 z
-M 1946 1933 
-Q 2138 1933 2282 1981 
-Q 2426 2029 2522 2102 
-Q 2618 2176 2666 2269 
-Q 2714 2362 2714 2458 
-L 2714 2586 
-Q 2714 2682 2669 2774 
-Q 2624 2867 2528 2940 
-Q 2432 3014 2288 3062 
-Q 2144 3110 1946 3110 
-Q 1747 3110 1603 3062 
-Q 1459 3014 1363 2940 
-Q 1267 2867 1222 2774 
-Q 1178 2682 1178 2586 
-L 1178 2458 
-Q 1178 2362 1226 2269 
-Q 1274 2176 1370 2102 
-Q 1466 2029 1610 1981 
-Q 1754 1933 1946 1933 
+M 5619 2074 
+L 5619 1536 
+L 205 1536 
+L 205 2074 
+L 5619 2074 
 z
 " transform="scale(0.015625)"/>
      </defs>
@@ -12838,214 +12634,820 @@ z
      <use xlink:href="#NanumSquareB-d0c8" transform="translate(297.999939 0)"/>
      <use xlink:href="#NanumSquareB-b77d" transform="translate(388.999924 0)"/>
      <use xlink:href="#NanumSquareB-20" transform="translate(479.999908 0)"/>
-     <use xlink:href="#NanumSquareB-c720" transform="translate(504.999893 0)"/>
-     <use xlink:href="#NanumSquareB-d615" transform="translate(595.999878 0)"/>
+     <use xlink:href="#NanumSquareB-c218" transform="translate(504.999893 0)"/>
+     <use xlink:href="#NanumSquareB-ce58" transform="translate(595.999878 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(686.999863 0)"/>
+     <use xlink:href="#NanumSquareB-28" transform="translate(711.999847 0)"/>
+     <use xlink:href="#NanumSquareB-c2e4" transform="translate(745.699844 0)"/>
+     <use xlink:href="#NanumSquareB-ce21" transform="translate(836.699829 0)"/>
+     <use xlink:href="#NanumSquareB-29" transform="translate(927.699814 0)"/>
     </g>
    </g>
-   <g id="patch_39">
-    <path d="M 953.109677 632.646 
-L 1024.849548 632.646 
-Q 1024.849548 632.646 1024.849548 632.646 
-L 1024.849548 599.261 
-Q 1024.849548 599.261 1024.849548 599.261 
-L 953.109677 599.261 
-Q 953.109677 599.261 953.109677 599.261 
-L 953.109677 632.646 
-Q 953.109677 632.646 953.109677 632.646 
+   <g id="patch_38">
+    <path d="M 886.05 708.6672 
+L 963.225 708.6672 
+Q 969.525 708.6672 969.525 697.5792 
+L 969.525 659.88 
+Q 969.525 648.792 963.225 648.792 
+L 886.05 648.792 
+Q 879.75 648.792 879.75 659.88 
+L 879.75 697.5792 
+Q 879.75 708.6672 886.05 708.6672 
 z
-" clip-path="url(#p4ca257693f)" style="fill: #e2e8f0"/>
+" clip-path="url(#p6ba7a9fa47)" style="fill: #ffffff; stroke: #ca8a04; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_61">
     <!-- 수집 필터 -->
-    <g style="fill: #1e293b" transform="translate(974.392113 589.549) scale(0.075 -0.075)">
+    <g style="fill: #1e293b" transform="translate(908.92 663.2064) scale(0.08 -0.08)">
      <defs>
-      <path id="NanumSquareR-c9d1" d="M 5056 1658 
-L 5056 -864 
-L 1485 -864 
-L 1485 1658 
-L 1926 1658 
-L 1926 851 
-L 4614 851 
-L 4614 1658 
-L 5056 1658 
+      <path id="NanumSquareB-d544" d="M 371 2771 
+L 973 2771 
+L 973 4243 
+L 410 4243 
+L 410 4755 
+L 3674 4755 
+L 3674 4243 
+L 3123 4243 
+L 3123 2816 
+Q 3328 2829 3513 2841 
+Q 3699 2854 3891 2874 
+L 3936 2381 
+Q 3642 2355 3334 2336 
+Q 3027 2317 2624 2301 
+Q 2221 2285 1680 2278 
+Q 1139 2272 371 2266 
+L 371 2771 
 z
-M 2144 3091 
-Q 2118 2976 1677 2611 
-Q 1587 2541 1468 2451 
-Q 1350 2362 1216 2259 
-Q 1082 2157 938 2057 
-Q 794 1958 659 1869 
-L 403 2202 
-Q 992 2573 1453 2957 
-Q 1594 3072 1680 3168 
-Q 1766 3264 1814 3366 
-Q 1862 3469 1881 3584 
-Q 1901 3699 1901 3866 
-L 1901 4237 
-L 570 4237 
-L 570 4627 
-L 3629 4627 
-L 3629 4237 
-L 2355 4237 
-L 2355 3923 
-Q 2355 3731 2368 3609 
-Q 2381 3488 2429 3392 
-Q 2477 3296 2573 3206 
-Q 2669 3117 2835 2995 
-Q 3040 2842 3277 2682 
-Q 3514 2522 3757 2374 
-L 3507 2054 
-Q 3309 2182 3097 2326 
-Q 2886 2470 2701 2605 
-Q 2470 2771 2323 2899 
-Q 2176 3027 2150 3091 
-L 2144 3091 
+M 1440 -934 
+L 1440 666 
+L 4474 666 
+L 4474 1222 
+L 1408 1222 
+L 1408 1747 
+L 5094 1747 
+L 5094 154 
+L 2061 154 
+L 2061 -410 
+L 5261 -410 
+L 5261 -934 
+L 1440 -934 
 z
-M 4614 -461 
-L 4614 454 
-L 1926 454 
-L 1926 -461 
-L 4614 -461 
+M 4467 2042 
+L 4467 5005 
+L 5094 5005 
+L 5094 2042 
+L 4467 2042 
 z
-M 5056 2003 
-L 4608 2003 
-L 4608 4979 
-L 5056 4979 
-L 5056 2003 
+M 2515 2790 
+L 2515 4243 
+L 1581 4243 
+L 1581 2771 
+L 2515 2790 
 z
 " transform="scale(0.015625)"/>
-      <path id="NanumSquareR-d544" d="M 3962 2400 
-Q 3558 2362 3120 2339 
-Q 2682 2317 2227 2307 
-Q 1773 2298 1309 2294 
-Q 845 2291 390 2291 
-L 390 2675 
-L 1011 2675 
-L 1011 4339 
-L 429 4339 
-L 429 4723 
-L 3667 4723 
-L 3667 4339 
-L 3040 4339 
-L 3040 2714 
-Q 3264 2726 3481 2739 
-Q 3699 2752 3923 2778 
-L 3962 2400 
+      <path id="NanumSquareB-d130" d="M 1254 3987 
+L 1254 2854 
+L 3104 2854 
+L 3104 2317 
+L 1254 2317 
+L 1254 1107 
+L 1811 1107 
+Q 2394 1107 2893 1136 
+Q 3392 1165 3834 1235 
+L 3898 698 
+Q 3635 659 3382 630 
+Q 3130 602 2861 589 
+Q 2592 576 2297 569 
+Q 2003 563 1658 563 
+L 627 563 
+L 627 4531 
+L 3328 4531 
+L 3328 3987 
+L 1254 3987 
 z
-M 5056 1728 
-L 5056 230 
-L 1920 230 
-L 1920 -506 
-L 5210 -506 
-L 5210 -890 
-L 1478 -890 
-L 1478 608 
-L 4614 608 
-L 4614 1338 
-L 1446 1338 
-L 1446 1728 
-L 5056 1728 
-z
-M 1446 2675 
-Q 2048 2675 2605 2694 
-L 2605 4339 
-L 1446 4339 
-L 1446 2675 
-z
-M 5056 2074 
-L 4608 2074 
-L 4608 4979 
-L 5056 4979 
-L 5056 2074 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareR-d130" d="M 3315 4506 
-L 3315 4102 
-L 1101 4102 
-L 1101 2810 
-L 3091 2810 
-L 3091 2406 
-L 1101 2406 
-L 1101 1037 
-L 1920 1037 
-Q 2368 1037 2854 1065 
-Q 3341 1094 3859 1171 
-L 3910 768 
-Q 3392 685 2854 656 
-Q 2317 627 1805 627 
-L 646 627 
-L 646 4506 
-L 3315 4506 
-z
-M 4653 2829 
-L 4653 4979 
-L 5101 4979 
-L 5101 -870 
-L 4653 -870 
-L 4653 2419 
-L 3469 2419 
-L 3469 2829 
-L 4653 2829 
+M 4512 -896 
+L 4512 2317 
+L 3443 2317 
+L 3443 2867 
+L 4512 2867 
+L 4512 5005 
+L 5146 5005 
+L 5146 -896 
+L 4512 -896 
 z
 " transform="scale(0.015625)"/>
      </defs>
-     <use xlink:href="#NanumSquareR-c218"/>
-     <use xlink:href="#NanumSquareR-c9d1" transform="translate(90.999985 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(181.999969 0)"/>
-     <use xlink:href="#NanumSquareR-d544" transform="translate(206.999954 0)"/>
-     <use xlink:href="#NanumSquareR-d130" transform="translate(297.999939 0)"/>
+     <use xlink:href="#NanumSquareB-c218"/>
+     <use xlink:href="#NanumSquareB-c9d1" transform="translate(90.999985 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
+     <use xlink:href="#NanumSquareB-d544" transform="translate(206.999954 0)"/>
+     <use xlink:href="#NanumSquareB-d130" transform="translate(297.999939 0)"/>
+    </g>
+   </g>
+   <g id="text_62">
+    <!-- 다수 제외 -->
+    <g style="fill: #ca8a04" transform="translate(907.9475 682.056) scale(0.085 -0.085)">
+     <defs>
+      <path id="NanumSquareB-b2e4" d="M 3213 3923 
+L 1133 3923 
+L 1133 1210 
+L 1472 1210 
+Q 2099 1210 2646 1251 
+Q 3194 1293 3738 1376 
+L 3821 845 
+Q 3251 742 2652 700 
+Q 2054 659 1338 659 
+L 499 659 
+L 499 4474 
+L 3213 4474 
+L 3213 3923 
+z
+M 5734 2323 
+L 4826 2323 
+L 4826 -896 
+L 4192 -896 
+L 4192 5005 
+L 4826 5005 
+L 4826 2874 
+L 5734 2874 
+L 5734 2323 
+z
+" transform="scale(0.015625)"/>
+      <path id="NanumSquareB-c678" d="M 4218 467 
+Q 3814 429 3392 400 
+Q 2970 371 2499 352 
+Q 2029 333 1494 323 
+Q 960 314 333 314 
+L 333 864 
+Q 762 858 1139 861 
+Q 1517 864 1862 870 
+L 1862 1856 
+Q 1574 1901 1340 2022 
+Q 1107 2144 947 2313 
+Q 787 2483 700 2688 
+Q 614 2893 614 3104 
+L 614 3398 
+Q 614 3635 723 3865 
+Q 832 4096 1033 4275 
+Q 1235 4454 1526 4563 
+Q 1818 4672 2182 4672 
+Q 2547 4672 2838 4563 
+Q 3130 4454 3331 4275 
+Q 3533 4096 3641 3865 
+Q 3750 3635 3750 3398 
+L 3750 3104 
+Q 3750 2893 3664 2691 
+Q 3578 2490 3418 2317 
+Q 3258 2144 3027 2022 
+Q 2797 1901 2509 1856 
+L 2509 890 
+Q 2963 902 3363 931 
+Q 3763 960 4160 998 
+L 4218 467 
+z
+M 4538 -896 
+L 4538 5005 
+L 5165 5005 
+L 5165 -896 
+L 4538 -896 
+z
+M 2182 2381 
+Q 2387 2381 2563 2445 
+Q 2739 2509 2867 2614 
+Q 2995 2720 3068 2857 
+Q 3142 2995 3142 3142 
+L 3142 3360 
+Q 3142 3514 3068 3654 
+Q 2995 3795 2867 3897 
+Q 2739 4000 2563 4061 
+Q 2387 4122 2182 4122 
+Q 1978 4122 1802 4061 
+Q 1626 4000 1498 3897 
+Q 1370 3795 1296 3654 
+Q 1222 3514 1222 3360 
+L 1222 3142 
+Q 1222 2995 1296 2857 
+Q 1370 2720 1498 2614 
+Q 1626 2509 1802 2445 
+Q 1978 2381 2182 2381 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareB-b2e4"/>
+     <use xlink:href="#NanumSquareB-c218" transform="translate(90.999985 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
+     <use xlink:href="#NanumSquareB-c81c" transform="translate(206.999954 0)"/>
+     <use xlink:href="#NanumSquareB-c678" transform="translate(297.999939 0)"/>
+    </g>
+   </g>
+   <g id="text_63">
+    <!-- quality_rejected -->
+    <g style="fill: #6b7280" transform="translate(899.85975 694.976375) scale(0.068 -0.068)">
+     <defs>
+      <path id="NanumSquareR-71" d="M 2758 288 
+L 2752 288 
+Q 2605 26 2320 -96 
+Q 2035 -218 1734 -218 
+Q 1434 -218 1184 -118 
+Q 934 -19 748 169 
+Q 563 358 460 633 
+Q 358 909 358 1261 
+L 358 1869 
+Q 358 2221 460 2496 
+Q 563 2771 745 2960 
+Q 928 3149 1181 3248 
+Q 1434 3347 1728 3347 
+Q 2112 3347 2371 3200 
+Q 2630 3053 2765 2861 
+L 2765 3283 
+L 3194 3283 
+L 3194 -1536 
+L 2758 -1536 
+L 2758 288 
+z
+M 794 1325 
+Q 794 768 1056 467 
+Q 1318 166 1754 166 
+Q 1965 166 2147 220 
+Q 2330 275 2464 387 
+Q 2598 499 2678 668 
+Q 2758 838 2758 1069 
+L 2758 2106 
+Q 2758 2259 2684 2409 
+Q 2611 2560 2476 2685 
+Q 2342 2810 2156 2886 
+Q 1971 2963 1754 2963 
+Q 1312 2963 1053 2659 
+Q 794 2355 794 1805 
+L 794 1325 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareR-71"/>
+     <use xlink:href="#NanumSquareR-75" transform="translate(57.899994 0)"/>
+     <use xlink:href="#NanumSquareR-61" transform="translate(115.699982 0)"/>
+     <use xlink:href="#NanumSquareR-6c" transform="translate(168.999969 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(191.799957 0)"/>
+     <use xlink:href="#NanumSquareR-74" transform="translate(215.199951 0)"/>
+     <use xlink:href="#NanumSquareR-79" transform="translate(253.999939 0)"/>
+     <use xlink:href="#NanumSquareR-5f" transform="translate(304.499924 0)"/>
+     <use xlink:href="#NanumSquareR-72" transform="translate(352.499908 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(391.224899 0)"/>
+     <use xlink:href="#NanumSquareR-6a" transform="translate(445.724884 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(470.024872 0)"/>
+     <use xlink:href="#NanumSquareR-63" transform="translate(524.024857 0)"/>
+     <use xlink:href="#NanumSquareR-74" transform="translate(573.42485 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(612.224838 0)"/>
+     <use xlink:href="#NanumSquareR-64" transform="translate(666.224823 0)"/>
+    </g>
+    <!-- trust &lt; 0.65 -->
+    <g style="fill: #6b7280" transform="translate(906.171531 703.1232) scale(0.068 -0.068)">
+     <defs>
+      <path id="NanumSquareR-3c" d="M 928 2029 
+L 3424 730 
+L 3424 262 
+L 416 1862 
+L 416 2240 
+L 3424 3840 
+L 3424 3379 
+L 928 2067 
+L 928 2029 
+z
+" transform="scale(0.015625)"/>
+      <path id="NanumSquareR-36" d="M 3091 3840 
+Q 2874 3968 2627 4041 
+Q 2381 4115 2112 4115 
+Q 1786 4115 1562 3984 
+Q 1338 3853 1190 3603 
+Q 1043 3354 966 2992 
+Q 890 2630 864 2170 
+Q 915 2272 1014 2387 
+Q 1114 2502 1258 2598 
+Q 1402 2694 1594 2755 
+Q 1786 2816 2029 2816 
+Q 2323 2816 2588 2720 
+Q 2854 2624 3056 2441 
+Q 3258 2259 3376 1993 
+Q 3494 1728 3494 1389 
+L 3494 1235 
+Q 3494 896 3379 624 
+Q 3264 352 3062 160 
+Q 2861 -32 2582 -134 
+Q 2304 -237 1984 -237 
+Q 1658 -237 1373 -125 
+Q 1088 -13 877 217 
+Q 666 448 544 803 
+Q 422 1158 422 1638 
+L 422 1792 
+Q 422 2534 540 3052 
+Q 659 3571 876 3897 
+Q 1094 4224 1408 4371 
+Q 1722 4518 2118 4518 
+Q 2432 4518 2736 4435 
+Q 3040 4352 3302 4205 
+L 3091 3840 
+z
+M 909 1325 
+Q 909 1062 985 851 
+Q 1062 640 1203 486 
+Q 1344 333 1539 249 
+Q 1734 166 1971 166 
+Q 2208 166 2406 240 
+Q 2605 314 2749 451 
+Q 2893 589 2973 790 
+Q 3053 992 3053 1254 
+L 3053 1350 
+Q 3053 1606 2963 1808 
+Q 2874 2010 2726 2147 
+Q 2579 2285 2384 2355 
+Q 2189 2426 1978 2426 
+Q 1773 2426 1581 2349 
+Q 1389 2272 1241 2137 
+Q 1094 2003 1001 1814 
+Q 909 1626 909 1408 
+L 909 1325 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareR-74"/>
+     <use xlink:href="#NanumSquareR-72" transform="translate(38.799988 0)"/>
+     <use xlink:href="#NanumSquareR-75" transform="translate(77.899979 0)"/>
+     <use xlink:href="#NanumSquareR-73" transform="translate(135.699966 0)"/>
+     <use xlink:href="#NanumSquareR-74" transform="translate(185.199951 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(223.999939 0)"/>
+     <use xlink:href="#NanumSquareR-3c" transform="translate(248.999924 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(308.999908 0)"/>
+     <use xlink:href="#NanumSquareR-30" transform="translate(333.999893 0)"/>
+     <use xlink:href="#NanumSquareR-2e" transform="translate(393.999878 0)"/>
+     <use xlink:href="#NanumSquareR-36" transform="translate(418.499863 0)"/>
+     <use xlink:href="#NanumSquareR-35" transform="translate(478.499847 0)"/>
+    </g>
+   </g>
+   <g id="patch_39">
+    <path d="M 983.7 708.6672 
+L 1060.875 708.6672 
+Q 1067.175 708.6672 1067.175 697.5792 
+L 1067.175 659.88 
+Q 1067.175 648.792 1060.875 648.792 
+L 983.7 648.792 
+Q 977.4 648.792 977.4 659.88 
+L 977.4 697.5792 
+Q 977.4 708.6672 983.7 708.6672 
+z
+" clip-path="url(#p6ba7a9fa47)" style="fill: #ffffff; stroke: #ef4444; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_64">
+    <!-- 충실도 검증 -->
+    <g style="fill: #1e293b" transform="translate(1002.93 663.2064) scale(0.08 -0.08)">
+     <defs>
+      <path id="NanumSquareB-cda9" d="M 205 1677 
+L 205 2214 
+L 5619 2214 
+L 5619 1677 
+L 3232 1677 
+L 3232 1165 
+Q 3942 1107 4348 825 
+Q 4755 544 4755 141 
+L 4755 -32 
+Q 4755 -256 4627 -445 
+Q 4499 -634 4259 -771 
+Q 4019 -909 3676 -989 
+Q 3334 -1069 2912 -1069 
+Q 2490 -1069 2147 -992 
+Q 1805 -915 1565 -774 
+Q 1325 -634 1197 -445 
+Q 1069 -256 1069 -32 
+L 1069 141 
+Q 1069 339 1174 515 
+Q 1280 691 1478 825 
+Q 1677 960 1958 1046 
+Q 2240 1133 2592 1165 
+L 2592 1677 
+L 205 1677 
+z
+M 2906 3277 
+Q 2835 3149 2656 3056 
+Q 2477 2963 2272 2886 
+Q 1907 2752 1564 2640 
+Q 1222 2528 864 2426 
+L 672 2938 
+Q 1005 3027 1286 3116 
+Q 1568 3206 1888 3328 
+Q 2240 3456 2413 3603 
+Q 2586 3750 2592 3981 
+L 890 3981 
+L 890 4506 
+L 2592 4506 
+L 2592 5082 
+L 3226 5082 
+L 3226 4506 
+L 4934 4506 
+L 4934 3981 
+L 3226 3981 
+Q 3232 3750 3408 3609 
+Q 3584 3469 3936 3328 
+Q 4154 3238 4454 3142 
+Q 4755 3046 5152 2938 
+L 4960 2426 
+Q 4256 2624 3558 2886 
+Q 3354 2963 3168 3056 
+Q 2982 3149 2912 3277 
+L 2906 3277 
+z
+M 1696 6 
+Q 1696 -115 1785 -217 
+Q 1875 -320 2035 -393 
+Q 2195 -467 2419 -508 
+Q 2643 -550 2912 -550 
+Q 3181 -550 3405 -508 
+Q 3629 -467 3789 -393 
+Q 3949 -320 4038 -217 
+Q 4128 -115 4128 6 
+L 4128 102 
+Q 4128 224 4038 326 
+Q 3949 429 3789 502 
+Q 3629 576 3405 617 
+Q 3181 659 2912 659 
+Q 2643 659 2419 617 
+Q 2195 576 2035 502 
+Q 1875 429 1785 326 
+Q 1696 224 1696 102 
+L 1696 6 
+z
+" transform="scale(0.015625)"/>
+      <path id="NanumSquareB-b3c4" d="M 4928 1734 
+L 3232 1734 
+L 3232 429 
+L 5619 429 
+L 5619 -109 
+L 205 -109 
+L 205 429 
+L 2592 429 
+L 2592 1734 
+L 934 1734 
+L 934 4512 
+L 4858 4512 
+L 4858 3974 
+L 1568 3974 
+L 1568 2272 
+L 4928 2272 
+L 4928 1734 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareB-cda9"/>
+     <use xlink:href="#NanumSquareB-c2e4" transform="translate(90.999985 0)"/>
+     <use xlink:href="#NanumSquareB-b3c4" transform="translate(181.999969 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(272.999954 0)"/>
+     <use xlink:href="#NanumSquareB-ac80" transform="translate(297.999939 0)"/>
+     <use xlink:href="#NanumSquareB-c99d" transform="translate(388.999924 0)"/>
+    </g>
+   </g>
+   <g id="text_65">
+    <!-- 일부 탈락 -->
+    <g style="fill: #ef4444" transform="translate(1005.5975 682.056) scale(0.085 -0.085)">
+     <defs>
+      <path id="NanumSquareB-c77c" d="M 1440 -934 
+L 1440 678 
+L 4474 678 
+L 4474 1248 
+L 1408 1248 
+L 1408 1773 
+L 5094 1773 
+L 5094 166 
+L 2061 166 
+L 2061 -410 
+L 5261 -410 
+L 5261 -934 
+L 1440 -934 
+z
+M 4467 2067 
+L 4467 5005 
+L 5094 5005 
+L 5094 2067 
+L 4467 2067 
+z
+M 1882 4922 
+Q 2240 4922 2515 4813 
+Q 2790 4704 2976 4531 
+Q 3162 4358 3254 4140 
+Q 3347 3923 3347 3706 
+L 3347 3450 
+Q 3347 3226 3254 3008 
+Q 3162 2790 2976 2617 
+Q 2790 2445 2515 2339 
+Q 2240 2234 1882 2234 
+Q 1523 2234 1248 2339 
+Q 973 2445 787 2617 
+Q 602 2790 509 3008 
+Q 416 3226 416 3450 
+L 416 3706 
+Q 416 3923 509 4140 
+Q 602 4358 787 4531 
+Q 973 4704 1248 4813 
+Q 1523 4922 1882 4922 
+z
+M 1882 2778 
+Q 2086 2778 2246 2838 
+Q 2406 2899 2515 2998 
+Q 2624 3098 2681 3226 
+Q 2739 3354 2739 3488 
+L 2739 3667 
+Q 2739 3802 2681 3930 
+Q 2624 4058 2515 4154 
+Q 2406 4250 2246 4310 
+Q 2086 4371 1882 4371 
+Q 1677 4371 1517 4313 
+Q 1357 4256 1248 4157 
+Q 1139 4058 1081 3930 
+Q 1024 3802 1024 3667 
+L 1024 3488 
+Q 1024 3354 1081 3226 
+Q 1139 3098 1248 2998 
+Q 1357 2899 1517 2838 
+Q 1677 2778 1882 2778 
+z
+" transform="scale(0.015625)"/>
+      <path id="NanumSquareB-bd80" d="M 4851 2163 
+L 973 2163 
+L 973 4774 
+L 1600 4774 
+L 1600 3968 
+L 4224 3968 
+L 4224 4781 
+L 4851 4781 
+L 4851 2163 
+z
+M 2592 -896 
+L 2592 979 
+L 205 979 
+L 205 1517 
+L 5619 1517 
+L 5619 979 
+L 3232 979 
+L 3232 -896 
+L 2592 -896 
+z
+M 1600 2707 
+L 4224 2707 
+L 4224 3430 
+L 1600 3430 
+L 1600 2707 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareB-c77c"/>
+     <use xlink:href="#NanumSquareB-bd80" transform="translate(90.999985 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
+     <use xlink:href="#NanumSquareB-d0c8" transform="translate(206.999954 0)"/>
+     <use xlink:href="#NanumSquareB-b77d" transform="translate(297.999939 0)"/>
+    </g>
+   </g>
+   <g id="text_66">
+    <!-- policy_rejected -->
+    <g style="fill: #6b7280" transform="translate(998.910125 694.976375) scale(0.068 -0.068)">
+     <use xlink:href="#NanumSquareR-70"/>
+     <use xlink:href="#NanumSquareR-6f" transform="translate(57.399994 0)"/>
+     <use xlink:href="#NanumSquareR-6c" transform="translate(114.199982 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(136.999969 0)"/>
+     <use xlink:href="#NanumSquareR-63" transform="translate(160.399963 0)"/>
+     <use xlink:href="#NanumSquareR-79" transform="translate(212.799957 0)"/>
+     <use xlink:href="#NanumSquareR-5f" transform="translate(263.299942 0)"/>
+     <use xlink:href="#NanumSquareR-72" transform="translate(311.299927 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(350.024918 0)"/>
+     <use xlink:href="#NanumSquareR-6a" transform="translate(404.524902 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(428.82489 0)"/>
+     <use xlink:href="#NanumSquareR-63" transform="translate(482.824875 0)"/>
+     <use xlink:href="#NanumSquareR-74" transform="translate(532.224869 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(571.024857 0)"/>
+     <use xlink:href="#NanumSquareR-64" transform="translate(625.024841 0)"/>
+    </g>
+    <!-- faithfulness &lt; 0.70 -->
+    <g style="fill: #6b7280" transform="translate(993.049375 703.1232) scale(0.068 -0.068)">
+     <defs>
+      <path id="NanumSquareR-68" d="M 1997 3347 
+Q 2592 3347 2915 3024 
+Q 3238 2701 3238 2157 
+L 3238 -166 
+L 2803 -166 
+L 2803 2048 
+Q 2803 2234 2764 2397 
+Q 2726 2560 2627 2685 
+Q 2528 2810 2358 2880 
+Q 2189 2950 1933 2950 
+Q 1715 2950 1532 2870 
+Q 1350 2790 1222 2662 
+Q 1094 2534 1020 2380 
+Q 947 2227 947 2074 
+L 947 -166 
+L 512 -166 
+L 512 4672 
+L 947 4672 
+L 947 2803 
+Q 1005 2899 1101 2998 
+Q 1197 3098 1328 3174 
+Q 1459 3251 1625 3299 
+Q 1792 3347 1997 3347 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareR-66"/>
+     <use xlink:href="#NanumSquareR-61" transform="translate(37.399994 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(90.699982 0)"/>
+     <use xlink:href="#NanumSquareR-74" transform="translate(114.099976 0)"/>
+     <use xlink:href="#NanumSquareR-68" transform="translate(152.899963 0)"/>
+     <use xlink:href="#NanumSquareR-66" transform="translate(211.09996 0)"/>
+     <use xlink:href="#NanumSquareR-75" transform="translate(248.499954 0)"/>
+     <use xlink:href="#NanumSquareR-6c" transform="translate(306.299942 0)"/>
+     <use xlink:href="#NanumSquareR-6e" transform="translate(329.09993 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(387.299927 0)"/>
+     <use xlink:href="#NanumSquareR-73" transform="translate(441.799911 0)"/>
+     <use xlink:href="#NanumSquareR-73" transform="translate(491.299896 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(540.799881 0)"/>
+     <use xlink:href="#NanumSquareR-3c" transform="translate(565.799866 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(625.79985 0)"/>
+     <use xlink:href="#NanumSquareR-30" transform="translate(650.799835 0)"/>
+     <use xlink:href="#NanumSquareR-2e" transform="translate(710.79982 0)"/>
+     <use xlink:href="#NanumSquareR-37" transform="translate(735.299805 0)"/>
+     <use xlink:href="#NanumSquareR-30" transform="translate(795.299789 0)"/>
     </g>
    </g>
    <g id="patch_40">
-    <path d="M 1043.690323 632.646 
-L 1115.430194 632.646 
-Q 1115.430194 632.646 1115.430194 632.646 
-L 1115.430194 599.261 
-Q 1115.430194 599.261 1115.430194 599.261 
-L 1043.690323 599.261 
-Q 1043.690323 599.261 1043.690323 599.261 
-L 1043.690323 632.646 
-Q 1043.690323 632.646 1043.690323 632.646 
+    <path d="M 1081.35 708.6672 
+L 1158.525 708.6672 
+Q 1164.825 708.6672 1164.825 697.5792 
+L 1164.825 659.88 
+Q 1164.825 648.792 1158.525 648.792 
+L 1081.35 648.792 
+Q 1075.05 648.792 1075.05 659.88 
+L 1075.05 697.5792 
+Q 1075.05 708.6672 1081.35 708.6672 
 z
-" clip-path="url(#p4ca257693f)" style="fill: #e2e8f0"/>
+" clip-path="url(#p6ba7a9fa47)" style="fill: #ffffff; stroke: #ea580c; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
-   <g id="text_62">
-    <!-- 충실도 검증 -->
-    <g style="fill: #1e293b" transform="translate(1061.560258 589.549) scale(0.075 -0.075)">
-     <use xlink:href="#NanumSquareR-cda9"/>
-     <use xlink:href="#NanumSquareR-c2e4" transform="translate(90.999985 0)"/>
-     <use xlink:href="#NanumSquareR-b3c4" transform="translate(181.999969 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(272.999954 0)"/>
-     <use xlink:href="#NanumSquareR-ac80" transform="translate(297.999939 0)"/>
-     <use xlink:href="#NanumSquareR-c99d" transform="translate(388.999924 0)"/>
-    </g>
-   </g>
-   <g id="patch_41">
-    <path d="M 1134.270968 632.646 
-L 1206.010839 632.646 
-Q 1206.010839 632.646 1206.010839 632.646 
-L 1206.010839 599.261 
-Q 1206.010839 599.261 1206.010839 599.261 
-L 1134.270968 599.261 
-Q 1134.270968 599.261 1134.270968 599.261 
-L 1134.270968 632.646 
-Q 1134.270968 632.646 1134.270968 632.646 
-z
-" clip-path="url(#p4ca257693f)" style="fill: #e2e8f0"/>
-   </g>
-   <g id="text_63">
+   <g id="text_67">
     <!-- 퀴즈 검증 -->
-    <g style="fill: #1e293b" transform="translate(1155.553403 589.549) scale(0.075 -0.075)">
-     <use xlink:href="#NanumSquareR-d034"/>
-     <use xlink:href="#NanumSquareR-c988" transform="translate(90.999985 0)"/>
-     <use xlink:href="#NanumSquareR-20" transform="translate(181.999969 0)"/>
-     <use xlink:href="#NanumSquareR-ac80" transform="translate(206.999954 0)"/>
-     <use xlink:href="#NanumSquareR-c99d" transform="translate(297.999939 0)"/>
+    <g style="fill: #1e293b" transform="translate(1104.22 663.2064) scale(0.08 -0.08)">
+     <use xlink:href="#NanumSquareB-d034"/>
+     <use xlink:href="#NanumSquareB-c988" transform="translate(90.999985 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
+     <use xlink:href="#NanumSquareB-ac80" transform="translate(206.999954 0)"/>
+     <use xlink:href="#NanumSquareB-c99d" transform="translate(297.999939 0)"/>
     </g>
    </g>
-   <g id="text_64">
+   <g id="text_68">
+    <!-- 106 / 147 -->
+    <g style="fill: #ea580c" transform="translate(1100.242617 671.9495) scale(0.085 -0.085)">
+     <defs>
+      <path id="NanumSquareB-36" d="M 3123 3667 
+Q 2906 3795 2656 3865 
+Q 2406 3936 2131 3936 
+Q 1894 3936 1699 3856 
+Q 1504 3776 1360 3590 
+Q 1216 3405 1129 3097 
+Q 1043 2790 1024 2336 
+Q 1082 2438 1187 2531 
+Q 1293 2624 1437 2697 
+Q 1581 2771 1757 2816 
+Q 1933 2861 2125 2861 
+Q 2432 2861 2697 2758 
+Q 2963 2656 3158 2464 
+Q 3354 2272 3466 2000 
+Q 3578 1728 3578 1389 
+L 3578 1248 
+Q 3578 915 3462 643 
+Q 3347 371 3142 176 
+Q 2938 -19 2646 -128 
+Q 2355 -237 2003 -237 
+Q 1222 -237 809 246 
+Q 397 730 397 1664 
+L 397 1901 
+Q 397 2656 528 3161 
+Q 659 3667 892 3968 
+Q 1126 4269 1452 4393 
+Q 1779 4518 2170 4518 
+Q 2483 4518 2793 4441 
+Q 3104 4365 3366 4205 
+L 3123 3667 
+z
+M 1043 1312 
+Q 1043 864 1292 601 
+Q 1542 339 1978 339 
+Q 2426 339 2685 582 
+Q 2944 826 2944 1280 
+L 2944 1363 
+Q 2944 1824 2681 2061 
+Q 2419 2298 1997 2298 
+Q 1786 2298 1610 2227 
+Q 1434 2157 1309 2038 
+Q 1184 1920 1113 1757 
+Q 1043 1594 1043 1402 
+L 1043 1312 
+z
+" transform="scale(0.015625)"/>
+      <path id="NanumSquareB-37" d="M 1734 -166 
+L 1043 -166 
+L 2874 3898 
+L 365 3898 
+L 365 4448 
+L 3558 4448 
+L 3558 3962 
+L 1734 -166 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareB-31"/>
+     <use xlink:href="#NanumSquareB-30" transform="translate(60.999985 0)"/>
+     <use xlink:href="#NanumSquareB-36" transform="translate(121.999969 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(182.999954 0)"/>
+     <use xlink:href="#NanumSquareB-2f" transform="translate(207.999939 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(251.699936 0)"/>
+     <use xlink:href="#NanumSquareB-31" transform="translate(276.699921 0)"/>
+     <use xlink:href="#NanumSquareB-34" transform="translate(337.699905 0)"/>
+     <use xlink:href="#NanumSquareB-37" transform="translate(398.69989 0)"/>
+    </g>
+    <!-- 탈락 72% -->
+    <g style="fill: #ea580c" transform="translate(1102.002383 682.056) scale(0.085 -0.085)">
+     <defs>
+      <path id="NanumSquareB-32" d="M 2131 2234 
+Q 2330 2451 2445 2611 
+Q 2560 2771 2617 2896 
+Q 2675 3021 2691 3120 
+Q 2707 3219 2707 3309 
+L 2707 3360 
+Q 2707 3635 2492 3792 
+Q 2278 3949 1914 3949 
+Q 1786 3949 1654 3920 
+Q 1523 3891 1395 3814 
+Q 1267 3738 1145 3606 
+Q 1024 3475 909 3277 
+L 422 3590 
+Q 506 3738 627 3901 
+Q 749 4064 925 4201 
+Q 1101 4339 1341 4428 
+Q 1581 4518 1901 4518 
+Q 2253 4518 2521 4432 
+Q 2790 4346 2972 4192 
+Q 3155 4038 3248 3824 
+Q 3341 3610 3341 3360 
+L 3341 3296 
+Q 3341 2918 3142 2585 
+Q 2944 2253 2630 1920 
+L 1190 384 
+L 3507 384 
+L 3507 -166 
+L 410 -166 
+L 410 365 
+L 2131 2234 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#NanumSquareB-d0c8"/>
+     <use xlink:href="#NanumSquareB-b77d" transform="translate(90.999985 0)"/>
+     <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
+     <use xlink:href="#NanumSquareB-37" transform="translate(206.999954 0)"/>
+     <use xlink:href="#NanumSquareB-32" transform="translate(267.999939 0)"/>
+     <use xlink:href="#NanumSquareB-25" transform="translate(328.999924 0)"/>
+    </g>
+   </g>
+   <g id="text_69">
+    <!-- policy_rejected -->
+    <g style="fill: #6b7280" transform="translate(1096.560125 694.976375) scale(0.068 -0.068)">
+     <use xlink:href="#NanumSquareR-70"/>
+     <use xlink:href="#NanumSquareR-6f" transform="translate(57.399994 0)"/>
+     <use xlink:href="#NanumSquareR-6c" transform="translate(114.199982 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(136.999969 0)"/>
+     <use xlink:href="#NanumSquareR-63" transform="translate(160.399963 0)"/>
+     <use xlink:href="#NanumSquareR-79" transform="translate(212.799957 0)"/>
+     <use xlink:href="#NanumSquareR-5f" transform="translate(263.299942 0)"/>
+     <use xlink:href="#NanumSquareR-72" transform="translate(311.299927 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(350.024918 0)"/>
+     <use xlink:href="#NanumSquareR-6a" transform="translate(404.524902 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(428.82489 0)"/>
+     <use xlink:href="#NanumSquareR-63" transform="translate(482.824875 0)"/>
+     <use xlink:href="#NanumSquareR-74" transform="translate(532.224869 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(571.024857 0)"/>
+     <use xlink:href="#NanumSquareR-64" transform="translate(625.024841 0)"/>
+    </g>
+    <!-- verified = 0 -->
+    <g style="fill: #6b7280" transform="translate(1102.463375 703.1232) scale(0.068 -0.068)">
+     <use xlink:href="#NanumSquareR-76"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(49.599991 0)"/>
+     <use xlink:href="#NanumSquareR-72" transform="translate(104.099976 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(143.199966 0)"/>
+     <use xlink:href="#NanumSquareR-66" transform="translate(166.59996 0)"/>
+     <use xlink:href="#NanumSquareR-69" transform="translate(203.999954 0)"/>
+     <use xlink:href="#NanumSquareR-65" transform="translate(227.399948 0)"/>
+     <use xlink:href="#NanumSquareR-64" transform="translate(281.399933 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(339.299927 0)"/>
+     <use xlink:href="#NanumSquareR-3d" transform="translate(364.299911 0)"/>
+     <use xlink:href="#NanumSquareR-20" transform="translate(424.299896 0)"/>
+     <use xlink:href="#NanumSquareR-30" transform="translate(449.299881 0)"/>
+    </g>
+   </g>
+   <g id="text_70">
     <!-- 설계 근거 -->
-    <g style="fill: #16a34a" transform="translate(938.616774 665.424) scale(0.085 -0.085)">
+    <g style="fill: #16a34a" transform="translate(882.9 733.0608) scale(0.09 -0.09)">
      <use xlink:href="#NanumSquareB-c124"/>
      <use xlink:href="#NanumSquareB-acc4" transform="translate(90.999985 0)"/>
      <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
@@ -13053,9 +13455,9 @@ z
      <use xlink:href="#NanumSquareB-ac70" transform="translate(297.999939 0)"/>
     </g>
    </g>
-   <g id="text_65">
+   <g id="text_71">
     <!-- • 불확실한 콘텐츠를 유저에게 노출하는 것이 가장 큰 리스크 -->
-    <g style="fill: #1e293b" transform="translate(938.616774 687.276) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(882.9 754.128) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-bd88" d="M 5600 2381 
 L 5600 1997 
@@ -13426,9 +13828,9 @@ z
      <use xlink:href="#NanumSquareR-d06c" transform="translate(2383.999512 0)"/>
     </g>
    </g>
-   <g id="text_66">
+   <g id="text_72">
     <!-- • 탈락 유형 분류로 '왜 실패했는지' 사후 추적 가능 (Observability) -->
-    <g style="fill: #1e293b" transform="translate(938.616774 708.521) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(882.9 774.0864) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-d0c8" d="M 4826 1670 
 L 4826 198 
@@ -14143,9 +14545,9 @@ z
      <use xlink:href="#NanumSquareR-29" transform="translate(2711.699371 0)"/>
     </g>
    </g>
-   <g id="text_67">
+   <g id="text_73">
     <!-- • 이전: 검증 오류 → 통과(보수적) / 현재: 검증 오류 → 탈락(엄격) -->
-    <g style="fill: #1e293b" transform="translate(938.616774 730.98) scale(0.078 -0.078)">
+    <g style="fill: #1e293b" transform="translate(882.9 794.0448) scale(0.085 -0.085)">
      <defs>
       <path id="NanumSquareR-bcf4" d="M 4806 4531 
 L 4806 1613 
@@ -14400,87 +14802,9 @@ z
      <use xlink:href="#NanumSquareR-29" transform="translate(2652.799393 0)"/>
     </g>
    </g>
-   <g id="text_68">
+   <g id="text_74">
     <!-- 수집 필터 -->
-    <g style="fill: #1e293b" transform="translate(982.706613 114.3485) scale(0.09 -0.09)">
-     <defs>
-      <path id="NanumSquareB-d544" d="M 371 2771 
-L 973 2771 
-L 973 4243 
-L 410 4243 
-L 410 4755 
-L 3674 4755 
-L 3674 4243 
-L 3123 4243 
-L 3123 2816 
-Q 3328 2829 3513 2841 
-Q 3699 2854 3891 2874 
-L 3936 2381 
-Q 3642 2355 3334 2336 
-Q 3027 2317 2624 2301 
-Q 2221 2285 1680 2278 
-Q 1139 2272 371 2266 
-L 371 2771 
-z
-M 1440 -934 
-L 1440 666 
-L 4474 666 
-L 4474 1222 
-L 1408 1222 
-L 1408 1747 
-L 5094 1747 
-L 5094 154 
-L 2061 154 
-L 2061 -410 
-L 5261 -410 
-L 5261 -934 
-L 1440 -934 
-z
-M 4467 2042 
-L 4467 5005 
-L 5094 5005 
-L 5094 2042 
-L 4467 2042 
-z
-M 2515 2790 
-L 2515 4243 
-L 1581 4243 
-L 1581 2771 
-L 2515 2790 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareB-d130" d="M 1254 3987 
-L 1254 2854 
-L 3104 2854 
-L 3104 2317 
-L 1254 2317 
-L 1254 1107 
-L 1811 1107 
-Q 2394 1107 2893 1136 
-Q 3392 1165 3834 1235 
-L 3898 698 
-Q 3635 659 3382 630 
-Q 3130 602 2861 589 
-Q 2592 576 2297 569 
-Q 2003 563 1658 563 
-L 627 563 
-L 627 4531 
-L 3328 4531 
-L 3328 3987 
-L 1254 3987 
-z
-M 4512 -896 
-L 4512 2317 
-L 3443 2317 
-L 3443 2867 
-L 4512 2867 
-L 4512 5005 
-L 5146 5005 
-L 5146 -896 
-L 4512 -896 
-z
-" transform="scale(0.015625)"/>
-     </defs>
+    <g style="fill: #1e293b" transform="translate(917.9725 227.5579) scale(0.095 -0.095)">
      <use xlink:href="#NanumSquareB-c218"/>
      <use xlink:href="#NanumSquareB-c9d1" transform="translate(90.999985 0)"/>
      <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
@@ -14488,9 +14812,9 @@ z
      <use xlink:href="#NanumSquareB-d130" transform="translate(297.999939 0)"/>
     </g>
    </g>
-   <g id="text_69">
+   <g id="text_75">
     <!-- 신뢰도 점수 + 길이 필터 -->
-    <g style="fill: #6b7280" transform="translate(964.967613 137.5805) scale(0.072 -0.072)">
+    <g style="fill: #6b7280" transform="translate(897.29 249.3664) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-b8b0" d="M 3827 1786 
 L 2515 1786 
@@ -14624,6 +14948,80 @@ Q 1203 2086 672 1882
 L 506 2253 
 z
 " transform="scale(0.015625)"/>
+      <path id="NanumSquareR-d544" d="M 3962 2400 
+Q 3558 2362 3120 2339 
+Q 2682 2317 2227 2307 
+Q 1773 2298 1309 2294 
+Q 845 2291 390 2291 
+L 390 2675 
+L 1011 2675 
+L 1011 4339 
+L 429 4339 
+L 429 4723 
+L 3667 4723 
+L 3667 4339 
+L 3040 4339 
+L 3040 2714 
+Q 3264 2726 3481 2739 
+Q 3699 2752 3923 2778 
+L 3962 2400 
+z
+M 5056 1728 
+L 5056 230 
+L 1920 230 
+L 1920 -506 
+L 5210 -506 
+L 5210 -890 
+L 1478 -890 
+L 1478 608 
+L 4614 608 
+L 4614 1338 
+L 1446 1338 
+L 1446 1728 
+L 5056 1728 
+z
+M 1446 2675 
+Q 2048 2675 2605 2694 
+L 2605 4339 
+L 1446 4339 
+L 1446 2675 
+z
+M 5056 2074 
+L 4608 2074 
+L 4608 4979 
+L 5056 4979 
+L 5056 2074 
+z
+" transform="scale(0.015625)"/>
+      <path id="NanumSquareR-d130" d="M 3315 4506 
+L 3315 4102 
+L 1101 4102 
+L 1101 2810 
+L 3091 2810 
+L 3091 2406 
+L 1101 2406 
+L 1101 1037 
+L 1920 1037 
+Q 2368 1037 2854 1065 
+Q 3341 1094 3859 1171 
+L 3910 768 
+Q 3392 685 2854 656 
+Q 2317 627 1805 627 
+L 646 627 
+L 646 4506 
+L 3315 4506 
+z
+M 4653 2829 
+L 4653 4979 
+L 5101 4979 
+L 5101 -870 
+L 4653 -870 
+L 4653 2419 
+L 3469 2419 
+L 3469 2829 
+L 4653 2829 
+z
+" transform="scale(0.015625)"/>
      </defs>
      <use xlink:href="#NanumSquareR-c2e0"/>
      <use xlink:href="#NanumSquareR-b8b0" transform="translate(90.999985 0)"/>
@@ -14641,152 +15039,9 @@ z
      <use xlink:href="#NanumSquareR-d130" transform="translate(887.999802 0)"/>
     </g>
    </g>
-   <g id="text_70">
+   <g id="text_76">
     <!-- 충실도 검증 -->
-    <g style="fill: #1e293b" transform="translate(978.611613 247.8885) scale(0.09 -0.09)">
-     <defs>
-      <path id="NanumSquareB-cda9" d="M 205 1677 
-L 205 2214 
-L 5619 2214 
-L 5619 1677 
-L 3232 1677 
-L 3232 1165 
-Q 3942 1107 4348 825 
-Q 4755 544 4755 141 
-L 4755 -32 
-Q 4755 -256 4627 -445 
-Q 4499 -634 4259 -771 
-Q 4019 -909 3676 -989 
-Q 3334 -1069 2912 -1069 
-Q 2490 -1069 2147 -992 
-Q 1805 -915 1565 -774 
-Q 1325 -634 1197 -445 
-Q 1069 -256 1069 -32 
-L 1069 141 
-Q 1069 339 1174 515 
-Q 1280 691 1478 825 
-Q 1677 960 1958 1046 
-Q 2240 1133 2592 1165 
-L 2592 1677 
-L 205 1677 
-z
-M 2906 3277 
-Q 2835 3149 2656 3056 
-Q 2477 2963 2272 2886 
-Q 1907 2752 1564 2640 
-Q 1222 2528 864 2426 
-L 672 2938 
-Q 1005 3027 1286 3116 
-Q 1568 3206 1888 3328 
-Q 2240 3456 2413 3603 
-Q 2586 3750 2592 3981 
-L 890 3981 
-L 890 4506 
-L 2592 4506 
-L 2592 5082 
-L 3226 5082 
-L 3226 4506 
-L 4934 4506 
-L 4934 3981 
-L 3226 3981 
-Q 3232 3750 3408 3609 
-Q 3584 3469 3936 3328 
-Q 4154 3238 4454 3142 
-Q 4755 3046 5152 2938 
-L 4960 2426 
-Q 4256 2624 3558 2886 
-Q 3354 2963 3168 3056 
-Q 2982 3149 2912 3277 
-L 2906 3277 
-z
-M 1696 6 
-Q 1696 -115 1785 -217 
-Q 1875 -320 2035 -393 
-Q 2195 -467 2419 -508 
-Q 2643 -550 2912 -550 
-Q 3181 -550 3405 -508 
-Q 3629 -467 3789 -393 
-Q 3949 -320 4038 -217 
-Q 4128 -115 4128 6 
-L 4128 102 
-Q 4128 224 4038 326 
-Q 3949 429 3789 502 
-Q 3629 576 3405 617 
-Q 3181 659 2912 659 
-Q 2643 659 2419 617 
-Q 2195 576 2035 502 
-Q 1875 429 1785 326 
-Q 1696 224 1696 102 
-L 1696 6 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareB-c2e4" d="M 4448 2067 
-L 4448 5005 
-L 5075 5005 
-L 5075 2067 
-L 4448 2067 
-z
-M 1421 -934 
-L 1421 678 
-L 4454 678 
-L 4454 1248 
-L 1389 1248 
-L 1389 1773 
-L 5075 1773 
-L 5075 166 
-L 2042 166 
-L 2042 -410 
-L 5242 -410 
-L 5242 -934 
-L 1421 -934 
-z
-M 2048 3238 
-Q 2029 3162 1913 3030 
-Q 1798 2899 1619 2739 
-Q 1414 2560 1142 2339 
-Q 870 2118 602 1933 
-L 237 2381 
-Q 544 2611 832 2838 
-Q 1120 3066 1293 3226 
-Q 1530 3443 1619 3657 
-Q 1709 3872 1709 4211 
-L 1709 4858 
-L 2349 4858 
-L 2349 4237 
-Q 2349 4090 2361 3971 
-Q 2374 3853 2409 3753 
-Q 2445 3654 2509 3561 
-Q 2573 3469 2682 3373 
-Q 2906 3168 3178 2973 
-Q 3450 2778 3725 2592 
-L 3360 2131 
-Q 3117 2310 2880 2483 
-Q 2643 2656 2419 2848 
-Q 2291 2957 2185 3062 
-Q 2080 3168 2054 3238 
-L 2048 3238 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareB-b3c4" d="M 4928 1734 
-L 3232 1734 
-L 3232 429 
-L 5619 429 
-L 5619 -109 
-L 205 -109 
-L 205 429 
-L 2592 429 
-L 2592 1734 
-L 934 1734 
-L 934 4512 
-L 4858 4512 
-L 4858 3974 
-L 1568 3974 
-L 1568 2272 
-L 4928 2272 
-L 4928 1734 
-z
-" transform="scale(0.015625)"/>
-     </defs>
+    <g style="fill: #1e293b" transform="translate(913.65 349.5259) scale(0.095 -0.095)">
      <use xlink:href="#NanumSquareB-cda9"/>
      <use xlink:href="#NanumSquareB-c2e4" transform="translate(90.999985 0)"/>
      <use xlink:href="#NanumSquareB-b3c4" transform="translate(181.999969 0)"/>
@@ -14795,9 +15050,9 @@ z
      <use xlink:href="#NanumSquareB-c99d" transform="translate(388.999924 0)"/>
     </g>
    </g>
-   <g id="text_71">
+   <g id="text_77">
     <!-- GPT-5 요약 → Claude 교차 검증 -->
-    <g style="fill: #6b7280" transform="translate(951.540175 271.1205) scale(0.072 -0.072)">
+    <g style="fill: #6b7280" transform="translate(882.370625 371.3344) scale(0.08 -0.08)">
      <use xlink:href="#NanumSquareR-47"/>
      <use xlink:href="#NanumSquareR-50" transform="translate(65.599991 0)"/>
      <use xlink:href="#NanumSquareR-54" transform="translate(125.399979 0)"/>
@@ -14823,9 +15078,9 @@ z
      <use xlink:href="#NanumSquareR-c99d" transform="translate(1260.99971 0)"/>
     </g>
    </g>
-   <g id="text_72">
+   <g id="text_78">
     <!-- 퀴즈 검증 -->
-    <g style="fill: #1e293b" transform="translate(982.706613 381.4285) scale(0.09 -0.09)">
+    <g style="fill: #1e293b" transform="translate(917.9725 471.4939) scale(0.095 -0.095)">
      <use xlink:href="#NanumSquareB-d034"/>
      <use xlink:href="#NanumSquareB-c988" transform="translate(90.999985 0)"/>
      <use xlink:href="#NanumSquareB-20" transform="translate(181.999969 0)"/>
@@ -14833,9 +15088,9 @@ z
      <use xlink:href="#NanumSquareB-c99d" transform="translate(297.999939 0)"/>
     </g>
    </g>
-   <g id="text_73">
+   <g id="text_79">
     <!-- GPT-5 생성 → Claude 교차 검증 -->
-    <g style="fill: #6b7280" transform="translate(951.540175 404.6605) scale(0.072 -0.072)">
+    <g style="fill: #6b7280" transform="translate(882.370625 493.3024) scale(0.08 -0.08)">
      <use xlink:href="#NanumSquareR-47"/>
      <use xlink:href="#NanumSquareR-50" transform="translate(65.599991 0)"/>
      <use xlink:href="#NanumSquareR-54" transform="translate(125.399979 0)"/>
@@ -14861,9 +15116,9 @@ z
      <use xlink:href="#NanumSquareR-c99d" transform="translate(1260.99971 0)"/>
     </g>
    </g>
-   <g id="text_74">
+   <g id="text_80">
     <!-- Supabase 저장 -->
-    <g style="fill: #1e293b" transform="translate(970.390675 506.097641) scale(0.09 -0.09)">
+    <g style="fill: #1e293b" transform="translate(904.972344 588.719448) scale(0.095 -0.095)">
      <defs>
       <path id="NanumSquareB-70" d="M 1101 2899 
 Q 1254 3168 1532 3283 
@@ -14950,9 +15205,9 @@ z
      <use xlink:href="#NanumSquareB-c7a5" transform="translate(571.699905 0)"/>
     </g>
    </g>
-   <g id="text_75">
+   <g id="text_81">
     <!-- 검증된 콘텐츠 + 퀴즈 -->
-    <g style="fill: #6b7280" transform="translate(969.143613 529.0955) scale(0.072 -0.072)">
+    <g style="fill: #6b7280" transform="translate(901.93 610.2808) scale(0.08 -0.08)">
      <defs>
       <path id="NanumSquareR-b41c" d="M 4211 1542 
 Q 3923 1504 3568 1475 
@@ -15009,56 +15264,17 @@ z
      <use xlink:href="#NanumSquareR-c988" transform="translate(771.999832 0)"/>
     </g>
    </g>
-   <g id="patch_42">
-    <path d="M 953.109677 632.646 
-L 965.407941 632.646 
-Q 965.407941 632.646 965.407941 632.646 
-L 965.407941 599.261 
-Q 965.407941 599.261 965.407941 599.261 
-L 953.109677 599.261 
-Q 953.109677 599.261 953.109677 599.261 
-L 953.109677 632.646 
-Q 953.109677 632.646 953.109677 632.646 
-z
-" clip-path="url(#p4ca257693f)" style="fill: #ca8a04; opacity: 0.85"/>
-   </g>
-   <g id="patch_43">
-    <path d="M 1043.690323 632.646 
-L 1080.585113 632.646 
-Q 1080.585113 632.646 1080.585113 632.646 
-L 1080.585113 599.261 
-Q 1080.585113 599.261 1080.585113 599.261 
-L 1043.690323 599.261 
-Q 1043.690323 599.261 1043.690323 599.261 
-L 1043.690323 632.646 
-Q 1043.690323 632.646 1043.690323 632.646 
-z
-" clip-path="url(#p4ca257693f)" style="fill: #ef4444; opacity: 0.85"/>
-   </g>
-   <g id="patch_44">
-    <path d="M 1134.270968 632.646 
-L 1158.867495 632.646 
-Q 1158.867495 632.646 1158.867495 632.646 
-L 1158.867495 599.261 
-Q 1158.867495 599.261 1158.867495 599.261 
-L 1134.270968 599.261 
-Q 1134.270968 599.261 1134.270968 599.261 
-L 1134.270968 632.646 
-Q 1134.270968 632.646 1134.270968 632.646 
-z
-" clip-path="url(#p4ca257693f)" style="fill: #ea580c; opacity: 0.85"/>
-   </g>
-   <g id="text_76">
+   <g id="text_82">
     <!-- (C) -->
-    <g style="fill: #2563eb" transform="translate(927.747097 70.235) scale(0.16 -0.16)">
+    <g style="fill: #2563eb" transform="translate(873.45 160.6498) scale(0.17 -0.17)">
      <use xlink:href="#NanumSquareB-28"/>
      <use xlink:href="#NanumSquareB-43" transform="translate(33.699997 0)"/>
      <use xlink:href="#NanumSquareB-29" transform="translate(98.099991 0)"/>
     </g>
    </g>
-   <g id="text_77">
+   <g id="text_83">
     <!-- 3단계 품질 게이트 -->
-    <g style="fill: #0f172a" transform="translate(953.109677 66.0975) scale(0.115 -0.115)">
+    <g style="fill: #0f172a" transform="translate(897.075 157.3297) scale(0.125 -0.125)">
      <defs>
       <path id="NanumSquareB-d488" d="M 5619 2298 
 L 5619 1760 
@@ -15201,10 +15417,47 @@ z
      <use xlink:href="#NanumSquareB-d2b8" transform="translate(656.999863 0)"/>
     </g>
    </g>
-   <g id="text_78">
+   <g id="text_84">
     <!-- 단계별 탈락으로 저품질 콘텐츠 차단 -->
-    <g style="fill: #6b7280" transform="translate(953.109677 90.734) scale(0.08 -0.08)">
+    <g style="fill: #6b7280" transform="translate(897.075 179.6345) scale(0.085 -0.085)">
      <defs>
+      <path id="NanumSquareR-b2e8" d="M 538 4595 
+L 3219 4595 
+L 3219 4192 
+L 992 4192 
+L 992 2246 
+Q 1472 2246 1833 2249 
+Q 2195 2253 2505 2269 
+Q 2816 2285 3107 2310 
+Q 3398 2336 3744 2374 
+L 3795 1978 
+Q 3558 1946 3347 1926 
+Q 3136 1907 2925 1891 
+Q 2714 1875 2480 1865 
+Q 2246 1856 1964 1853 
+Q 1683 1850 1334 1846 
+Q 986 1843 538 1843 
+L 538 4595 
+z
+M 4826 3386 
+L 5722 3386 
+L 5722 2989 
+L 4826 2989 
+L 4826 794 
+L 4378 794 
+L 4378 4979 
+L 4826 4979 
+L 4826 3386 
+z
+M 1779 -397 
+L 5005 -397 
+L 5005 -800 
+L 1325 -800 
+L 1325 1126 
+L 1779 1126 
+L 1779 -397 
+z
+" transform="scale(0.015625)"/>
       <path id="NanumSquareR-acc4" d="M 314 768 
 Q 742 1056 1049 1283 
 Q 1357 1510 1565 1705 
@@ -15310,224 +15563,92 @@ z
      <use xlink:href="#NanumSquareR-b2e8" transform="translate(1373.999725 0)"/>
     </g>
    </g>
-   <g id="patch_45">
-    <path d="M 1090.792258 150.258758 
-Q 1090.792258 167.987832 1090.792258 183.704446 
-" style="fill: none; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
-    <path d="M 1092.792258 179.704446 
-L 1090.792258 183.704446 
-L 1088.792258 179.704446 
+   <g id="patch_41">
+    <path d="M 1015.2 262.714662 
+Q 1015.2 280.669728 1015.2 296.500529 
+" style="fill: none; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
+    <path d="M 1017.2 292.500529 
+L 1015.2 296.500529 
+L 1013.2 292.500529 
 z
-" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
+" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_42">
+    <path d="M 998.162141 234.478087 
+Q 1048.276102 215.150688 1096.929669 233.915684 
+" style="fill: none; stroke: #ef4444; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 1093.917325 230.610266 
+L 1096.929669 233.915684 
+L 1092.477929 234.342309 
+z
+" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_43">
+    <path d="M 1015.2 384.682662 
+Q 1015.2 402.637728 1015.2 418.468529 
+" style="fill: none; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
+    <path d="M 1017.2 414.468529 
+L 1015.2 418.468529 
+L 1013.2 414.468529 
+z
+" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_44">
+    <path d="M 998.162141 356.446087 
+Q 1048.276102 337.118688 1096.929669 355.883684 
+" style="fill: none; stroke: #ef4444; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 1093.917325 352.578266 
+L 1096.929669 355.883684 
+L 1092.477929 356.310309 
+z
+" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_45">
+    <path d="M 1015.2 506.650662 
+Q 1015.2 524.605728 1015.2 540.436529 
+" style="fill: none; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
+    <path d="M 1017.2 536.436529 
+L 1015.2 540.436529 
+L 1013.2 536.436529 
+z
+" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
    </g>
    <g id="patch_46">
-    <path d="M 1070.910182 122.034628 
-Q 1128.832593 99.585452 1185.399764 121.506697 
-" style="fill: none; stroke: #ef4444; stroke-width: 1.3; stroke-linecap: round"/>
-    <path d="M 1182.392715 118.196462 
-L 1185.399764 121.506697 
-L 1180.947346 121.926195 
+    <path d="M 998.162141 478.414087 
+Q 1048.276102 459.086688 1096.929669 477.851684 
+" style="fill: none; stroke: #ef4444; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 1093.917325 474.546266 
+L 1096.929669 477.851684 
+L 1092.477929 478.278309 
 z
-" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.3; stroke-linecap: round"/>
+" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.4; stroke-linecap: round"/>
    </g>
    <g id="patch_47">
-    <path d="M 1090.792258 283.798758 
-Q 1090.792258 301.527832 1090.792258 317.244446 
-" style="fill: none; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
-    <path d="M 1092.792258 313.244446 
-L 1090.792258 317.244446 
-L 1088.792258 313.244446 
+    <path d="M 1015.2 528.822973 
+Q 1015.2 550.38433 1015.2 569.821423 
+" style="fill: none; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
+    <path d="M 1017.2 565.821423 
+L 1015.2 569.821423 
+L 1013.2 565.821423 
 z
-" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
+" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.9; stroke-linecap: round"/>
    </g>
-   <g id="patch_48">
-    <path d="M 1070.910182 255.574628 
-Q 1128.832593 233.125452 1185.399764 255.046697 
-" style="fill: none; stroke: #ef4444; stroke-width: 1.3; stroke-linecap: round"/>
-    <path d="M 1182.392715 251.736462 
-L 1185.399764 255.046697 
-L 1180.947346 255.466195 
-z
-" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.3; stroke-linecap: round"/>
-   </g>
-   <g id="patch_49">
-    <path d="M 1090.792258 417.338758 
-Q 1090.792258 435.067832 1090.792258 450.784446 
-" style="fill: none; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
-    <path d="M 1092.792258 446.784446 
-L 1090.792258 450.784446 
-L 1088.792258 446.784446 
-z
-" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
-   </g>
-   <g id="patch_50">
-    <path d="M 1070.910182 389.114628 
-Q 1128.832593 366.665452 1185.399764 388.586697 
-" style="fill: none; stroke: #ef4444; stroke-width: 1.3; stroke-linecap: round"/>
-    <path d="M 1182.392715 385.276462 
-L 1185.399764 388.586697 
-L 1180.947346 389.006195 
-z
-" style="fill: #ef4444; stroke: #ef4444; stroke-width: 1.3; stroke-linecap: round"/>
-   </g>
-   <g id="patch_51">
-    <path d="M 1090.792258 441.619684 
-Q 1090.792258 465.416899 1090.792258 487.201654 
-" style="fill: none; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
-    <path d="M 1092.792258 483.201654 
-L 1090.792258 487.201654 
-L 1088.792258 483.201654 
-z
-" style="fill: #16a34a; stroke: #16a34a; stroke-width: 1.8; stroke-linecap: round"/>
-   </g>
-   <g id="text_79">
-    <!-- quality_rejected -->
-    <g style="fill: #ffffff" transform="translate(963.324488 616.257) scale(0.068 -0.068)">
-     <defs>
-      <path id="NanumSquareB-71" d="M 2694 -1536 
-L 2694 243 
-Q 2547 -6 2278 -112 
-Q 2010 -218 1690 -218 
-Q 1024 -218 675 169 
-Q 326 557 326 1274 
-L 326 1894 
-Q 326 2246 428 2528 
-Q 531 2810 713 3002 
-Q 896 3194 1152 3296 
-Q 1408 3398 1715 3398 
-Q 2118 3398 2352 3260 
-Q 2586 3123 2694 2970 
-L 2694 3334 
-L 3315 3334 
-L 3315 -1536 
-L 2694 -1536 
-z
-M 2701 2112 
-Q 2701 2246 2633 2380 
-Q 2566 2515 2441 2620 
-Q 2317 2726 2147 2790 
-Q 1978 2854 1779 2854 
-Q 1382 2854 1161 2579 
-Q 941 2304 941 1805 
-L 941 1376 
-Q 941 877 1165 601 
-Q 1389 326 1779 326 
-Q 1971 326 2137 387 
-Q 2304 448 2429 563 
-Q 2554 678 2627 841 
-Q 2701 1005 2701 1210 
-L 2701 2112 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareB-79" d="M 1709 538 
-L 2630 3334 
-L 3283 3334 
-L 1466 -1613 
-L 902 -1414 
-L 1357 -218 
-L 83 3334 
-L 755 3334 
-L 1683 538 
-L 1709 538 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareB-6a" d="M 1267 4589 
-L 1267 3910 
-L 608 3910 
-L 608 4589 
-L 1267 4589 
-z
-M 1248 -563 
-Q 1248 -1094 989 -1344 
-Q 730 -1594 230 -1594 
-Q 64 -1594 -112 -1568 
-Q -288 -1542 -397 -1504 
-L -301 -998 
-Q -70 -1062 173 -1062 
-Q 262 -1062 345 -1043 
-Q 429 -1024 489 -969 
-Q 550 -915 588 -812 
-Q 627 -710 627 -538 
-L 627 3334 
-L 1248 3334 
-L 1248 -563 
-z
-" transform="scale(0.015625)"/>
-     </defs>
-     <use xlink:href="#NanumSquareB-71"/>
-     <use xlink:href="#NanumSquareB-75" transform="translate(59.599991 0)"/>
-     <use xlink:href="#NanumSquareB-61" transform="translate(119.099976 0)"/>
-     <use xlink:href="#NanumSquareB-6c" transform="translate(174.299973 0)"/>
-     <use xlink:href="#NanumSquareB-69" transform="translate(199.59996 0)"/>
-     <use xlink:href="#NanumSquareB-74" transform="translate(225.499954 0)"/>
-     <use xlink:href="#NanumSquareB-79" transform="translate(264.899948 0)"/>
-     <use xlink:href="#NanumSquareB-5f" transform="translate(317.499939 0)"/>
-     <use xlink:href="#NanumSquareB-72" transform="translate(367.499924 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(408.949921 0)"/>
-     <use xlink:href="#NanumSquareB-6a" transform="translate(465.149918 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(492.749908 0)"/>
-     <use xlink:href="#NanumSquareB-63" transform="translate(548.949905 0)"/>
-     <use xlink:href="#NanumSquareB-74" transform="translate(599.849899 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(638.749893 0)"/>
-     <use xlink:href="#NanumSquareB-64" transform="translate(694.94989 0)"/>
-    </g>
-   </g>
-   <g id="text_80">
-    <!-- policy_rejected -->
-    <g style="fill: #ffffff" transform="translate(1055.312946 616.257) scale(0.068 -0.068)">
-     <use xlink:href="#NanumSquareB-70"/>
-     <use xlink:href="#NanumSquareB-6f" transform="translate(59.599991 0)"/>
-     <use xlink:href="#NanumSquareB-6c" transform="translate(118.399979 0)"/>
-     <use xlink:href="#NanumSquareB-69" transform="translate(143.699966 0)"/>
-     <use xlink:href="#NanumSquareB-63" transform="translate(169.59996 0)"/>
-     <use xlink:href="#NanumSquareB-79" transform="translate(223.499954 0)"/>
-     <use xlink:href="#NanumSquareB-5f" transform="translate(276.099945 0)"/>
-     <use xlink:href="#NanumSquareB-72" transform="translate(326.09993 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(367.549927 0)"/>
-     <use xlink:href="#NanumSquareB-6a" transform="translate(423.749924 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(451.349915 0)"/>
-     <use xlink:href="#NanumSquareB-63" transform="translate(507.549911 0)"/>
-     <use xlink:href="#NanumSquareB-74" transform="translate(558.449905 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(597.349899 0)"/>
-     <use xlink:href="#NanumSquareB-64" transform="translate(653.549896 0)"/>
-    </g>
-   </g>
-   <g id="text_81">
-    <!-- policy_rejected -->
-    <g style="fill: #ffffff" transform="translate(1145.893591 616.257) scale(0.068 -0.068)">
-     <use xlink:href="#NanumSquareB-70"/>
-     <use xlink:href="#NanumSquareB-6f" transform="translate(59.599991 0)"/>
-     <use xlink:href="#NanumSquareB-6c" transform="translate(118.399979 0)"/>
-     <use xlink:href="#NanumSquareB-69" transform="translate(143.699966 0)"/>
-     <use xlink:href="#NanumSquareB-63" transform="translate(169.59996 0)"/>
-     <use xlink:href="#NanumSquareB-79" transform="translate(223.499954 0)"/>
-     <use xlink:href="#NanumSquareB-5f" transform="translate(276.099945 0)"/>
-     <use xlink:href="#NanumSquareB-72" transform="translate(326.09993 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(367.549927 0)"/>
-     <use xlink:href="#NanumSquareB-6a" transform="translate(423.749924 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(451.349915 0)"/>
-     <use xlink:href="#NanumSquareB-63" transform="translate(507.549911 0)"/>
-     <use xlink:href="#NanumSquareB-74" transform="translate(558.449905 0)"/>
-     <use xlink:href="#NanumSquareB-65" transform="translate(597.349899 0)"/>
-     <use xlink:href="#NanumSquareB-64" transform="translate(653.549896 0)"/>
-    </g>
-   </g>
-   <g id="text_82">
-    <g id="patch_52">
-     <path d="M 1059.854758 121.597 
-L 1121.729758 121.597 
-Q 1123.745758 121.597 1123.745758 119.581 
-L 1123.745758 112.597 
-Q 1123.745758 110.581 1121.729758 110.581 
-L 1059.854758 110.581 
-Q 1057.838758 110.581 1057.838758 112.597 
-L 1057.838758 119.581 
-Q 1057.838758 121.597 1059.854758 121.597 
+   <g id="text_85">
+    <g id="patch_48">
+     <path d="M 982.973437 232.2267 
+L 1047.426562 232.2267 
+Q 1049.676562 232.2267 1049.676562 229.9767 
+L 1049.676562 222.7017 
+Q 1049.676562 220.4517 1047.426562 220.4517 
+L 982.973437 220.4517 
+Q 980.723437 220.4517 980.723437 222.7017 
+L 980.723437 229.9767 
+Q 980.723437 232.2267 982.973437 232.2267 
 z
 " style="fill: #ca8a04"/>
     </g>
     <!-- trust_score ≥ 0.65 -->
-    <g style="fill: #ffffff" transform="translate(1059.854758 117.853) scale(0.072 -0.072)">
+    <g style="fill: #ffffff" transform="translate(982.973437 228.1767) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareB-2265" d="M 422 1562 
 L 2797 2579 
@@ -15544,52 +15665,6 @@ L 422 762
 L 3443 762 
 L 3443 243 
 L 422 243 
-z
-" transform="scale(0.015625)"/>
-      <path id="NanumSquareB-36" d="M 3123 3667 
-Q 2906 3795 2656 3865 
-Q 2406 3936 2131 3936 
-Q 1894 3936 1699 3856 
-Q 1504 3776 1360 3590 
-Q 1216 3405 1129 3097 
-Q 1043 2790 1024 2336 
-Q 1082 2438 1187 2531 
-Q 1293 2624 1437 2697 
-Q 1581 2771 1757 2816 
-Q 1933 2861 2125 2861 
-Q 2432 2861 2697 2758 
-Q 2963 2656 3158 2464 
-Q 3354 2272 3466 2000 
-Q 3578 1728 3578 1389 
-L 3578 1248 
-Q 3578 915 3462 643 
-Q 3347 371 3142 176 
-Q 2938 -19 2646 -128 
-Q 2355 -237 2003 -237 
-Q 1222 -237 809 246 
-Q 397 730 397 1664 
-L 397 1901 
-Q 397 2656 528 3161 
-Q 659 3667 892 3968 
-Q 1126 4269 1452 4393 
-Q 1779 4518 2170 4518 
-Q 2483 4518 2793 4441 
-Q 3104 4365 3366 4205 
-L 3123 3667 
-z
-M 1043 1312 
-Q 1043 864 1292 601 
-Q 1542 339 1978 339 
-Q 2426 339 2685 582 
-Q 2944 826 2944 1280 
-L 2944 1363 
-Q 2944 1824 2681 2061 
-Q 2419 2298 1997 2298 
-Q 1786 2298 1610 2227 
-Q 1434 2157 1309 2038 
-Q 1184 1920 1113 1757 
-Q 1043 1594 1043 1402 
-L 1043 1312 
 z
 " transform="scale(0.015625)"/>
      </defs>
@@ -15613,44 +15688,44 @@ z
      <use xlink:href="#NanumSquareB-35" transform="translate(798.349823 0)"/>
     </g>
    </g>
-   <g id="text_83">
-    <g id="patch_53">
-     <path d="M 1082.149446 171.825 
-L 1099.435071 171.825 
-Q 1101.395071 171.825 1101.395071 169.865 
-L 1101.395071 163.075 
-Q 1101.395071 161.115 1099.435071 161.115 
-L 1082.149446 161.115 
-Q 1080.189446 161.115 1080.189446 163.075 
-L 1080.189446 169.865 
-Q 1080.189446 171.825 1082.149446 171.825 
+   <g id="text_86">
+    <g id="patch_49">
+     <path d="M 1005.939844 283.2315 
+L 1024.460156 283.2315 
+Q 1026.710156 283.2315 1026.710156 280.9815 
+L 1026.710156 273.7065 
+Q 1026.710156 271.4565 1024.460156 271.4565 
+L 1005.939844 271.4565 
+Q 1003.689844 271.4565 1003.689844 273.7065 
+L 1003.689844 280.9815 
+Q 1003.689844 283.2315 1005.939844 283.2315 
 z
 " style="fill: #16a34a"/>
     </g>
     <!-- PASS -->
-    <g style="fill: #ffffff" transform="translate(1082.149446 168.185) scale(0.07 -0.07)">
+    <g style="fill: #ffffff" transform="translate(1005.939844 279.1815) scale(0.075 -0.075)">
      <use xlink:href="#NanumSquareB-50"/>
      <use xlink:href="#NanumSquareB-41" transform="translate(56.449997 0)"/>
      <use xlink:href="#NanumSquareB-53" transform="translate(123.749985 0)"/>
      <use xlink:href="#NanumSquareB-53" transform="translate(185.349976 0)"/>
     </g>
    </g>
-   <g id="text_84">
-    <g id="patch_54">
-     <path d="M 1059.075696 255.137 
-L 1122.508821 255.137 
-Q 1124.524821 255.137 1124.524821 253.121 
-L 1124.524821 246.137 
-Q 1124.524821 244.121 1122.508821 244.121 
-L 1059.075696 244.121 
-Q 1057.059696 244.121 1057.059696 246.137 
-L 1057.059696 253.121 
-Q 1057.059696 255.137 1059.075696 255.137 
+   <g id="text_87">
+    <g id="patch_50">
+     <path d="M 982.161914 354.1947 
+L 1048.238086 354.1947 
+Q 1050.488086 354.1947 1050.488086 351.9447 
+L 1050.488086 344.6697 
+Q 1050.488086 342.4197 1048.238086 342.4197 
+L 982.161914 342.4197 
+Q 979.911914 342.4197 979.911914 344.6697 
+L 979.911914 351.9447 
+Q 979.911914 354.1947 982.161914 354.1947 
 z
 " style="fill: #ca8a04"/>
     </g>
     <!-- faithfulness ≥ 0.70 -->
-    <g style="fill: #ffffff" transform="translate(1059.075696 251.393) scale(0.072 -0.072)">
+    <g style="fill: #ffffff" transform="translate(982.161914 350.1447) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareB-66" d="M 742 2803 
 L 166 2803 
@@ -15699,16 +15774,6 @@ Q 3386 2464 3386 2150
 L 3386 -166 
 z
 " transform="scale(0.015625)"/>
-      <path id="NanumSquareB-37" d="M 1734 -166 
-L 1043 -166 
-L 2874 3898 
-L 365 3898 
-L 365 4448 
-L 3558 4448 
-L 3558 3962 
-L 1734 -166 
-z
-" transform="scale(0.015625)"/>
      </defs>
      <use xlink:href="#NanumSquareB-66"/>
      <use xlink:href="#NanumSquareB-61" transform="translate(38.599991 0)"/>
@@ -15731,44 +15796,44 @@ z
      <use xlink:href="#NanumSquareB-30" transform="translate(819.999817 0)"/>
     </g>
    </g>
-   <g id="text_85">
-    <g id="patch_55">
-     <path d="M 1082.149446 305.365 
-L 1099.435071 305.365 
-Q 1101.395071 305.365 1101.395071 303.405 
-L 1101.395071 296.615 
-Q 1101.395071 294.655 1099.435071 294.655 
-L 1082.149446 294.655 
-Q 1080.189446 294.655 1080.189446 296.615 
-L 1080.189446 303.405 
-Q 1080.189446 305.365 1082.149446 305.365 
+   <g id="text_88">
+    <g id="patch_51">
+     <path d="M 1005.939844 405.1995 
+L 1024.460156 405.1995 
+Q 1026.710156 405.1995 1026.710156 402.9495 
+L 1026.710156 395.6745 
+Q 1026.710156 393.4245 1024.460156 393.4245 
+L 1005.939844 393.4245 
+Q 1003.689844 393.4245 1003.689844 395.6745 
+L 1003.689844 402.9495 
+Q 1003.689844 405.1995 1005.939844 405.1995 
 z
 " style="fill: #16a34a"/>
     </g>
     <!-- PASS -->
-    <g style="fill: #ffffff" transform="translate(1082.149446 301.725) scale(0.07 -0.07)">
+    <g style="fill: #ffffff" transform="translate(1005.939844 401.1495) scale(0.075 -0.075)">
      <use xlink:href="#NanumSquareB-50"/>
      <use xlink:href="#NanumSquareB-41" transform="translate(56.449997 0)"/>
      <use xlink:href="#NanumSquareB-53" transform="translate(123.749985 0)"/>
      <use xlink:href="#NanumSquareB-53" transform="translate(185.349976 0)"/>
     </g>
    </g>
-   <g id="text_86">
-    <g id="patch_56">
-     <path d="M 1060.324446 388.677 
-L 1121.260071 388.677 
-Q 1123.276071 388.677 1123.276071 386.661 
-L 1123.276071 379.677 
-Q 1123.276071 377.661 1121.260071 377.661 
-L 1060.324446 377.661 
-Q 1058.308446 377.661 1058.308446 379.677 
-L 1058.308446 386.661 
-Q 1058.308446 388.677 1060.324446 388.677 
+   <g id="text_89">
+    <g id="patch_52">
+     <path d="M 983.462695 476.1627 
+L 1046.937305 476.1627 
+Q 1049.187305 476.1627 1049.187305 473.9127 
+L 1049.187305 466.6377 
+Q 1049.187305 464.3877 1046.937305 464.3877 
+L 983.462695 464.3877 
+Q 981.212695 464.3877 981.212695 466.6377 
+L 981.212695 473.9127 
+Q 981.212695 476.1627 983.462695 476.1627 
 z
 " style="fill: #ca8a04"/>
     </g>
     <!-- verified_count &gt; 0 -->
-    <g style="fill: #ffffff" transform="translate(1060.324446 384.933) scale(0.072 -0.072)">
+    <g style="fill: #ffffff" transform="translate(983.462695 472.1127) scale(0.075 -0.075)">
      <defs>
       <path id="NanumSquareB-76" d="M 1690 416 
 L 2605 3334 
@@ -15813,62 +15878,62 @@ z
      <use xlink:href="#NanumSquareB-30" transform="translate(785.29985 0)"/>
     </g>
    </g>
-   <g id="text_87">
-    <g id="patch_57">
-     <path d="M 1082.149446 438.905 
-L 1099.435071 438.905 
-Q 1101.395071 438.905 1101.395071 436.945 
-L 1101.395071 430.155 
-Q 1101.395071 428.195 1099.435071 428.195 
-L 1082.149446 428.195 
-Q 1080.189446 428.195 1080.189446 430.155 
-L 1080.189446 436.945 
-Q 1080.189446 438.905 1082.149446 438.905 
+   <g id="text_90">
+    <g id="patch_53">
+     <path d="M 1005.939844 527.1675 
+L 1024.460156 527.1675 
+Q 1026.710156 527.1675 1026.710156 524.9175 
+L 1026.710156 517.6425 
+Q 1026.710156 515.3925 1024.460156 515.3925 
+L 1005.939844 515.3925 
+Q 1003.689844 515.3925 1003.689844 517.6425 
+L 1003.689844 524.9175 
+Q 1003.689844 527.1675 1005.939844 527.1675 
 z
 " style="fill: #16a34a"/>
     </g>
     <!-- PASS -->
-    <g style="fill: #ffffff" transform="translate(1082.149446 435.265) scale(0.07 -0.07)">
+    <g style="fill: #ffffff" transform="translate(1005.939844 523.1175) scale(0.075 -0.075)">
      <use xlink:href="#NanumSquareB-50"/>
      <use xlink:href="#NanumSquareB-41" transform="translate(56.449997 0)"/>
      <use xlink:href="#NanumSquareB-53" transform="translate(123.749985 0)"/>
      <use xlink:href="#NanumSquareB-53" transform="translate(185.349976 0)"/>
     </g>
    </g>
-   <g id="text_88">
-    <g id="patch_58">
-     <path d="M 1084.422258 477.146 
-L 1097.162258 477.146 
-Q 1099.122258 477.146 1099.122258 475.186 
-L 1099.122258 468.396 
-Q 1099.122258 466.436 1097.162258 466.436 
-L 1084.422258 466.436 
-Q 1082.462258 466.436 1082.462258 468.396 
-L 1082.462258 475.186 
-Q 1082.462258 477.146 1084.422258 477.146 
+   <g id="text_91">
+    <g id="patch_54">
+     <path d="M 1008.375 559.3227 
+L 1022.025 559.3227 
+Q 1024.275 559.3227 1024.275 557.0727 
+L 1024.275 549.7977 
+Q 1024.275 547.5477 1022.025 547.5477 
+L 1008.375 547.5477 
+Q 1006.125 547.5477 1006.125 549.7977 
+L 1006.125 557.0727 
+Q 1006.125 559.3227 1008.375 559.3227 
 z
 " style="fill: #16a34a"/>
     </g>
     <!-- 저장 -->
-    <g style="fill: #ffffff" transform="translate(1084.422258 473.506) scale(0.07 -0.07)">
+    <g style="fill: #ffffff" transform="translate(1008.375 555.2727) scale(0.075 -0.075)">
      <use xlink:href="#NanumSquareB-c800"/>
      <use xlink:href="#NanumSquareB-c7a5" transform="translate(90.999985 0)"/>
     </g>
    </g>
   </g>
   <g id="line2d_5">
-   <path d="M 481.2 763.56 
-L 481.2 27 
-" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
+   <path d="M 385.2 901.08 
+L 385.2 30.6 
+" style="fill: none; stroke: #e2e8f0; stroke-width: 1.5; stroke-linecap: square"/>
   </g>
   <g id="line2d_6">
-   <path d="M 876.48 763.56 
-L 876.48 27 
-" style="fill: none; stroke: #e2e8f0; stroke-width: 1.2; stroke-linecap: square"/>
+   <path d="M 838.8 901.08 
+L 838.8 30.6 
+" style="fill: none; stroke: #e2e8f0; stroke-width: 1.5; stroke-linecap: square"/>
   </g>
-  <g id="text_89">
-   <!-- Figure 2. BrefUp 에이전트 핵심 설계 결정 -->
-   <g style="fill: #0f172a" transform="translate(518.767344 18.161562) scale(0.14 -0.14)">
+  <g id="text_92">
+   <!-- Figure 2. BriefUp 에이전트 핵심 설계 결정 -->
+   <g style="fill: #0f172a" transform="translate(438.917578 18.944531) scale(0.15 -0.15)">
     <defs>
      <path id="NanumSquareB-67" d="M 3315 -122 
 Q 3315 -1594 1754 -1594 
@@ -15910,38 +15975,6 @@ Q 2304 512 2429 627
 Q 2554 742 2627 905 
 Q 2701 1069 2701 1274 
 L 2701 2112 
-z
-" transform="scale(0.015625)"/>
-     <path id="NanumSquareB-32" d="M 2131 2234 
-Q 2330 2451 2445 2611 
-Q 2560 2771 2617 2896 
-Q 2675 3021 2691 3120 
-Q 2707 3219 2707 3309 
-L 2707 3360 
-Q 2707 3635 2492 3792 
-Q 2278 3949 1914 3949 
-Q 1786 3949 1654 3920 
-Q 1523 3891 1395 3814 
-Q 1267 3738 1145 3606 
-Q 1024 3475 909 3277 
-L 422 3590 
-Q 506 3738 627 3901 
-Q 749 4064 925 4201 
-Q 1101 4339 1341 4428 
-Q 1581 4518 1901 4518 
-Q 2253 4518 2521 4432 
-Q 2790 4346 2972 4192 
-Q 3155 4038 3248 3824 
-Q 3341 3610 3341 3360 
-L 3341 3296 
-Q 3341 2918 3142 2585 
-Q 2944 2253 2630 1920 
-L 1190 384 
-L 3507 384 
-L 3507 -166 
-L 410 -166 
-L 410 365 
-L 2131 2234 
 z
 " transform="scale(0.015625)"/>
      <path id="NanumSquareB-55" d="M 3904 4448 
@@ -16096,29 +16129,30 @@ z
     <use xlink:href="#NanumSquareB-20" transform="translate(414.849915 0)"/>
     <use xlink:href="#NanumSquareB-42" transform="translate(439.849899 0)"/>
     <use xlink:href="#NanumSquareB-72" transform="translate(503.349884 0)"/>
-    <use xlink:href="#NanumSquareB-65" transform="translate(544.799881 0)"/>
-    <use xlink:href="#NanumSquareB-66" transform="translate(600.999878 0)"/>
-    <use xlink:href="#NanumSquareB-55" transform="translate(639.599869 0)"/>
-    <use xlink:href="#NanumSquareB-70" transform="translate(707.999863 0)"/>
-    <use xlink:href="#NanumSquareB-20" transform="translate(767.599854 0)"/>
-    <use xlink:href="#NanumSquareB-c5d0" transform="translate(792.599838 0)"/>
-    <use xlink:href="#NanumSquareB-c774" transform="translate(883.599823 0)"/>
-    <use xlink:href="#NanumSquareB-c804" transform="translate(974.599808 0)"/>
-    <use xlink:href="#NanumSquareB-d2b8" transform="translate(1065.599792 0)"/>
-    <use xlink:href="#NanumSquareB-20" transform="translate(1156.599777 0)"/>
-    <use xlink:href="#NanumSquareB-d575" transform="translate(1181.599762 0)"/>
-    <use xlink:href="#NanumSquareB-c2ec" transform="translate(1272.599747 0)"/>
-    <use xlink:href="#NanumSquareB-20" transform="translate(1363.599731 0)"/>
-    <use xlink:href="#NanumSquareB-c124" transform="translate(1388.599716 0)"/>
-    <use xlink:href="#NanumSquareB-acc4" transform="translate(1479.599701 0)"/>
-    <use xlink:href="#NanumSquareB-20" transform="translate(1570.599686 0)"/>
-    <use xlink:href="#NanumSquareB-acb0" transform="translate(1595.59967 0)"/>
-    <use xlink:href="#NanumSquareB-c815" transform="translate(1686.599655 0)"/>
+    <use xlink:href="#NanumSquareB-69" transform="translate(545.049881 0)"/>
+    <use xlink:href="#NanumSquareB-65" transform="translate(570.949875 0)"/>
+    <use xlink:href="#NanumSquareB-66" transform="translate(627.149872 0)"/>
+    <use xlink:href="#NanumSquareB-55" transform="translate(665.749863 0)"/>
+    <use xlink:href="#NanumSquareB-70" transform="translate(734.149857 0)"/>
+    <use xlink:href="#NanumSquareB-20" transform="translate(793.749847 0)"/>
+    <use xlink:href="#NanumSquareB-c5d0" transform="translate(818.749832 0)"/>
+    <use xlink:href="#NanumSquareB-c774" transform="translate(909.749817 0)"/>
+    <use xlink:href="#NanumSquareB-c804" transform="translate(1000.749802 0)"/>
+    <use xlink:href="#NanumSquareB-d2b8" transform="translate(1091.749786 0)"/>
+    <use xlink:href="#NanumSquareB-20" transform="translate(1182.749771 0)"/>
+    <use xlink:href="#NanumSquareB-d575" transform="translate(1207.749756 0)"/>
+    <use xlink:href="#NanumSquareB-c2ec" transform="translate(1298.749741 0)"/>
+    <use xlink:href="#NanumSquareB-20" transform="translate(1389.749725 0)"/>
+    <use xlink:href="#NanumSquareB-c124" transform="translate(1414.74971 0)"/>
+    <use xlink:href="#NanumSquareB-acc4" transform="translate(1505.749695 0)"/>
+    <use xlink:href="#NanumSquareB-20" transform="translate(1596.74968 0)"/>
+    <use xlink:href="#NanumSquareB-acb0" transform="translate(1621.749664 0)"/>
+    <use xlink:href="#NanumSquareB-c815" transform="translate(1712.749649 0)"/>
    </g>
   </g>
-  <g id="text_90">
+  <g id="text_93">
    <!-- (A) 이중 모델 역할 분리와 교차 검증 루프.  (B) 세션 스토어를 통한 원문 격리 및 토큰 비용 최적화.  (C) 3단계 품질 게이트와 실패 유형 분류 체계. -->
-   <g style="fill: #6b7280" transform="translate(395.52793 30.829) scale(0.085 -0.085)">
+   <g style="fill: #6b7280" transform="translate(297.390039 34.727) scale(0.095 -0.095)">
     <defs>
      <path id="NanumSquareR-41" d="M 4070 -166 
 L 3590 -166 
@@ -16458,14 +16492,14 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p331f878633">
-   <rect x="7.2" y="39" width="442.83871" height="728.4"/>
+  <clipPath id="p1b38f46972">
+   <rect x="7.2" y="105.48" width="385" height="720.72"/>
   </clipPath>
-  <clipPath id="p9ac453c9ed">
-   <rect x="462.03871" y="39" width="442.83871" height="728.4"/>
+  <clipPath id="pab83123161">
+   <rect x="435.6" y="105.48" width="385" height="720.72"/>
   </clipPath>
-  <clipPath id="p4ca257693f">
-   <rect x="916.877419" y="39" width="362.322581" height="728.4"/>
+  <clipPath id="p6ba7a9fa47">
+   <rect x="864" y="105.48" width="315" height="720.72"/>
   </clipPath>
  </defs>
 </svg>

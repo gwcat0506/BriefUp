@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/pre_push_security.py",
+            "command": "python3 /Users/gwcat/Desktop/BrefUp/.claude/hooks/pre_push_security.py",
             "if": "Bash(git push*)",
             "timeout": 10,
             "statusMessage": "보안 파일 검사 중..."

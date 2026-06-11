@@ -103,7 +103,7 @@ def _clean_and_extract(raw: str) -> str:
     # HTML 태그 제거
     text = re.sub(r"<[^>]+>", " ", raw)
     # 마크다운 링크 → 텍스트만 유지 ([Main page](...) → "Main page")
-    text = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", text)
+    text = re.sub(r"\[([^\]]+)\]\(.*?\)", r"\1", text)
     # 마크다운 헤딩·불릿 기호 제거
     text = re.sub(r"^#+\s*", "", text, flags=re.MULTILINE)
     text = re.sub(r"^\s*[*\-]\s+", "", text, flags=re.MULTILINE)
@@ -114,7 +114,7 @@ def _clean_and_extract(raw: str) -> str:
     lines = []
     for line in text.splitlines():
         line = line.strip()
-        if len(line.split()) >= 4:  # 3단어 이하 줄은 메뉴 항목으로 간주
+        if len(line) >= 10:  # 10자 미만 줄은 메뉴/버튼 항목으로 간주 (한국어 단문 보존)
             lines.append(line)
 
     cleaned = "\n".join(lines)
@@ -232,7 +232,7 @@ async def search_web(
         raw = r.get("raw_content") or ""
         cleaned_raw = _clean_and_extract(raw) if raw else ""
 
-        if len(snippet) >= _MIN_CONTENT_LEN:
+        if len(snippet) >= 150:
             text = snippet
         elif len(cleaned_raw) >= _MIN_CONTENT_LEN and _is_content_rich(cleaned_raw):
             text = cleaned_raw

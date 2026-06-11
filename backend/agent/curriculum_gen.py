@@ -11,7 +11,9 @@ import os
 import re
 
 import anthropic
+from core.config import CLAUDE_HAIKU_MODEL
 from core.supabase import supabase
+from core.utils import extract_json
 
 claude = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
@@ -109,7 +111,7 @@ async def _validate_concepts(topic_name: str, chapters: list[dict]) -> list[dict
     print(f"  [커리큘럼 검증] '{topic_name}' concepts 실존 여부 확인...")
     try:
         response = await claude.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=CLAUDE_HAIKU_MODEL,
             max_tokens=4096,
             messages=[{
                 "role": "user",
@@ -120,8 +122,9 @@ async def _validate_concepts(topic_name: str, chapters: list[dict]) -> list[dict
             }],
         )
         raw = response.content[0].text.strip()
-        raw = _extract_json(raw)
-        result = json.loads(raw)
+        result = extract_json(raw)
+        if result is None:
+            return chapters
 
         if result.get("issues"):
             print(f"  [커리큘럼 검증 이슈] {result['issues']}")
@@ -243,7 +246,7 @@ async def _generate_and_validate_curriculum(topic_name: str, category: str, topi
     for attempt in range(2):
         try:
             response = await claude.messages.create(
-                model="claude-haiku-4-5-20251001",
+                model=CLAUDE_HAIKU_MODEL,
                 max_tokens=4096,
                 messages=[{
                     "role": "user",
@@ -255,14 +258,18 @@ async def _generate_and_validate_curriculum(topic_name: str, category: str, topi
                 }],
             )
             raw = response.content[0].text.strip()
-            raw = _extract_json(raw)
-            curriculum = json.loads(raw)
-            break
-        except json.JSONDecodeError as e:
+            curriculum = extract_json(raw)
+            if curriculum is not None:
+                break
             if attempt == 0:
-                print(f"  [커리큘럼 생성 재시도] JSON 파싱 오류: {e}")
+                print(f"  [커리큘럼 생성 재시도] JSON 파싱 오류")
             else:
                 print(f"  [커리큘럼 생성 실패] JSON 파싱 불가 — 폴백 커리큘럼 사용")
+        except Exception as e:
+            if attempt == 0:
+                print(f"  [커리큘럼 생성 재시도] 오류: {e}")
+            else:
+                print(f"  [커리큘럼 생성 실패] {e} — 폴백 커리큘럼 사용")
 
     if curriculum is None:
         curriculum = _fallback_curriculum(topic_name, topic_key)
@@ -279,11 +286,3 @@ async def _generate_and_validate_curriculum(topic_name: str, category: str, topi
         curriculum["chapters"] = validated_chapters
 
     return curriculum
-
-
-def _extract_json(text: str) -> str:
-    if "```json" in text:
-        return text.split("```json")[1].split("```")[0].strip()
-    if "```" in text:
-        return text.split("```")[1].split("```")[0].strip()
-    return text

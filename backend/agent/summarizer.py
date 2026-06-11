@@ -6,6 +6,7 @@ GPT-5 사용
 
 from openai import AsyncOpenAI
 import os
+from core.config import GPT_4O_MINI_MODEL
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -36,7 +37,7 @@ SUMMARY_PROMPT = """당신은 {category} 분야 전문가입니다.
 async def summarize(title: str, text: str, category: str) -> tuple[str, dict]:
     """소스 기반 요약 생성. (요약문, {input, output} 토큰) 반환"""
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=GPT_4O_MINI_MODEL,
         max_tokens=3000,
         messages=[{
             "role": "user",

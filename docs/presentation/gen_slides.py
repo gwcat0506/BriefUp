@@ -238,8 +238,8 @@ def img3_quiz_verify():
                         fontsize=8, rotation=45, color=SUBTEXT)
     ax2.set_yticks([0, 1, 2, 3])
     ax2.set_yticklabels(["0", "1", "2", "3 ✓"], color=WHITE, fontsize=11)
-    ax2.set_ylabel("검증 통과 퀴즈 수", color=SUBTEXT, fontsize=11)
-    ax2.set_title("step별 verified 수 (59~78번 스텝)", color=WHITE, fontsize=12)
+    ax2.set_ylabel("")
+    ax2.set_title("step별 verified 퀴즈 수 (59~78번 스텝)", color=WHITE, fontsize=12)
     ax2.tick_params(colors=SUBTEXT)
     for spine in ax2.spines.values():
         spine.set_edgecolor("#2d3148")

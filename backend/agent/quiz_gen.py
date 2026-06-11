@@ -6,7 +6,8 @@ GPT-5 사용
 
 from openai import AsyncOpenAI
 import os
-import json
+from core.config import GPT_4O_MINI_MODEL
+from core.utils import extract_json
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -76,7 +77,7 @@ JSON 형식으로만 응답:
 async def generate_quizzes(title: str, text: str, category: str) -> tuple[list[dict], dict]:
     """소스 기반 퀴즈 생성. (퀴즈 목록, {input, output} 토큰) 반환"""
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=GPT_4O_MINI_MODEL,
         max_tokens=5000,
         messages=[{
             "role": "user",
@@ -90,14 +91,5 @@ async def generate_quizzes(title: str, text: str, category: str) -> tuple[list[d
 
     usage = {"input": response.usage.prompt_tokens, "output": response.usage.completion_tokens}
     raw = response.choices[0].message.content.strip()
-    raw = _extract_json(raw)
-    data = json.loads(raw)
+    data = extract_json(raw) or {}
     return data.get("quizzes", []), usage
-
-
-def _extract_json(text: str) -> str:
-    if "```json" in text:
-        return text.split("```json")[1].split("```")[0].strip()
-    if "```" in text:
-        return text.split("```")[1].split("```")[0].strip()
-    return text

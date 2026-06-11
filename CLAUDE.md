@@ -119,23 +119,4 @@ NEXT_PUBLIC_API_URL
 - `supabase` 2.x 최신은 2.9.1 (2.12.0은 존재하지 않음)
 - `pydantic-settings`는 `mcp` 때문에 >=2.5.2 필요
 
-## 설계 의도 (발표용)
-
-상세 설계 의도는 `DESIGN.md`를 참조. 핵심 결정만 요약:
-
-| 결정 | 이유 |
-|------|------|
-| Claude Haiku로 에이전트 오케스트레이션 | Tool Use + 지시 이해 능력. 도구 조합 판단에 강함 |
-| GPT-4o-mini로 콘텐츠 생성 | 한국어 생성 품질 + 비용 효율. 역할별 최적 모델 선택 |
-| FastMCP 전환 | `@mcp.tool()` 선언적 관리, Claude Desktop 외부 연결 지원 |
-| 세션 스토어로 원문 텍스트 격리 | Claude에 원문 노출 시 토큰 비용 폭증 + 할루시네이션 위험 |
-| get_collection_plan 도구 추가 | 커리큘럼 챕터 순서대로 수집. 매일 다른 챕터, 챕터별 검색 힌트 |
-| asyncio.gather로 도구 병렬 실행 | 토픽 N개 → N배 빠름 |
-| 퀴즈 검증 오류 시 탈락 (이전: 통과) | 불확실한 퀴즈를 유저에게 노출하는 것이 더 큰 피해 |
-| 모든 AI 호출이 토큰 usage 반환 | 실행별 Claude + GPT 비용 집계 → USD 투명 추적 |
-| curriculum_gen.py — Claude가 커리큘럼 자동 생성 | 임의 관심사 추가 시 즉시 구조화된 학습 경로 제공 |
-| topic_curricula DB 캐시 + alias 매칭 | 동의어 관심사 중복 생성 방지 ("주식" = "주식/투자") |
-| 개념 레벨 낮아지지 않음 | 레벨 하락 → 좌절 → 이탈. 항상 성장하는 느낌 유지 |
-| 스트릭 프리즈 | 하루 빠졌을 때 이탈 방지. Duolingo 이탈률 연구 기반 |
-| Render Free 티어 콜드 스타트 폴백 | API 실패 시 하드코딩 기본 데이터로 빈 화면 방지 |
-| TEMP_USER_ID 하드코딩 | MVP. Auth 붙이면 이 상수만 교체 |
+설계 의도 상세: `DESIGN.md` 참조.

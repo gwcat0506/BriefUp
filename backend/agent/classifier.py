@@ -5,6 +5,7 @@
 
 import os
 from openai import AsyncOpenAI
+from core.config import GPT_4O_MINI_MODEL
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -22,7 +23,7 @@ CLASSIFY_PROMPT = f"""다음 관심사를 아래 카테고리 중 하나로 분�
 async def classify_topic(topic_name: str) -> str:
     """관심사 → 카테고리 자동 분류 (RSS 소스 선택용)"""
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=GPT_4O_MINI_MODEL,
         max_tokens=20,
         messages=[{
             "role": "user",
