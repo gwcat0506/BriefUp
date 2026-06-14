@@ -5,6 +5,7 @@ import { api, Topic, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import { savePipelinePending, clearPipelinePending } from "@/components/ui/GlobalPipelineWatcher";
 import { SUGGESTED_TOPICS as SUGGESTED } from "@/lib/topics";
 import ProgressBar from "@/components/ui/ProgressBar";
 
@@ -60,6 +61,7 @@ export default function MyPage() {
 
   function startPipelinePhase(topicName: string) {
     const startedAt = Date.now();
+    savePipelinePending({ topicName, startedAt });
     setPipelineStatus({ topicName, phase: "pipeline", elapsed: 0, startedAt, done: false });
 
     pipelineTimerRef.current = setInterval(() => {
@@ -73,6 +75,7 @@ export default function MyPage() {
         const hasNew = data.some(c => new Date(c.created_at).getTime() >= startedAt);
         if (hasNew) {
           clearPipelineTimers();
+          clearPipelinePending();
           setPipelineStatus(prev => prev ? { ...prev, done: true } : null);
           api.getTopics(TEMP_USER_ID).then(setTopics);
           showToast(`'${topicName}' 브리핑이 준비됐어요!`, "success");
@@ -84,6 +87,7 @@ export default function MyPage() {
     // 최대 3분 후 강제 종료
     setTimeout(() => {
       clearPipelineTimers();
+      clearPipelinePending();
       setPipelineStatus(prev => prev && !prev.done ? { ...prev, done: true } : prev);
       setTimeout(() => setPipelineStatus(null), 4000);
     }, 180000);

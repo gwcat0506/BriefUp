@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import GlobalPipelineWatcher from "@/components/ui/GlobalPipelineWatcher";
 
 export const metadata: Metadata = {
   title: "BriefUp",
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko">
       <body className="bg-[#FAFAF8] text-[#1C1C1E] min-h-screen max-w-md mx-auto">
         {children}
+        <GlobalPipelineWatcher />
       </body>
     </html>
   );
