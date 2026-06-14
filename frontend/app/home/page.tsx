@@ -246,6 +246,46 @@ export default function HomePage() {
             </div>
           )}
 
+          {/* 내 관심사 */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between px-5 mb-3">
+              <p className="text-[#1C1C1E] font-bold text-base">내 관심사</p>
+              <button onClick={() => router.push("/mypage")} className="text-[#10B981] text-sm font-medium">
+                + 추가
+              </button>
+            </div>
+            <div className="px-5">
+              {curricula.length === 0 ? (
+                <button
+                  onClick={() => router.push("/mypage")}
+                  className="w-full bg-gradient-to-r from-[#10B981] to-[#059669] rounded-3xl p-5 text-left text-white active:scale-[0.98] transition-all"
+                >
+                  <p className="text-green-100 text-xs mb-1">원하는 주제라면 무엇이든</p>
+                  <p className="font-bold text-base">AI, 경제, 심리학... 뭐든 배워요</p>
+                  <p className="text-green-100 text-sm mt-1.5">주제를 추가하면 맞춤 커리큘럼이 자동으로 만들어져요 →</p>
+                </button>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {curricula.map((track) => (
+                    <span
+                      key={track.id}
+                      className="flex items-center gap-1.5 bg-white border border-[#E5E7EB] rounded-full px-3 py-1.5 text-sm text-[#1C1C1E] font-medium card-shadow"
+                    >
+                      <span>{track.emoji}</span>
+                      <span>{track.title}</span>
+                    </span>
+                  ))}
+                  <button
+                    onClick={() => router.push("/mypage")}
+                    className="flex items-center gap-1 bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-3 py-1.5 text-sm text-[#10B981] font-medium"
+                  >
+                    + 추가
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* 오늘의 챕터 */}
           <div className="mt-4">
             <div className="flex items-center justify-between px-5 mb-3">
@@ -255,16 +295,9 @@ export default function HomePage() {
 
             {curricula.length === 0 && (
               <div className="px-5">
-                <Link href="/roadmap">
-                  <div className="bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] rounded-3xl p-4 flex items-center justify-between text-white">
-                    <div>
-                      <p className="text-purple-200 text-xs mb-0.5">학습 경로</p>
-                      <p className="font-bold">커리큘럼 로드맵 보기</p>
-                      <p className="text-purple-200 text-xs mt-0.5">RAG · Agentic AI · LLM 단계별 학습</p>
-                    </div>
-                    <span className="text-2xl">→</span>
-                  </div>
-                </Link>
+                <div className="bg-white rounded-3xl card-shadow px-5 py-6 text-center">
+                  <p className="text-[#9CA3AF] text-sm">관심사를 추가하면 오늘의 챕터가 나타나요</p>
+                </div>
               </div>
             )}
 
