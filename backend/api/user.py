@@ -63,10 +63,10 @@ def add_xp(user_id: str, amount: int) -> dict:
 
 # ── 마일스톤 정의 (듀오링고 방식) ──────────────────────
 MILESTONES = {
-    7:   {"badge": "🔥 일주일 달성!", "reward": "스트릭 프리즈 1개 추가"},
-    30:  {"badge": "💎 한 달 달성!", "reward": "스트릭 프리즈 2개 추가"},
-    100: {"badge": "👑 100일 달성!", "reward": "스트릭 프리즈 3개 추가 + VIP 뱃지"},
-    365: {"badge": "🏆 1년 달성!", "reward": "전설의 학습자!"},
+    7:   {"badge": "🔥 일주일 달성!", "reward": "+100 XP 보너스!", "xp": 100},
+    30:  {"badge": "💎 한 달 달성!",  "reward": "+300 XP 보너스!", "xp": 300},
+    100: {"badge": "👑 100일 달성!", "reward": "+800 XP 보너스!", "xp": 800},
+    365: {"badge": "🏆 1년 달성!",   "reward": "+2000 XP 보너스!", "xp": 2000},
 }
 
 class UserCreate(BaseModel):

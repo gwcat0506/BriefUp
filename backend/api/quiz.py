@@ -203,8 +203,10 @@ def _update_streak(user_id: str):
             "last_active_date": today.isoformat()
         }).eq("user_id", user_id).execute()
         try:
-            from api.user import add_xp, XP_STREAK_DAY
+            from api.user import add_xp, XP_STREAK_DAY, MILESTONES
             add_xp(user_id, XP_STREAK_DAY)
+            if new_streak in MILESTONES and MILESTONES[new_streak].get("xp"):
+                add_xp(user_id, MILESTONES[new_streak]["xp"])
         except Exception:
             pass
     else:
