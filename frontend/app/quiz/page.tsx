@@ -291,6 +291,20 @@ function QuizContent() {
               ) : null}
             </div>
             <p className="text-[#374151] text-sm leading-relaxed">{result.explanation}</p>
+            {quiz.contents?.original_url && (
+              <a
+                href={quiz.contents.original_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 mt-3 text-[#9CA3AF] text-xs hover:text-[#6B7280] transition-colors"
+              >
+                <span>📄</span>
+                <span>원문 보기</span>
+                {quiz.contents.source && quiz.contents.source !== "unknown" && (
+                  <span className="ml-0.5 opacity-70">— {quiz.contents.source === "arxiv" ? "arXiv" : "웹 기사"}</span>
+                )}
+              </a>
+            )}
           </div>
         )}
       </div>

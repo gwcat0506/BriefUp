@@ -183,7 +183,7 @@ export interface Quiz {
   concept: string;
   difficulty: number;
   content_id: string;
-  contents?: { title: string; source: string };
+  contents?: { title: string; source: string; original_url?: string };
 }
 
 export interface AnswerBody {

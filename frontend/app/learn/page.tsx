@@ -10,6 +10,8 @@ interface ContentRow {
   id: string;
   title: string;
   summary: string;
+  source?: string;
+  original_url?: string;
 }
 
 const LOADING_STEPS = [
@@ -321,6 +323,24 @@ function LearnContent() {
           </div>
         </div>
       </div>
+
+      {/* 출처 */}
+      {contentRow?.original_url && (
+        <div className="px-5 pb-1 flex justify-center">
+          <a
+            href={contentRow.original_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-[#9CA3AF] text-xs hover:text-[#6B7280] transition-colors"
+          >
+            <span>📄</span>
+            <span>원문 보기</span>
+            {contentRow.source && !contentRow.source.startsWith("chapter:") && contentRow.source !== "unknown" && (
+              <span className="opacity-70">— {contentRow.source === "arxiv" ? "arXiv" : "웹 기사"}</span>
+            )}
+          </a>
+        </div>
+      )}
 
       {/* 하단 버튼 */}
       <div className="px-5 pb-2 flex gap-3">

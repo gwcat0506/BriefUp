@@ -14,7 +14,7 @@ class QuizAnswer(BaseModel):
 @router.get("/by-content/{content_id}")
 async def get_quizzes_by_content(content_id: str):
     """특정 브리핑 콘텐츠의 퀴즈 반환"""
-    res = supabase.table("quizzes").select("*").eq("content_id", content_id).execute()
+    res = supabase.table("quizzes").select("*, contents(title, source, original_url)").eq("content_id", content_id).execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="이 콘텐츠의 퀴즈가 아직 없어요.")
     return res.data
@@ -50,7 +50,7 @@ async def get_review_quizzes(user_id: str):
     answered_ids = [r["quiz_id"] for r in answered_today.data]
 
     quizzes_q = supabase.table("quizzes")\
-        .select("*, contents(title, source)")\
+        .select("*, contents(title, source, original_url)")\
         .in_("concept", weak_concepts)\
         .limit(5)
 
@@ -99,7 +99,7 @@ async def get_today_quizzes(user_id: str):
         topic_content_ids = [c["id"] for c in topic_contents.data]
         if not topic_content_ids:
             continue
-        q = supabase.table("quizzes").select("*, contents(title, source)") \
+        q = supabase.table("quizzes").select("*, contents(title, source, original_url)") \
             .in_("content_id", topic_content_ids) \
             .order("difficulty") \
             .limit(2)
