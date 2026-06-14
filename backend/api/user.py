@@ -144,17 +144,20 @@ async def add_topic(body: TopicCreate, background_tasks: BackgroundTasks):
     except Exception:
         return {"message": "이미 추가된 관심사예요"}
 
-    # 커리큘럼 생성 (없으면 Claude가 자동 생성, 있으면 DB 캐시 반환)
-    try:
-        from agent.curriculum_gen import get_or_create_curriculum
-        curriculum = await get_or_create_curriculum(body.name, category)
-        topic_row["curriculum"] = curriculum
-    except Exception as e:
-        print(f"[커리큘럼 생성 오류] {e}")
+    # 커리큘럼 생성 → 파이프라인 순서대로 백그라운드 실행 (HTTP 응답 블로킹 방지)
+    async def _bg(topic_name: str, cat: str):
+        try:
+            from agent.curriculum_gen import get_or_create_curriculum
+            await get_or_create_curriculum(topic_name, cat)
+        except Exception as e:
+            print(f"[커리큘럼 생성 오류] {e}")
+        try:
+            from agent.scheduler import run_daily_pipeline
+            await run_daily_pipeline([{"name": topic_name, "category": cat}])
+        except Exception as e:
+            print(f"[파이프라인 오류] {e}")
 
-    # 새 토픽에 대해 즉시 콘텐츠 수집 (백그라운드)
-    from agent.scheduler import run_daily_pipeline
-    background_tasks.add_task(run_daily_pipeline, [{"name": body.name, "category": category}])
+    background_tasks.add_task(_bg, body.name, category)
 
     return topic_row
 
