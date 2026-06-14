@@ -4,6 +4,8 @@
 
 **프로토타입:** https://brief-up.vercel.app &nbsp;|&nbsp; **소스코드:** https://github.com/gwcat0506/BriefUp
 
+<img src="docs/qr_briefup.png" alt="BriefUp QR" width="120" align="right"/>
+
 > ⚠️ Render Free Plan 특성상 첫 접속 시 백엔드 콜드 스타트로 30~60초 지연될 수 있습니다.
 
 ---
