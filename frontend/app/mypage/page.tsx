@@ -61,6 +61,7 @@ export default function MyPage() {
 
   function startPipelinePhase(topicName: string) {
     const startedAt = Date.now();
+    let succeeded = false;
     savePipelinePending({ topicName, startedAt });
     setPipelineStatus({ topicName, phase: "pipeline", elapsed: 0, startedAt, done: false });
 
@@ -74,6 +75,7 @@ export default function MyPage() {
         const data = await api.getContentsByCategory(topicName, 5);
         const hasNew = data.some(c => new Date(c.created_at).getTime() >= startedAt);
         if (hasNew) {
+          succeeded = true;
           clearPipelineTimers();
           clearPipelinePending();
           setPipelineStatus(prev => prev ? { ...prev, done: true } : null);
@@ -88,6 +90,9 @@ export default function MyPage() {
     setTimeout(() => {
       clearPipelineTimers();
       clearPipelinePending();
+      if (!succeeded) {
+        showToast(`'${topicName}' 관련 자료를 충분히 찾지 못했어요 🙏`, "error");
+      }
       setPipelineStatus(prev => prev && !prev.done ? { ...prev, done: true } : prev);
       setTimeout(() => setPipelineStatus(null), 4000);
     }, 180000);

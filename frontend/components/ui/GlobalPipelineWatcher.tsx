@@ -21,7 +21,7 @@ export function clearPipelinePending() {
 }
 
 export default function GlobalPipelineWatcher() {
-  const [toast, setToast] = useState<{ message: string } | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
@@ -34,15 +34,17 @@ export default function GlobalPipelineWatcher() {
 
   function startWatching(entry: PipelineEntry) {
     stopPolling();
+    let succeeded = false;
 
     const check = async () => {
       try {
         const data = await api.getContentsByCategory(entry.topicName, 5);
         const hasNew = data.some(c => new Date(c.created_at).getTime() >= entry.startedAt);
         if (hasNew) {
+          succeeded = true;
           stopPolling();
           clearPipelinePending();
-          setToast({ message: `'${entry.topicName}' 브리핑이 준비됐어요!` });
+          setToast({ message: `'${entry.topicName}' 브리핑이 준비됐어요!`, type: "success" });
         }
       } catch {}
     };
@@ -53,6 +55,9 @@ export default function GlobalPipelineWatcher() {
     timeoutRef.current = setTimeout(() => {
       stopPolling();
       clearPipelinePending();
+      if (!succeeded) {
+        setToast({ message: `'${entry.topicName}' 관련 자료를 충분히 찾지 못했어요 🙏`, type: "error" });
+      }
     }, 180000);
   }
 
@@ -73,16 +78,23 @@ export default function GlobalPipelineWatcher() {
 
   if (!toast) return null;
 
+  const isSuccess = toast.type === "success";
+
   return (
     <div
-      className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50
-        flex items-center gap-3 px-4 py-3 rounded-2xl border card-shadow cursor-pointer
-        bg-[#ECFDF5] border-[#6EE7B7] text-[#059669]
-        animate-in slide-in-from-bottom-4 duration-300"
-      onClick={() => { setToast(null); router.push("/home"); }}
+      className={`fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50
+        flex items-center gap-3 px-4 py-3 rounded-2xl border card-shadow
+        animate-in slide-in-from-bottom-4 duration-300
+        ${isSuccess
+          ? "bg-[#ECFDF5] border-[#6EE7B7] text-[#059669] cursor-pointer"
+          : "bg-[#FEF2F2] border-[#FECACA] text-[#DC2626]"
+        }`}
+      onClick={() => { if (isSuccess) { setToast(null); router.push("/home"); } }}
     >
-      <span>✅</span>
-      <p className="text-sm font-medium flex-1">{toast.message} 홈에서 확인하세요 →</p>
+      <span>{isSuccess ? "✅" : "🙏"}</span>
+      <p className="text-sm font-medium flex-1">
+        {toast.message}{isSuccess ? " 홈에서 확인하세요 →" : ""}
+      </p>
       <button
         onClick={e => { e.stopPropagation(); setToast(null); }}
         className="text-xs opacity-60"
