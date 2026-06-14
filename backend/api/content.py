@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from core.supabase import supabase
 from datetime import date
@@ -63,6 +65,25 @@ async def get_contents(category: str | None = None, limit: int = 10):
         q = q.eq("topic_category", category)
     res = q.order("collected_at", desc=True).limit(limit).execute()
     return res.data
+
+
+@router.get("/{content_id}/cards")
+async def get_content_cards(content_id: str):
+    """
+    파이프라인 수집 콘텐츠의 학습 카드 반환.
+    summary 필드가 {"cards": [...]} 형식이어야 합니다.
+    """
+    res = supabase.table("contents").select("*").eq("id", content_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="콘텐츠를 찾을 수 없어요.")
+    row = res.data[0]
+    try:
+        cards_data = json.loads(row["summary"])
+        if not isinstance(cards_data.get("cards"), list):
+            raise ValueError("cards 필드 없음")
+    except Exception:
+        raise HTTPException(status_code=422, detail="이 콘텐츠는 카드 형식이 아닙니다.")
+    return {"content": row, "cards": cards_data}
 
 
 @router.post("/run-pipeline")

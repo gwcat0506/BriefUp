@@ -17,7 +17,7 @@ from core.supabase import supabase
 from core.logger import PipelineLogger
 from agent.collector import collect_for_topic
 from agent.web_search import search_web
-from agent.summarizer import summarize as _summarize
+from agent.summarizer import summarize as _summarize, parse_cards, _cards_to_text
 from agent.quiz_gen import generate_quizzes as _quiz_gen
 from agent.verifier import verify_and_filter, check_faithfulness
 
@@ -141,19 +141,31 @@ async def get_collection_plan(topic_name: str, category: str) -> dict:
     """
     # 1. 커리큘럼 조회 — DB 우선, 없으면 인메모리 카탈로그
     chapters: list[dict] = []
+    collection_strategy: dict = {}
     topic_key = _slugify(topic_name)
 
     try:
         # DB에서 topic_name 또는 topic_key로 조회
-        db_res = await asyncio.to_thread(
-            lambda: supabase.table("topic_curricula")
-                .select("chapters")
-                .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
-                .limit(1)
-                .execute()
-        )
+        try:
+            db_res = await asyncio.to_thread(
+                lambda: supabase.table("topic_curricula")
+                    .select("chapters, collection_strategy")
+                    .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
+                    .limit(1)
+                    .execute()
+            )
+        except Exception:
+            # collection_strategy 컬럼이 아직 없으면 chapters만 조회
+            db_res = await asyncio.to_thread(
+                lambda: supabase.table("topic_curricula")
+                    .select("chapters")
+                    .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
+                    .limit(1)
+                    .execute()
+            )
         if db_res.data:
             chapters = db_res.data[0].get("chapters") or []
+            collection_strategy = db_res.data[0].get("collection_strategy") or {}
     except Exception as e:
         print(f"  [get_collection_plan] DB 조회 오류: {e}")
 
@@ -170,6 +182,7 @@ async def get_collection_plan(topic_name: str, category: str) -> dict:
                         break
             if catalog_entry:
                 chapters = catalog_entry.get("chapters", [])
+                collection_strategy = catalog_entry.get("collection_strategy", {})
         except Exception as e:
             print(f"  [get_collection_plan] 카탈로그 조회 오류: {e}")
 
@@ -184,6 +197,7 @@ async def get_collection_plan(topic_name: str, category: str) -> dict:
             "arxiv_query": None,
             "web_query": f"{topic_name} introduction explained 2024",
             "concepts": [],
+            "collection_strategy": {},
             "note": "커리큘럼 없음 — 기본 쿼리 사용",
         }
 
@@ -216,6 +230,7 @@ async def get_collection_plan(topic_name: str, category: str) -> dict:
         "arxiv_query": arxiv_q,
         "web_query": web_q,
         "concepts": chapter.get("concepts", []),
+        "collection_strategy": collection_strategy,
     }
 
 
@@ -225,6 +240,9 @@ async def collect_articles(
     category: str,
     arxiv_query: str | None = None,
     web_query: str | None = None,
+    use_arxiv: bool = True,
+    include_domains: list[str] | None = None,
+    web_result_count: int = 10,
 ) -> dict:
     """
     토픽에 대한 원문 아티클을 수집합니다.
@@ -237,16 +255,42 @@ async def collect_articles(
         category: 카테고리 (예: AI/ML, 철학)
         arxiv_query: arxiv 영문 검색 쿼리 (없으면 topic_name 사용)
         web_query: 웹 영문 검색 쿼리 (없으면 topic_name 사용)
+        use_arxiv: get_collection_plan의 collection_strategy.use_arxiv 값 사용
+        include_domains: get_collection_plan의 collection_strategy.include_domains 값 사용
+        web_result_count: Tavily 검색 결과 수 (기본 10, 전략에 따라 증가 가능)
     """
     logger = _log()
     t = time.monotonic()
     retry_no = _session["retry_counts"].get(topic_name, 0)
     _session["retry_counts"][topic_name] = retry_no + 1
+
+    # collection_strategy의 rss_sources 가져오기 (get_collection_plan 결과 활용)
+    from agent.curriculum_catalog import CURRICULUM_CATALOG
+    topic_key = _slugify(topic_name)
+    strategy_rss: list[dict] | None = None
+    catalog_entry = CURRICULUM_CATALOG.get(topic_key)
+    if not catalog_entry:
+        for v in CURRICULUM_CATALOG.values():
+            if topic_name in v.get("topic_names", []):
+                catalog_entry = v
+                break
+    if catalog_entry:
+        strategy_rss = catalog_entry.get("collection_strategy", {}).get("rss_sources")
+
     try:
-        trad_items = await collect_for_topic(topic_name, category, arxiv_query=arxiv_query)
+        trad_items = await collect_for_topic(
+            topic_name, category,
+            arxiv_query=arxiv_query,
+            use_arxiv=use_arxiv,
+            rss_sources=strategy_rss,
+        )
 
         try:
-            web_items = await search_web(web_query or topic_name)
+            web_items = await search_web(
+                web_query or topic_name,
+                max_results=web_result_count,
+                include_domains=include_domains or None,
+            )
         except ValueError:
             web_items = []
 
@@ -390,12 +434,13 @@ async def summarize_article(article_id: str, category: str) -> dict:
 
     t = time.monotonic()
     try:
-        # GPT-4o-mini로 요약 생성
-        summary, gen_usage = await _summarize(article["title"], article["text"], category)
+        # GPT-4o-mini로 카드 JSON 생성
+        raw, gen_usage = await _summarize(article["title"], article["text"], category)
         _add_openai_tokens(gen_usage["input"], gen_usage["output"])
 
-        # 빈 요약 조기 차단 — 충실도 검사에 빈 prompt 전달 방지
-        if not summary or len(summary.strip()) < 50:
+        # JSON 파싱 — cards 필드 필수
+        cards_data = parse_cards(raw)
+        if not cards_data:
             _session["run_stats"]["total_failed"] += 1
             if logger:
                 logger.log_step(
@@ -403,19 +448,33 @@ async def summarize_article(article_id: str, category: str) -> dict:
                     inputs={"article_id": article_id, "category": category},
                     duration_ms=int((time.monotonic() - t) * 1000),
                     status="failed",
-                    error_message="summary too short or empty",
+                    error_message="카드 JSON 파싱 실패",
                     category=category,
                     failure_type="quality_rejected",
                     parent_step_order=parent_order,
                 )
-            return {
-                "success": False,
-                "error": "summary too short or empty",
-            }
+            return {"success": False, "error": "카드 JSON 파싱 실패"}
+
+        # 충실도 검증용 평문 추출
+        summary_text = _cards_to_text(cards_data)
+        if len(summary_text.strip()) < 50:
+            _session["run_stats"]["total_failed"] += 1
+            if logger:
+                logger.log_step(
+                    tool_name="summarize",
+                    inputs={"article_id": article_id, "category": category},
+                    duration_ms=int((time.monotonic() - t) * 1000),
+                    status="failed",
+                    error_message="카드 내용이 너무 짧음",
+                    category=category,
+                    failure_type="quality_rejected",
+                    parent_step_order=parent_order,
+                )
+            return {"success": False, "error": "카드 내용이 너무 짧음"}
 
         # Claude Haiku로 충실도 검증 (교차 검증)
         is_faithful, faith_score, issues, faith_usage = await check_faithfulness(
-            summary, article["text"]
+            summary_text, article["text"]
         )
         _add_claude_tokens(faith_usage["claude_input"], faith_usage["claude_output"])
         _session["run_stats"]["quality"]["faithfulness_scores"].append(faith_score)
@@ -444,7 +503,8 @@ async def summarize_article(article_id: str, category: str) -> dict:
                 "error": "요약이 원문에 충실하지 않아 스킵합니다.",
             }
 
-        article["summary"] = summary
+        import json as _json
+        article["summary"] = _json.dumps(cards_data, ensure_ascii=False)
         print(f"    [충실도 PASS] {article_id} — score={faith_score:.2f}")
 
         if logger:

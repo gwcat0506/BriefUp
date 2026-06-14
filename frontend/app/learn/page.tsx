@@ -96,6 +96,7 @@ const CARD_STYLES: Record<string, { bg: string; border: string; titleColor: stri
 function LearnContent() {
   const searchParams = useSearchParams();
   const chapterId = searchParams.get("id") || "";
+  const contentId = searchParams.get("content_id") || "";
   const router = useRouter();
 
   const [cards, setCards] = useState<Card[]>([]);
@@ -111,9 +112,13 @@ function LearnContent() {
   const track = chapterId.split("-")[0] || "rag";
 
   useEffect(() => {
-    if (!chapterId) { setError("챕터 ID가 없어요."); setLoading(false); return; }
+    if (!chapterId && !contentId) { setError("챕터 또는 콘텐츠 ID가 없어요."); setLoading(false); return; }
 
-    api.getChapterContent(chapterId)
+    const fetchData = contentId
+      ? api.getContentCards(contentId).then((data) => ({ content: data.content, cards: data.cards }))
+      : api.getChapterContent(chapterId).then((data) => ({ content: data.content, cards: data.cards }));
+
+    fetchData
       .then(async (data) => {
         setContentRow(data.content);
         if (data.cards?.cards) {
@@ -121,12 +126,14 @@ function LearnContent() {
         } else {
           throw new Error("카드 데이터가 없어요.");
         }
-        api.updateProgress({
-          user_id: TEMP_USER_ID,
-          chapter_id: chapterId,
-          track,
-          status: "started",
-        }).catch(() => {});
+        if (chapterId) {
+          api.updateProgress({
+            user_id: TEMP_USER_ID,
+            chapter_id: chapterId,
+            track,
+            status: "started",
+          }).catch(() => {});
+        }
         if (data.content?.id) {
           const bm = await api.checkBookmark(TEMP_USER_ID, data.content.id);
           setBookmarked(bm.bookmarked);
@@ -134,7 +141,7 @@ function LearnContent() {
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [chapterId]);
+  }, [chapterId, contentId]);
 
   const currentCard = cards[cardIdx];
   const progress = cards.length > 0 ? ((cardIdx + 1) / cards.length) * 100 : 0;
@@ -146,12 +153,14 @@ function LearnContent() {
 
   async function handleNext() {
     if (cardIdx + 1 >= cards.length) {
-      await api.updateProgress({
-        user_id: TEMP_USER_ID,
-        chapter_id: chapterId,
-        track,
-        status: "completed",
-      });
+      if (chapterId) {
+        await api.updateProgress({
+          user_id: TEMP_USER_ID,
+          chapter_id: chapterId,
+          track,
+          status: "completed",
+        });
+      }
       setDone(true);
     } else {
       setCardIdx(i => i + 1);
@@ -265,15 +274,37 @@ function LearnContent() {
           onTouchEnd={handleTouchEnd}
         >
           {/* 카드 헤더 */}
-          <div className="flex items-center gap-3 mb-5">
-            <span className="text-4xl">{currentCard.emoji}</span>
-            <div>
-              <p className="text-xs font-medium mb-0.5" style={{ color: style.titleColor }}>
-                {currentCard.type === "hook" ? "공감하기" :
-                 currentCard.type === "concept" ? "개념 이해" :
-                 currentCard.type === "example" ? "실제 사례" :
-                 currentCard.type === "insight" ? "핵심 인사이트" : "정리"}
-              </p>
+          <div className="flex items-start gap-3 mb-5">
+            <span className="text-4xl flex-shrink-0">{currentCard.emoji}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                <p className="text-xs font-medium" style={{ color: style.titleColor }}>
+                  {currentCard.type === "hook" ? "공감하기" :
+                   currentCard.type === "concept" ? "개념 이해" :
+                   currentCard.type === "example" ? "실제 사례" :
+                   currentCard.type === "insight" ? "핵심 인사이트" : "정리"}
+                </p>
+                {contentRow?.source && !contentRow.source.startsWith("chapter:") && contentRow.source !== "unknown" && (
+                  contentRow.original_url ? (
+                    <a
+                      href={contentRow.original_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-full border opacity-70 hover:opacity-100 transition-opacity"
+                      style={{ color: style.titleColor, borderColor: style.border }}
+                    >
+                      {contentRow.source === "arxiv" ? "📄 arXiv 원문" : "🔗 원문 보기"}
+                    </a>
+                  ) : (
+                    <span
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-full border opacity-60"
+                      style={{ color: style.titleColor, borderColor: style.border }}
+                    >
+                      {contentRow.source === "arxiv" ? "📄 arXiv" : "🌐 웹 기사"}
+                    </span>
+                  )
+                )}
+              </div>
               <h2 className="text-[#1C1C1E] font-bold text-lg leading-tight">
                 {currentCard.title}
               </h2>
@@ -323,24 +354,6 @@ function LearnContent() {
           </div>
         </div>
       </div>
-
-      {/* 출처 */}
-      {contentRow?.original_url && (
-        <div className="px-5 pb-1 flex justify-center">
-          <a
-            href={contentRow.original_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[#9CA3AF] text-xs hover:text-[#6B7280] transition-colors"
-          >
-            <span>📄</span>
-            <span>원문 보기</span>
-            {contentRow.source && !contentRow.source.startsWith("chapter:") && contentRow.source !== "unknown" && (
-              <span className="opacity-70">— {contentRow.source === "arxiv" ? "arXiv" : "웹 기사"}</span>
-            )}
-          </a>
-        </div>
-      )}
 
       {/* 하단 버튼 */}
       <div className="px-5 pb-2 flex gap-3">

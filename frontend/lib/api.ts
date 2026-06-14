@@ -145,6 +145,12 @@ export const api = {
       60000,
     ),
 
+  // 파이프라인 수집 콘텐츠 카드 (summary JSON 파싱)
+  getContentCards: (contentId: string) =>
+    fetcher<{ content: Content; cards: { cards: Card[] } }>(
+      `/api/content/${contentId}/cards`,
+    ),
+
   // 카테고리별 콘텐츠 목록
   getContentsByCategory: (category: string, limit = 5) =>
     fetcher<{ created_at: string }[]>(

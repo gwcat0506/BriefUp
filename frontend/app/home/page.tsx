@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api, HomeSummary, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, TEMP_USER_ID } from "@/lib/api";
+import { api, HomeSummary, Streak, ConceptLevel, StreakStatus, XpInfo, CurriculumTrack, Content, TEMP_USER_ID } from "@/lib/api";
 import BottomNav from "@/components/layout/BottomNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,6 +38,7 @@ export default function HomePage() {
   const [levels, setLevels] = useState<ConceptLevel[]>([]);
   const [xpInfo, setXpInfo] = useState<XpInfo | null>(null);
   const [curricula, setCurricula] = useState<CurriculumTrack[]>([]);
+  const [todayContents, setTodayContents] = useState<Content[]>([]);
   const [reviewCount, setReviewCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [milestoneShown, setMilestoneShown] = useState(false);
@@ -69,6 +70,9 @@ export default function HomePage() {
         return score(b) - score(a);
       });
       setCurricula(sorted);
+    }
+    if (data.contents?.length) {
+      setTodayContents(data.contents.filter(c => !c.source?.startsWith("chapter:")));
     }
   };
 
@@ -357,6 +361,31 @@ export default function HomePage() {
               </div>
             )}
           </div>
+
+          {/* 오늘의 브리핑 — 파이프라인 수집 카드 콘텐츠 */}
+          {todayContents.length > 0 && (
+            <div className="mt-4">
+              <div className="flex items-center justify-between px-5 mb-3">
+                <p className="text-[#1C1C1E] font-bold text-base">오늘의 브리핑 📰</p>
+              </div>
+              <div className="px-5 flex flex-col gap-2">
+                {todayContents.slice(0, 5).map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => router.push(`/learn?content_id=${item.id}`)}
+                    className="w-full bg-white rounded-2xl card-shadow px-4 py-3.5 text-left flex items-center gap-3 active:scale-[0.98] transition-all"
+                  >
+                    <span className="text-xl flex-shrink-0">📄</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[#1C1C1E] text-sm font-semibold leading-tight line-clamp-2">{item.title}</p>
+                      <p className="text-[#9CA3AF] text-xs mt-0.5">{item.topic_category} · {item.source !== "unknown" ? item.source : "웹 기사"}</p>
+                    </div>
+                    <span className="text-[#10B981] font-bold text-sm flex-shrink-0">→</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
         </>
       )}
