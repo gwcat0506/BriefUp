@@ -7,6 +7,7 @@ FastMCP 서버 — BriefUp 파이프라인 도구 정의
 
 import asyncio
 import re
+import sys
 import time
 import uuid
 from datetime import date
@@ -360,7 +361,7 @@ async def collect_articles(
 @mcp.tool()
 async def summarize_article(article_id: str, category: str) -> dict:
     """
-    아티클 하나를 요약하고 원문 충실도를 검증합니다 (GPT-5 생성 → Claude 검증).
+    아티클 하나를 요약하고 원문 충실도를 검증합니다 (GPT-4o-mini 생성 → Claude 검증).
     같은 토픽의 여러 아티클에 대해 동시에 호출할 수 있습니다.
     실패(success=false) 또는 충실도 미달(faithful=false) 시 해당 아티클은 건너뛰세요.
 
@@ -389,7 +390,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
 
     t = time.monotonic()
     try:
-        # GPT-5로 요약 생성
+        # GPT-4o-mini로 요약 생성
         summary, gen_usage = await _summarize(article["title"], article["text"], category)
         _add_openai_tokens(gen_usage["input"], gen_usage["output"])
 
@@ -482,7 +483,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
 @mcp.tool()
 async def generate_quizzes(article_id: str, category: str) -> dict:
     """
-    아티클에 대한 퀴즈를 생성하고 Claude로 교차 검증합니다 (GPT-5 생성 → Claude Haiku 검증).
+    아티클에 대한 퀴즈를 생성하고 Claude로 교차 검증합니다 (GPT-4o-mini 생성 → Claude Haiku 검증).
     summarize_article 완료 후 호출하세요.
     verified_count가 0이면 save_content를 호출하지 마세요.
 
@@ -509,7 +510,7 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
 
     t = time.monotonic()
     try:
-        # GPT-5로 퀴즈 생성
+        # GPT-4o-mini로 퀴즈 생성
         quizzes, gen_usage = await _quiz_gen(article["title"], article["text"], category)
         if not quizzes:
             raise ValueError("퀴즈 생성 결과 없음")
@@ -700,7 +701,6 @@ async def save_reflection(
             duration_ms=0,
             status="success",
         )
-    import sys
     print(f"\n[Reflection] {quality_assessment}", file=sys.stderr)
     for s in next_run_suggestions[:3]:
         print(f"  → {s}", file=sys.stderr)

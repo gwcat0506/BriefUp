@@ -1,7 +1,7 @@
 """
 STEP 3 — 퀴즈 생성
 소스 본문 기반으로만 생성 → 할루시네이션 최소화
-GPT-5 사용
+GPT-4o-mini 사용
 """
 
 from openai import AsyncOpenAI
