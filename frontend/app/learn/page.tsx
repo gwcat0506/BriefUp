@@ -89,6 +89,7 @@ const CARD_STYLES: Record<string, { bg: string; border: string; titleColor: stri
   hook:    { bg: "#FFF7ED", border: "#FED7AA", titleColor: "#C2410C" },
   concept: { bg: "#ECFDF5", border: "#A7F3D0", titleColor: "#065F46" },
   example: { bg: "#EFF6FF", border: "#BFDBFE", titleColor: "#1D4ED8" },
+  detail:  { bg: "#EFF6FF", border: "#BFDBFE", titleColor: "#1D4ED8" },
   insight: { bg: "#FDF4FF", border: "#E9D5FF", titleColor: "#7E22CE" },
   summary: { bg: "#FFFBEB", border: "#FDE68A", titleColor: "#92400E" },
 };
@@ -279,9 +280,10 @@ function LearnContent() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-0.5">
                 <p className="text-xs font-medium" style={{ color: style.titleColor }}>
-                  {currentCard.type === "hook" ? "공감하기" :
+                  {currentCard.type === "hook" ? "핵심 주장" :
                    currentCard.type === "concept" ? "개념 이해" :
                    currentCard.type === "example" ? "실제 사례" :
+                   currentCard.type === "detail" ? "핵심 근거" :
                    currentCard.type === "insight" ? "핵심 인사이트" : "정리"}
                 </p>
                 {contentRow?.source && !contentRow.source.startsWith("chapter:") && contentRow.source !== "unknown" && (

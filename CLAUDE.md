@@ -132,3 +132,4 @@ cd frontend && npm run lint && npm run build
 - **발생 불가능한 시나리오 방어 코드**: 내부 코드와 프레임워크 보장을 신뢰, 시스템 경계에서만 검증
 
 설계 의도 상세: `DESIGN.md` 참조.
+DB 스키마 상세: `DB.md` 참조.

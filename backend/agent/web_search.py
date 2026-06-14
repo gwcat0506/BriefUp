@@ -180,6 +180,7 @@ async def search_web(
     query: str,
     max_results: int = 10,
     trust_threshold: float = TRUST_THRESHOLD,
+    include_domains: list[str] | None = None,
 ) -> list[dict]:
     """
     웹 검색 후 신뢰도 필터 적용.
@@ -190,6 +191,7 @@ async def search_web(
                topic_name 그대로 넘어오면 fallback suffix 추가.
         max_results: Tavily에 요청할 최대 결과 수
         trust_threshold: 이 점수 미만은 제외
+        include_domains: 이 도메인 목록에서만 검색 (None이면 제한 없음)
 
     Returns:
         collector.py와 동일한 [{title, url, text, trust_score}] 리스트.
@@ -205,13 +207,17 @@ async def search_web(
     has_korean = any("가" <= c <= "힣" for c in query)
     search_query = f"{query} {_FALLBACK_SUFFIX}" if has_korean else query
 
+    search_kwargs: dict = dict(
+        query=search_query,
+        max_results=max_results,
+        include_raw_content=True,
+        search_depth="advanced",
+    )
+    if include_domains:
+        search_kwargs["include_domains"] = include_domains
+
     try:
-        response = await client.search(
-            query=search_query,
-            max_results=max_results,
-            include_raw_content=True,
-            search_depth="advanced",
-        )
+        response = await client.search(**search_kwargs)
     except Exception as e:
         print(f"  [웹 검색 오류] '{query}': {e}")
         return []

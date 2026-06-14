@@ -6,6 +6,7 @@ FastMCP 서버 — BriefUp 파이프라인 도구 정의
 """
 
 import asyncio
+import json
 import re
 import sys
 import time
@@ -503,15 +504,14 @@ async def summarize_article(article_id: str, category: str) -> dict:
                 "error": "요약이 원문에 충실하지 않아 스킵합니다.",
             }
 
-        import json as _json
-        article["summary"] = _json.dumps(cards_data, ensure_ascii=False)
+        article["summary"] = json.dumps(cards_data, ensure_ascii=False)
         print(f"    [충실도 PASS] {article_id} — score={faith_score:.2f}")
 
         if logger:
             logger.log_step(
                 tool_name="summarize",
                 inputs={"article_id": article_id, "category": category},
-                output={"summary_length": len(summary), "faithfulness_score": faith_score},
+                output={"summary_length": len(article["summary"]), "faithfulness_score": faith_score},
                 duration_ms=int((time.monotonic() - t) * 1000),
                 status="success",
                 category=category,
@@ -521,7 +521,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
             "success": True,
             "faithful": True,
             "faithfulness_score": faith_score,
-            "summary_length": len(summary),
+            "summary_length": len(article["summary"]),
         }
 
     except Exception as e:
@@ -570,15 +570,23 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
 
     t = time.monotonic()
     try:
+        # 카드 텍스트를 퀴즈 소스로 사용 (학습 카드가 교육 내용의 원천)
+        # 카드 텍스트가 없는 경우에만 원문으로 폴백
+        try:
+            cards_text = _cards_to_text(json.loads(article["summary"]))
+        except Exception:
+            cards_text = ""
+        quiz_source = cards_text if len(cards_text) > 100 else article["text"][:3000]
+
         # GPT-4o-mini로 퀴즈 생성
-        quizzes, gen_usage = await _quiz_gen(article["title"], article["text"], category)
+        quizzes, gen_usage = await _quiz_gen(article["title"], quiz_source, category)
         if not quizzes:
             raise ValueError("퀴즈 생성 결과 없음")
         _add_openai_tokens(gen_usage["input"], gen_usage["output"])
         _session["run_stats"]["total_generated_quizzes"] += len(quizzes)
 
-        # Claude Haiku로 교차 검증 (동일 모델 blind spot 방지)
-        verified, ver_usage = await verify_and_filter(quizzes, article["text"])
+        # Claude Haiku로 교차 검증 (카드 텍스트 기준 — 학습 내용과 일치하는지 검증)
+        verified, ver_usage = await verify_and_filter(quizzes, quiz_source)
         _add_claude_tokens(ver_usage["claude_input"], ver_usage["claude_output"])
 
         article["quizzes"] = verified

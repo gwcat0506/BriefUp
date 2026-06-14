@@ -32,30 +32,37 @@ RSS_SOURCES: dict[str, list[dict]] = {
 }
 
 
-async def collect_for_topic(topic_name: str, category: str, arxiv_query: str | None = None) -> list[dict]:
+async def collect_for_topic(
+    topic_name: str,
+    category: str,
+    arxiv_query: str | None = None,
+    use_arxiv: bool = True,
+    rss_sources: list[dict] | None = None,
+) -> list[dict]:
     """
     topic_name을 실제 수집 키워드로 사용.
 
-    - arxiv: arxiv_query 우선, 없으면 topic_name으로 검색
-    - RSS: 카테고리 소스에서 수집 후 topic_name 키워드 필터
+    - arxiv: use_arxiv=True이고 arxiv_query 또는 topic_name으로 검색
+    - RSS: rss_sources 지정 시 해당 목록 사용, 없으면 RSS_SOURCES[category] 사용
     """
-    rss_sources = RSS_SOURCES.get(category, [])
+    effective_rss = rss_sources if rss_sources is not None else RSS_SOURCES.get(category, [])
     raw_items: list[dict] = []
 
     async with httpx.AsyncClient(timeout=20) as client:
-        # arxiv — arxiv_query 우선, 없으면 topic_name
-        try:
-            query = arxiv_query or topic_name
-            items = await _fetch_arxiv(client, query)
-            for item in items:
-                item["source"] = "arxiv"
-                item["topic_category"] = category
-            raw_items.extend(items)
-        except Exception as e:
-            print(f"  [arxiv 오류] '{topic_name}': {e}")
+        # arxiv — use_arxiv=True일 때만 수집
+        if use_arxiv:
+            try:
+                query = arxiv_query or topic_name
+                items = await _fetch_arxiv(client, query)
+                for item in items:
+                    item["source"] = "arxiv"
+                    item["topic_category"] = category
+                raw_items.extend(items)
+            except Exception as e:
+                print(f"  [arxiv 오류] '{topic_name}': {e}")
 
         # RSS — 카테고리 소스 전체 수집
-        for source in rss_sources:
+        for source in effective_rss:
             try:
                 items = await _fetch_rss(source["url"])
                 for item in items:

@@ -11,6 +11,7 @@ import os
 import re
 
 import anthropic
+import httpx
 from core.config import CLAUDE_HAIKU_MODEL
 from core.supabase import supabase
 from core.utils import extract_json
@@ -49,6 +50,13 @@ CURRICULUM_PROMPT = """당신은 "{topic_name}"({category}) 분야의 전문 커
   "color": "hex 색상코드 (예: #10B981)",
   "description": "이 분야를 한 문장으로 — 핵심 가치와 학습 범위를 담아서",
   "topic_aliases": ["동의어1", "동의어2"],
+  "collection_strategy": {{
+    "use_arxiv": true or false (학술 논문이 의미 있는 분야면 true, 실용/예술/생활/요리 등이면 false),
+    "include_domains": ["이 토픽의 고품질 영문 정보를 가장 잘 제공하는 신뢰도 높은 도메인 3~6개. 예: investopedia.com, bloomberg.com"],
+    "rss_sources": [
+      {{"url": "실제 동작하는 RSS/Atom 피드 URL", "name": "소스명"}}
+    ]
+  }},
   "chapters": [
     {{
       "id": "{topic_key}-1",
@@ -82,6 +90,23 @@ JSON으로만 응답:
   "issues": ["문제점 설명"] or [],
   "chapters": [수정된 chapters 배열 — 수정 없으면 입력과 동일하게 반환]
 }}"""
+
+
+async def _validate_rss_sources(rss_sources: list[dict]) -> list[dict]:
+    """RSS URL에 HEAD 요청 후 응답하는 것만 남긴다."""
+    valid = []
+    async with httpx.AsyncClient(timeout=5, follow_redirects=True) as client:
+        for source in rss_sources:
+            url = source.get("url", "")
+            if not url:
+                continue
+            try:
+                r = await client.head(url)
+                if r.status_code < 400:
+                    valid.append(source)
+            except Exception:
+                pass
+    return valid
 
 
 def _slugify(name: str) -> str:
@@ -141,7 +166,7 @@ async def _validate_concepts(topic_name: str, chapters: list[dict]) -> list[dict
 
 
 def _catalog_to_row(topic_key: str, track: dict, category: str) -> dict:
-    return {
+    row: dict = {
         "topic_key":     topic_key,
         "topic_name":    track["title"],
         "category":      category,
@@ -151,6 +176,9 @@ def _catalog_to_row(topic_key: str, track: dict, category: str) -> dict:
         "description":   track.get("description", ""),
         "chapters":      track["chapters"],
     }
+    if "collection_strategy" in track:
+        row["collection_strategy"] = track["collection_strategy"]
+    return row
 
 
 async def get_or_create_curriculum(topic_name: str, category: str) -> dict:
@@ -195,19 +223,35 @@ async def get_or_create_curriculum(topic_name: str, category: str) -> dict:
     # 5. Claude로 신규 생성 + 검증
     curriculum = await _generate_and_validate_curriculum(topic_name, category, topic_key)
 
-    # 6. DB 저장
-    saved = await asyncio.to_thread(
-        lambda: supabase.table("topic_curricula").insert({
-            "topic_key":    topic_key,
-            "topic_name":   topic_name,
-            "category":     category,
-            "topic_aliases": curriculum.get("topic_aliases", []),
-            "emoji":        curriculum.get("emoji", "📚"),
-            "color":        curriculum.get("color", "#6366F1"),
-            "description":  curriculum.get("description", ""),
-            "chapters":     curriculum["chapters"],
-        }).execute()
-    )
+    # 6. collection_strategy RSS URL 검증
+    strategy = curriculum.get("collection_strategy") or {}
+    if strategy.get("rss_sources"):
+        strategy["rss_sources"] = await _validate_rss_sources(strategy["rss_sources"])
+
+    # 7. DB 저장
+    row: dict = {
+        "topic_key":    topic_key,
+        "topic_name":   topic_name,
+        "category":     category,
+        "topic_aliases": curriculum.get("topic_aliases", []),
+        "emoji":        curriculum.get("emoji", "📚"),
+        "color":        curriculum.get("color", "#6366F1"),
+        "description":  curriculum.get("description", ""),
+        "chapters":     curriculum["chapters"],
+    }
+    if strategy:
+        row["collection_strategy"] = strategy
+
+    try:
+        saved = await asyncio.to_thread(
+            lambda: supabase.table("topic_curricula").insert(row).execute()
+        )
+    except Exception:
+        # collection_strategy 컬럼이 없으면 제외하고 재시도
+        row.pop("collection_strategy", None)
+        saved = await asyncio.to_thread(
+            lambda: supabase.table("topic_curricula").insert(row).execute()
+        )
     return saved.data[0]
 
 

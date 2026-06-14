@@ -160,7 +160,7 @@ export const api = {
 
 // ── 타입 ──────────────────────────────────────────
 export interface Card {
-  type: "hook" | "concept" | "example" | "insight" | "summary";
+  type: "hook" | "concept" | "example" | "detail" | "insight" | "summary";
   emoji: string;
   title: string;
   content?: string;

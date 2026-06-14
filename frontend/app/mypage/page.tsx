@@ -22,6 +22,15 @@ type PipelineStatus = {
 
 const PIPELINE_ESTIMATE = 90; // 예상 파이프라인 소요 시간 (초)
 
+const PIPELINE_MSGS = [
+  { emoji: "📚", text: "커리큘럼 구성 중" },
+  { emoji: "🔍", text: "관련 논문·뉴스 검색 중" },
+  { emoji: "🧠", text: "핵심 개념 추출 중" },
+  { emoji: "✍️", text: "요약 카드 작성 중" },
+  { emoji: "✏️", text: "퀴즈 문제 생성 중" },
+  { emoji: "🔎", text: "품질 최종 검증 중" },
+];
+
 export default function MyPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [bookmarks, setBookmarks] = useState<any[]>([]);
@@ -36,14 +45,17 @@ export default function MyPage() {
   const [feedbackType, setFeedbackType] = useState<FeedbackType>("suggestion");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [pipelineMsgIdx, setPipelineMsgIdx] = useState(0);
   const pipelineTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const msgTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const router = useRouter();
   const { show: showToast, ToastComponent } = useToast();
 
   function clearPipelineTimers() {
     if (pipelineTimerRef.current) { clearInterval(pipelineTimerRef.current); pipelineTimerRef.current = null; }
     if (pollTimerRef.current) { clearInterval(pollTimerRef.current); pollTimerRef.current = null; }
+    if (msgTimerRef.current) { clearInterval(msgTimerRef.current); msgTimerRef.current = null; }
   }
 
   useEffect(() => () => clearPipelineTimers(), []);
@@ -59,11 +71,36 @@ export default function MyPage() {
     api.getBookmarks(TEMP_USER_ID).then(setBookmarks);
   }, []);
 
-  function startPipelinePhase(topicName: string) {
-    const startedAt = Date.now();
+  // 페이지 복귀 시 진행 중인 파이프라인 복원
+  useEffect(() => {
+    const raw = localStorage.getItem("briefup_pipeline_pending");
+    if (!raw) return;
+    try {
+      const entry = JSON.parse(raw);
+      // 3분 초과 항목은 무시
+      if (Date.now() - entry.startedAt > 180000) {
+        clearPipelinePending();
+        return;
+      }
+      startPipelinePhase(entry.topicName, entry.startedAt);
+    } catch {
+      clearPipelinePending();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function startPipelinePhase(topicName: string, existingStartedAt?: number) {
+    const startedAt = existingStartedAt ?? Date.now();
+    const initialElapsed = existingStartedAt ? Math.floor((Date.now() - existingStartedAt) / 1000) : 0;
     let succeeded = false;
-    savePipelinePending({ topicName, startedAt });
-    setPipelineStatus({ topicName, phase: "pipeline", elapsed: 0, startedAt, done: false });
+    if (!existingStartedAt) savePipelinePending({ topicName, startedAt });
+    setPipelineStatus({ topicName, phase: "pipeline", elapsed: initialElapsed, startedAt, done: false });
+
+    // 메시지 로테이션 (12초마다)
+    setPipelineMsgIdx(0);
+    msgTimerRef.current = setInterval(() => {
+      setPipelineMsgIdx(prev => (prev + 1) % PIPELINE_MSGS.length);
+    }, 12000);
 
     pipelineTimerRef.current = setInterval(() => {
       setPipelineStatus(prev => prev ? { ...prev, elapsed: prev.elapsed + 1 } : null);
@@ -309,36 +346,39 @@ export default function MyPage() {
                 </button>
               </div>
               {pipelineStatus && (
-                <div className="mb-4 px-1">
+                <div className="mb-4">
                   {pipelineStatus.done ? (
-                    <div className="flex items-center gap-2 py-1">
+                    <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-2xl px-4 py-3 flex items-center gap-2">
                       <span className="text-base">✅</span>
-                      <p className="text-[#10B981] text-xs font-medium">
+                      <p className="text-[#10B981] text-xs font-medium flex-1">
                         <span className="font-bold">'{pipelineStatus.topicName}'</span> 브리핑이 준비됐어요!
                       </p>
                     </div>
                   ) : pipelineStatus.phase === "curriculum" ? (
-                    <div className="flex items-center gap-2 py-1">
+                    <div className="bg-[#F0FDF4] border border-[#D1FAE5] rounded-2xl px-4 py-3 flex items-center gap-2">
                       <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
                       <p className="text-[#10B981] text-xs">
-                        <span className="font-bold">'{pipelineStatus.topicName}'</span> 커리큘럼 생성 중...
+                        <span className="font-bold">'{pipelineStatus.topicName}'</span> 커리큘럼 구성 중...
                       </p>
                     </div>
                   ) : (
-                    <>
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
-                        <p className="text-[#10B981] text-xs flex-1">
-                          <span className="font-bold">'{pipelineStatus.topicName}'</span> 브리핑 수집 중...
+                    <div className="bg-[#F0FDF4] border border-[#D1FAE5] rounded-2xl px-4 py-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-base">{PIPELINE_MSGS[pipelineMsgIdx].emoji}</span>
+                        <p className="text-[#10B981] text-xs font-medium flex-1">
+                          {PIPELINE_MSGS[pipelineMsgIdx].text}...
                         </p>
-                        <span className="text-[#6B7280] text-xs tabular-nums">
+                        <span className="text-[#6B7280] text-[10px] tabular-nums flex-shrink-0">
                           {pipelineStatus.elapsed < PIPELINE_ESTIMATE
-                            ? `약 ${PIPELINE_ESTIMATE - pipelineStatus.elapsed}초 남음`
+                            ? `약 ${PIPELINE_ESTIMATE - pipelineStatus.elapsed}초`
                             : "거의 다 됐어요"}
                         </span>
                       </div>
                       <ProgressBar pct={Math.min((pipelineStatus.elapsed / PIPELINE_ESTIMATE) * 100, 95)} height="sm" duration={1000} />
-                    </>
+                      <p className="text-[#9CA3AF] text-[10px] mt-1.5">
+                        AI가 <span className="font-medium text-[#10B981]">'{pipelineStatus.topicName}'</span> 브리핑을 만들고 있어요
+                      </p>
+                    </div>
                   )}
                 </div>
               )}
