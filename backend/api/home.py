@@ -67,9 +67,12 @@ def _q_levels(user_id: str):
     return res.data or []
 
 
-def _q_contents(user_id: str):
+async def _q_contents(user_id: str):
     today = date.today().isoformat()
-    topics_res = supabase.table("topics").select("name, category").eq("user_id", user_id).eq("is_active", True).execute()
+    topics_res = await asyncio.to_thread(
+        lambda: supabase.table("topics").select("name, category")
+            .eq("user_id", user_id).eq("is_active", True).execute()
+    )
     topics = topics_res.data or []
     if not topics:
         return []
@@ -82,12 +85,18 @@ def _q_contents(user_id: str):
                 seen_keys.add(key)
                 lookup_keys.append(key)
 
+    async def _fetch(key: str):
+        return await asyncio.to_thread(
+            lambda: supabase.table("contents").select("*")
+                .eq("topic_category", key).eq("collected_at", today)
+                .order("created_at", desc=True).limit(3).execute()
+        )
+
+    results = await asyncio.gather(*[_fetch(k) for k in lookup_keys])
+
     all_contents = []
     seen_ids: set[str] = set()
-    for key in lookup_keys:
-        res = (supabase.table("contents").select("*")
-               .eq("topic_category", key).eq("collected_at", today)
-               .order("created_at", desc=True).limit(3).execute())
+    for res in results:
         for item in (res.data or []):
             if item["id"] not in seen_ids:
                 seen_ids.add(item["id"])
@@ -121,7 +130,7 @@ async def home_summary(user_id: str):
     streak_status_task = asyncio.to_thread(_q_streak_and_status, user_id)
     xp_task            = asyncio.to_thread(_q_xp,            user_id)
     levels_task        = asyncio.to_thread(_q_levels,         user_id)
-    contents_task      = asyncio.to_thread(_q_contents,       user_id)
+    contents_task      = _q_contents(user_id)
     review_task        = asyncio.to_thread(_q_review_count,   user_id)
     curricula_task     = get_user_curricula(user_id)
 

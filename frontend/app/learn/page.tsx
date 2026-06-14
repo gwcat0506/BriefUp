@@ -119,12 +119,12 @@ function LearnContent() {
         } else {
           throw new Error("카드 데이터가 없어요.");
         }
-        await api.updateProgress({
+        api.updateProgress({
           user_id: TEMP_USER_ID,
           chapter_id: chapterId,
           track,
           status: "started",
-        });
+        }).catch(() => {});
         if (data.content?.id) {
           const bm = await api.checkBookmark(TEMP_USER_ID, data.content.id);
           setBookmarked(bm.bookmarked);
