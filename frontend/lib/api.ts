@@ -8,15 +8,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 // 임시 유저 ID (로그인 없는 MVP용 — 나중에 Supabase Auth로 교체)
 export const TEMP_USER_ID = "00000000-0000-0000-0000-000000000001";
 
-// Render 콜드 스타트 대응: 앱 첫 로드 시 백엔드 사전 워밍업
-let warmed = false;
-export function warmupBackend() {
-  if (warmed || API_URL.includes("localhost")) return;
-  warmed = true;
-  fetch(`${API_URL}/health`, { method: "GET" }).catch(() => {});
-}
-
-async function fetcher<T>(path: string, options?: RequestInit, timeoutMs = 15000): Promise<T> {
+async function fetcher<T>(path: string, options?: RequestInit, timeoutMs = 8000): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {

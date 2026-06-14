@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
-import { api, TEMP_USER_ID, warmupBackend, Card, CardsData } from "@/lib/api";
+import { api, TEMP_USER_ID, Card, CardsData } from "@/lib/api";
 import ProgressBar from "@/components/ui/ProgressBar";
 
 interface ContentRow {
@@ -110,8 +110,6 @@ function LearnContent() {
 
   useEffect(() => {
     if (!chapterId) { setError("챕터 ID가 없어요."); setLoading(false); return; }
-
-    warmupBackend();
 
     api.getChapterContent(chapterId)
       .then(async (data) => {
