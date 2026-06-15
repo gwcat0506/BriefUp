@@ -280,6 +280,7 @@ export interface CurriculumTrack {
   description: string;
   totalChapters: number;
   chapters: CurriculumChapter[];
+  last_active_at?: string;
 }
 
 export interface HomeSummary {

@@ -73,10 +73,10 @@ async def get_user_curricula(user_id: str):
 
     # 토픽 + 챕터 진행 상태를 병렬 조회
     topics_task = asyncio.to_thread(
-        lambda: supabase.table("topics").select("name, category").eq("user_id", user_id).eq("is_active", True).execute()
+        lambda: supabase.table("topics").select("name, category, created_at").eq("user_id", user_id).eq("is_active", True).order("created_at", desc=True).execute()
     )
     progress_task = asyncio.to_thread(
-        lambda: supabase.table("chapter_progress").select("chapter_id,status").eq("user_id", user_id).execute()
+        lambda: supabase.table("chapter_progress").select("chapter_id,status,completed_at,created_at").eq("user_id", user_id).execute()
     )
     topics_res, progress_res = await asyncio.gather(topics_task, progress_task, return_exceptions=True)
 
@@ -97,9 +97,15 @@ async def get_user_curricula(user_id: str):
 
     completed_ids: set[str] = set()
     progress_map: dict[str, str] = {}
+    progress_times: dict[str, str] = {}  # chapter_id -> updated_at
     if not isinstance(progress_res, Exception):
-        completed_ids = {r["chapter_id"] for r in progress_res.data if r.get("status") == "completed"}
-        progress_map = {r["chapter_id"]: r["status"] for r in progress_res.data}
+        for r in progress_res.data:
+            cid = r["chapter_id"]
+            status = r.get("status", "")
+            progress_map[cid] = status
+            progress_times[cid] = r.get("completed_at") or r.get("created_at", "")
+            if status == "completed":
+                completed_ids.add(cid)
 
     # 모든 토픽 커리큘럼을 병렬 조회
     curriculum_results = await asyncio.gather(
@@ -110,7 +116,7 @@ async def get_user_curricula(user_id: str):
     result = []
     seen_keys: set[str] = set()
 
-    for curriculum_row in curriculum_results:
+    for topic, curriculum_row in zip(topics, curriculum_results):
         if isinstance(curriculum_row, Exception):
             print(f"[curricula] 커리큘럼 조회 실패: {curriculum_row}")
             continue
@@ -122,6 +128,7 @@ async def get_user_curricula(user_id: str):
 
         chapters = curriculum_row.get("chapters") or []
         chapters_out = []
+        last_chapter_time = ""
 
         for i, ch in enumerate(chapters):
             ch_id = ch["id"]
@@ -139,6 +146,12 @@ async def get_user_curricula(user_id: str):
                 "duration": ch.get("duration", "5분"),
                 "status": status,
             })
+            t = progress_times.get(ch_id, "")
+            if t > last_chapter_time:
+                last_chapter_time = t
+
+        topic_created_at = topic.get("created_at", "")
+        last_active_at = max(topic_created_at, last_chapter_time)
 
         result.append({
             "id": topic_key,
@@ -148,6 +161,7 @@ async def get_user_curricula(user_id: str):
             "description": curriculum_row.get("description", ""),
             "totalChapters": len(chapters),
             "chapters": chapters_out,
+            "last_active_at": last_active_at,
         })
 
     return result

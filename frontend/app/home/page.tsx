@@ -62,12 +62,10 @@ export default function HomePage() {
     setReviewCount(data.review_count ?? 0);
     if (data.curricula?.length) {
       const sorted = [...data.curricula].sort((a, b) => {
-        const score = (t: CurriculumTrack) => {
-          if (t.chapters.some(ch => ch.status === "started")) return 2;
-          if (t.chapters.some(ch => ch.status === "available")) return 1;
-          return 0;
-        };
-        return score(b) - score(a);
+        // 최근에 추가했거나 학습한 트랙이 위로
+        const tA = a.last_active_at ?? "";
+        const tB = b.last_active_at ?? "";
+        return tB.localeCompare(tA);
       });
       setCurricula(sorted);
     }
