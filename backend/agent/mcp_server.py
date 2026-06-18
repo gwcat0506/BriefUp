@@ -66,6 +66,9 @@ _session: dict = {
 # faithfulness 통과 기준
 FAITHFULNESS_THRESHOLD = 0.7
 
+# GPT-4o-mini 동시 요청 상한 (rate limit 초과 방지)
+_GPT_SEM = asyncio.Semaphore(5)
+
 
 def reset_session(logger: PipelineLogger) -> None:
     _session["articles"].clear()
@@ -418,7 +421,7 @@ async def collect_articles(
 
 
 @mcp.tool()
-async def summarize_article(article_id: str, category: str) -> dict:
+async def summarize_article(article_id: str, category: str, audience_level: str = "general") -> dict:
     """
     아티클 하나를 요약하고 원문 faithfulness를 검증합니다 (GPT-4o-mini 생성 → Claude 검증).
     같은 토픽의 여러 아티클에 대해 동시에 호출할 수 있습니다.
@@ -427,6 +430,8 @@ async def summarize_article(article_id: str, category: str) -> dict:
     Args:
         article_id: collect_articles에서 받은 article ID
         category: 카테고리 (예: AI/ML, 철학)
+        audience_level: 독자 수준. "general"(기본값, 일반인) 또는 "expert"(전문가, 기초 설명 생략·수식·실험 결과 중심)
+            유저 피드백에 "전문가", "어렵게", "expert", "전공자" 등이 있으면 "expert"로 설정하세요.
     """
     logger = _log()
     article = _session["articles"].get(article_id)
@@ -450,7 +455,8 @@ async def summarize_article(article_id: str, category: str) -> dict:
     t = time.monotonic()
     try:
         # GPT-4o-mini로 카드 JSON 생성
-        raw, gen_usage = await _summarize(article["title"], article["text"], category)
+        async with _GPT_SEM:
+            raw, gen_usage = await _summarize(article["title"], article["text"], category, audience_level)
         _add_openai_tokens(gen_usage["input"], gen_usage["output"])
 
         # JSON 파싱 — cards 필드 필수
@@ -593,14 +599,15 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
         quiz_source = cards_text if len(cards_text) > 100 else article["text"][:3000]
 
         # GPT-4o-mini로 퀴즈 생성
-        quizzes, gen_usage = await _quiz_gen(article["title"], quiz_source, category)
+        async with _GPT_SEM:
+            quizzes, gen_usage = await _quiz_gen(article["title"], quiz_source, category)
         if not quizzes:
             raise ValueError("퀴즈 생성 결과 없음")
         _add_openai_tokens(gen_usage["input"], gen_usage["output"])
         _session["run_stats"]["total_generated_quizzes"] += len(quizzes)
 
         # Claude Haiku로 교차 검증 (카드 텍스트 기준 — 학습 내용과 일치하는지 검증)
-        verified, ver_usage = await verify_and_filter(quizzes, quiz_source)
+        verified, failed_details, ver_usage = await verify_and_filter(quizzes, quiz_source)
         _add_claude_tokens(ver_usage["claude_input"], ver_usage["claude_output"])
 
         article["quizzes"] = verified
@@ -614,7 +621,7 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
                 logger.log_step(
                     tool_name="quiz_gen",
                     inputs={"article_id": article_id, "category": category},
-                    output={"generated": len(quizzes), "verified": 0, "pass_rate": 0},
+                    output={"generated": len(quizzes), "verified": 0, "pass_rate": 0, "failed_quizzes": failed_details},
                     duration_ms=int((time.monotonic() - t) * 1000),
                     status="failed",
                     error_message="생성된 퀴즈가 모두 검증 탈락",
@@ -632,6 +639,7 @@ async def generate_quizzes(article_id: str, category: str) -> dict:
                     "generated": len(quizzes),
                     "verified": len(verified),
                     "pass_rate": round(pass_rate, 2),
+                    "failed_quizzes": failed_details,
                 },
                 duration_ms=int((time.monotonic() - t) * 1000),
                 status="success",

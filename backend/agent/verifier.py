@@ -154,14 +154,14 @@ async def verify_quiz(quiz: dict, source_text: str) -> tuple[dict, dict]:
     raise ValueError(f"퀴즈 검증 JSON 파싱 실패 (2회 시도): {raw[:100]}")
 
 
-async def verify_and_filter(quizzes: list[dict], source_text: str) -> tuple[list[dict], dict]:
+async def verify_and_filter(quizzes: list[dict], source_text: str) -> tuple[list[dict], list[dict], dict]:
     """
     퀴즈 목록 검증 후 PASS된 것만 반환 (Claude Haiku 교차검증).
     검증 오류/파싱 실패 시 해당 퀴즈는 탈락 (보수적 처리).
-    Returns: (passed 목록, {"claude_input": N, "claude_output": N})
+    Returns: (passed 목록, failed_details 목록, {"claude_input": N, "claude_output": N})
     """
     passed = []
-    failed_count = 0
+    failed_details = []
     total_claude_input = 0
     total_claude_output = 0
 
@@ -175,14 +175,15 @@ async def verify_and_filter(quizzes: list[dict], source_text: str) -> tuple[list
                 passed.append(quiz)
                 print(f"    [PASS] {quiz['concept']} — {result['reason']}")
             else:
-                failed_count += 1
-                print(f"    [FAIL] {quiz['concept']} — {result['reason']}")
+                reason = result.get("reason", "")
+                failed_details.append({"concept": quiz.get("concept", ""), "reason": reason})
+                print(f"    [FAIL] {quiz['concept']} — {reason}")
         except Exception as e:
-            failed_count += 1
+            failed_details.append({"concept": quiz.get("concept", "?"), "reason": f"검증 오류: {e}"})
             print(f"    [검증 오류-FAIL] {quiz.get('concept', '?')} — {e}")
 
     total = len(quizzes)
     pass_rate = len(passed) / total * 100 if total > 0 else 0
     print(f"    [검증 결과] {len(passed)}/{total} 통과 ({pass_rate:.0f}%)")
 
-    return passed, {"claude_input": total_claude_input, "claude_output": total_claude_output}
+    return passed, failed_details, {"claude_input": total_claude_input, "claude_output": total_claude_output}

@@ -12,11 +12,90 @@ import re
 
 import anthropic
 import httpx
+from agent.web_search import search_web
 from core.config import CLAUDE_HAIKU_MODEL
 from core.supabase import supabase
 from core.utils import extract_json
 
 claude = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+_REFERENCE_DOMAINS = [
+    "coursera.org", "edx.org", "roadmap.sh", "wikipedia.org",
+    "mit.edu", "stanford.edu", "github.com", "udemy.com",
+    "khanacademy.org", "freecodecamp.org",
+]
+
+_REF_CHAR_LIMIT = 800   # 건당 최대 문자 수
+_REF_MAX_RESULTS = 3    # 최대 수집 건수
+
+
+async def _fetch_curriculum_references(topic_name: str) -> tuple[str, list[dict]]:
+    """
+    Tavily로 강의 실러버스·책 목차 검색.
+
+    Returns:
+        (prompt_text, refs_meta)
+        - prompt_text: Claude 프롬프트에 주입할 텍스트. 결과 없으면 "".
+        - refs_meta: DB 저장용 메타데이터 리스트.
+          각 항목: {url, title, snippet, query, fetched_at}
+    """
+    from datetime import datetime, timezone
+
+    queries = [
+        f"{topic_name} course syllabus OR learning path OR curriculum",
+        f"{topic_name} textbook outline OR table of contents",
+    ]
+    try:
+        results_list = await asyncio.gather(
+            search_web(queries[0], max_results=3, trust_threshold=0.4,
+                       include_domains=_REFERENCE_DOMAINS),
+            search_web(queries[1], max_results=3, trust_threshold=0.4,
+                       include_domains=_REFERENCE_DOMAINS),
+            return_exceptions=True,
+        )
+    except Exception as e:
+        print(f"  [레퍼런스 검색 오류] {e}")
+        return "", []
+
+    seen_urls: set[str] = set()
+    prompt_parts: list[str] = []
+    refs_meta: list[dict] = []
+    fetched_at = datetime.now(timezone.utc).isoformat()
+
+    for query, batch in zip(queries, results_list):
+        if isinstance(batch, Exception):
+            continue
+        for item in batch:
+            url = item.get("url", "")
+            if url in seen_urls:
+                continue
+            seen_urls.add(url)
+            title = item.get("title", "").strip()
+            text = item.get("text", "").strip()
+            snippet = text[:_REF_CHAR_LIMIT]
+
+            prompt_parts.append(f"[출처: {url}] {title}\n{snippet}")
+            refs_meta.append({
+                "url": url,
+                "title": title,
+                "snippet": snippet,
+                "query": query,
+                "fetched_at": fetched_at,
+            })
+            if len(refs_meta) >= _REF_MAX_RESULTS:
+                break
+        if len(refs_meta) >= _REF_MAX_RESULTS:
+            break
+
+    if not prompt_parts:
+        print(f"  [레퍼런스 검색] '{topic_name}' — 수집 결과 없음")
+        return "", []
+
+    print(f"  [레퍼런스 검색] '{topic_name}' — {len(refs_meta)}건 수집")
+    joined = "\n\n".join(prompt_parts)
+    prompt_text = f"=== 외부 학습 구조 레퍼런스 ===\n{joined}\n=== 레퍼런스 끝 ===\n\n"
+    return prompt_text, refs_meta
+
 
 CURRICULUM_PROMPT = """당신은 "{topic_name}"({category}) 분야의 전문 커리큘럼 설계자입니다.
 
@@ -319,16 +398,20 @@ async def _generate_and_validate_curriculum(topic_name: str, category: str, topi
     """Claude API로 커리큘럼 생성 후 구조 검증 + concepts 실존 검증."""
     print(f"  [커리큘럼 생성] '{topic_name}' ({category}) ...")
 
+    ref_text, refs_meta = await _fetch_curriculum_references(topic_name)
+    ref_prefix = ref_text if ref_text else ""
+    ref_note = "위 레퍼런스를 참고하여 " if ref_text else ""
+
     curriculum = None
     used_fallback = False
     for attempt in range(2):
         try:
             response = await claude.messages.create(
                 model=CLAUDE_HAIKU_MODEL,
-                max_tokens=4096,
+                max_tokens=8192,
                 messages=[{
                     "role": "user",
-                    "content": CURRICULUM_PROMPT.format(
+                    "content": ref_prefix + ref_note + CURRICULUM_PROMPT.format(
                         topic_name=topic_name,
                         category=category,
                         topic_key=topic_key,
@@ -362,5 +445,10 @@ async def _generate_and_validate_curriculum(topic_name: str, category: str, topi
     if not used_fallback:
         validated_chapters = await _validate_concepts(topic_name, curriculum.get("chapters", []))
         curriculum["chapters"] = validated_chapters
+
+    # 생성 근거 기록 — DB collection_strategy.generation_refs에 저장
+    if refs_meta:
+        strategy = curriculum.setdefault("collection_strategy", {})
+        strategy["generation_refs"] = refs_meta
 
     return curriculum

@@ -4,9 +4,6 @@ STEP 2 — 요약 생성
 GPT-4o-mini 사용. 4장 학습 카드 JSON 반환.
 """
 
-import json
-import re
-
 from openai import AsyncOpenAI
 import os
 from core.config import GPT_4O_MINI_MODEL
@@ -14,9 +11,21 @@ from core.utils import extract_json
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+AUDIENCE_INSTRUCTIONS: dict[str, str] = {
+    "general": "독자 수준: 일반인. 전문용어에 간략한 설명을 병기하고, 개념을 직관적으로 풀어쓰세요.",
+    "expert": (
+        "독자 수준: 해당 분야 전문가. "
+        "기초 개념 설명 생략, 수식·모델링·실험 설계·수치 결과 중심으로 서술하세요. "
+        "전문용어를 그대로 사용하고 방법론적 세부사항(하이퍼파라미터, 벤치마크, ablation 등)을 포함하세요."
+    ),
+}
+
 SUMMARY_PROMPT = """당신은 {category} 분야 전문가입니다.
 아래 [원문]을 읽고 학습 카드 4장을 만드세요.
 모든 카드는 [원문]에 명시된 내용만 사용하세요. 추론·응용 사례·외부 지식 추가 금지.
+
+[독자 수준 지침]
+{audience_instruction}
 
 [원문 제목]
 {title}
@@ -74,8 +83,9 @@ def _cards_to_text(cards_data: dict) -> str:
     return "\n".join(p for p in parts if p)
 
 
-async def summarize(title: str, text: str, category: str) -> tuple[str, dict]:
+async def summarize(title: str, text: str, category: str, audience_level: str = "general") -> tuple[str, dict]:
     """소스 기반 카드 JSON 생성. (JSON 문자열, {input, output} 토큰) 반환"""
+    audience_instruction = AUDIENCE_INSTRUCTIONS.get(audience_level, AUDIENCE_INSTRUCTIONS["general"])
     response = await client.chat.completions.create(
         model=GPT_4O_MINI_MODEL,
         max_tokens=3000,
@@ -85,6 +95,7 @@ async def summarize(title: str, text: str, category: str) -> tuple[str, dict]:
                 category=category,
                 title=title,
                 text=text[:6000],
+                audience_instruction=audience_instruction,
             )
         }]
     )
