@@ -63,7 +63,7 @@ _session: dict = {
     "reflection": {},           # {quality_assessment, next_run_suggestions}
 }
 
-# 충실도 통과 기준
+# faithfulness 통과 기준
 FAITHFULNESS_THRESHOLD = 0.7
 
 
@@ -420,9 +420,9 @@ async def collect_articles(
 @mcp.tool()
 async def summarize_article(article_id: str, category: str) -> dict:
     """
-    아티클 하나를 요약하고 원문 충실도를 검증합니다 (GPT-4o-mini 생성 → Claude 검증).
+    아티클 하나를 요약하고 원문 faithfulness를 검증합니다 (GPT-4o-mini 생성 → Claude 검증).
     같은 토픽의 여러 아티클에 대해 동시에 호출할 수 있습니다.
-    실패(success=false) 또는 충실도 미달(faithful=false) 시 해당 아티클은 건너뛰세요.
+    실패(success=false) 또는 faithfulness 미달(faithful=false) 시 해당 아티클은 건너뛰세요.
 
     Args:
         article_id: collect_articles에서 받은 article ID
@@ -470,7 +470,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
                 )
             return {"success": False, "error": "카드 JSON 파싱 실패"}
 
-        # 충실도 검증용 평문 추출
+        # faithfulness 검증용 평문 추출
         summary_text = _cards_to_text(cards_data)
         if len(summary_text.strip()) < 50:
             _session["run_stats"]["total_failed"] += 1
@@ -487,7 +487,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
                 )
             return {"success": False, "error": "카드 내용이 너무 짧음"}
 
-        # Claude Haiku로 충실도 검증 (교차 검증)
+        # Claude Haiku로 faithfulness 검증 (교차 검증)
         is_faithful, faith_score, issues, faith_usage = await check_faithfulness(
             summary_text, article["text"]
         )
@@ -497,7 +497,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
         if not is_faithful or faith_score < FAITHFULNESS_THRESHOLD:
             _session["run_stats"]["quality"]["faithfulness_failures"] += 1
             _session["run_stats"]["total_failed"] += 1
-            print(f"    [충실도 미달] {article_id} — score={faith_score:.2f}, issues={issues}")
+            print(f"    [faithfulness 미달] {article_id} — score={faith_score:.2f}, issues={issues}")
             if logger:
                 logger.log_step(
                     tool_name="summarize",
@@ -505,7 +505,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
                     output={"faithfulness_score": faith_score, "issues": issues},
                     duration_ms=int((time.monotonic() - t) * 1000),
                     status="failed",
-                    error_message=f"충실도 미달 (score={faith_score:.2f}): {issues}",
+                    error_message=f"faithfulness 미달 (score={faith_score:.2f}): {issues}",
                     category=category,
                     failure_type="policy_rejected",
                     parent_step_order=parent_order,
@@ -519,7 +519,7 @@ async def summarize_article(article_id: str, category: str) -> dict:
             }
 
         article["summary"] = json.dumps(cards_data, ensure_ascii=False)
-        print(f"    [충실도 PASS] {article_id} — score={faith_score:.2f}")
+        print(f"    [faithfulness PASS] {article_id} — score={faith_score:.2f}")
 
         if logger:
             logger.log_step(
@@ -762,10 +762,13 @@ async def save_reflection(
 
     Args:
         quality_assessment: 이번 실행 전체 품질 한 문장 평가
-            예) "AI/ML 토픽 충실도 양호, 철학 토픽 수집량 저조"
-        next_run_suggestions: 다음 실행을 위한 구체적 제안 (최대 3개)
-            예) ["철학 web_query에서 한국어 제거 권장",
-                 "AI/ML arxiv_query에 survey 2024 추가"]
+            예) "AI/ML faithfulness 0.85로 양호, 사회과학 계열 arxiv 미스매치 반복"
+        next_run_suggestions: 다음 실행에 범용 적용 가능한 패턴 수준 제안 (최대 3개)
+            - 특정 토픽 키워드가 아닌 카테고리/분야 수준으로 작성할 것
+            - "왜 이 패턴이 반복되는지" + "어떤 분야에 적용할지"를 포함할 것
+            예) ["사회과학 계열(경제·심리·사회학)은 arxiv 미스매치가 반복됨 → use_arxiv=false 기본값으로 설정 권장",
+                 "faithfulness 0.7 미만 원인은 대부분 HTML 기반 콘텐츠 → web_query에 'systematic review' 또는 'research' 추가하면 학술 자료 비율 상승",
+                 "AI/ML 분야는 arxiv preview 텍스트만 수집되어 요약 품질 저하 → cs.LG/cs.CL 카테고리 필터로 full-text 논문 우선 수집"]
     """
     logger = _log()
     _session["reflection"] = {

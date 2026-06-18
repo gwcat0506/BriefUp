@@ -1,5 +1,5 @@
 """
-STEP 4 — 퀴즈 교차 검증 (Cross-Model Verification) + 요약 충실도 검증
+STEP 4 — 퀴즈 교차 검증 (Cross-Model Verification) + 요약 faithfulness 검증
 GPT-4o-mini가 생성한 퀴즈를 Claude Haiku가 재검증 — 동일 모델 blind spot 방지
 """
 
@@ -12,7 +12,7 @@ from core.utils import extract_json as _extract_json
 claude = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 
-# ── 요약 충실도 검증 ────────────────────────────────────────────
+# ── 요약 faithfulness 검증 ────────────────────────────────────────────
 
 FAITHFULNESS_PROMPT = """당신은 팩트체크 전문가입니다.
 아래 [요약문]의 모든 주장이 [원문]에 근거하는지 엄격하게 검증하세요.

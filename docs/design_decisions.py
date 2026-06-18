@@ -110,7 +110,7 @@ box(ax, 0.4, 9.2, 4.0, 1.7, C_CLAUDE,
     sub="오케스트레이션 + 검증",
     fs=10.5, bc=BLUE, lw=2.0)
 ax.text(2.4, 10.22, "역할", ha="center", fontsize=8, color=BLUE, fontstyle="italic")
-ax.text(2.4, 9.88, "① 에이전트 루프 제어\n② 요약 충실도 검증\n③ 퀴즈 교차 검증",
+ax.text(2.4, 9.88, "① 에이전트 루프 제어\n② 요약 faithfulness 검증\n③ 퀴즈 교차 검증",
         ha="center", va="center", fontsize=8.5, color=C_TXT, linespacing=1.7)
 # 비용 배지 — 우측 상단
 badge(ax, 3.95, 10.75, "$1/1M tokens", BLUE, fs=7.5)
@@ -144,7 +144,7 @@ box(ax, 2.8, 5.85, 2.7, 0.60, C_FAIL, "스킵 (탈락)", fs=9.0, bc=RED,   lw=1.
 badge(ax, 7.15, 6.35, "PASS", GREEN, fs=7.5)
 badge(ax, 5.50, 6.35, "FAIL", RED,   fs=7.5)
 
-ax.text(7.15, 5.68, "충실도 ≥ 0.70\n검증 통과 수 > 0",
+ax.text(7.15, 5.68, "faithfulness ≥ 0.70\n검증 통과 수 > 0",
         ha="center", fontsize=8.0, color=GREEN, linespacing=1.5)
 ax.text(4.15, 5.68, "failure_type =\npolicy_rejected",
         ha="center", fontsize=8.0, color=RED, linespacing=1.5)
@@ -281,7 +281,7 @@ section_title(ax, 0.3, 11.6,
 stages = [
     (9.8,  "수집 필터",    "신뢰도 점수 + 길이 필터",
      "trust_score",    "≥ 0.65",    C_GATE,  "저품질 제외"),
-    (7.6,  "충실도 검증",  "GPT-5 요약 → Claude 교차 검증",
+    (7.6,  "faithfulness 검증",  "GPT-5 요약 → Claude 교차 검증",
      "faithfulness",   "≥ 0.70",    C_GATE,  "policy_rejected"),
     (5.4,  "퀴즈 검증",   "GPT-5 생성 → Claude 교차 검증",
      "verified_count", "> 0",       C_GATE,  "policy_rejected"),
@@ -316,7 +316,7 @@ ax.text(0.6, 3.32, "단계별 탈락 수치 (실측)", fontsize=9.0,
 # 숫자 카드 3개
 card_data = [
     ("수집 필터",   "다수 제외",  "#CA8A04", "quality_rejected\ntrust < 0.65"),
-    ("충실도 검증", "일부 탈락",  RED,       "policy_rejected\nfaithfulness < 0.70"),
+    ("faithfulness 검증", "일부 탈락",  RED,       "policy_rejected\nfaithfulness < 0.70"),
     ("퀴즈 검증",  "106 / 147\n탈락 72%",  ORANGE,    "policy_rejected\nverified = 0"),
 ]
 card_x = [0.5, 3.6, 6.7]

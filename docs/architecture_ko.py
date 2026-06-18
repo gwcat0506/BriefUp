@@ -125,7 +125,7 @@ box(ax, 5.75, 6.70, 2.0, 0.38, C_EXT,  "GPT-5  (요약 생성)", fs=8.5)
 box(ax, 8.15, 6.70, 2.4, 0.38, C_ORCH, "Claude Haiku  (검증)", fs=8)
 ax.annotate("", xy=(8.15, 6.89), xytext=(7.75, 6.89),
     arrowprops=dict(arrowstyle="-|>", color=C_ARR, lw=1.2), zorder=5)
-ax.text(7.4, 6.57, "충실도 ≥ 0.70", ha="center", va="top",
+ax.text(7.4, 6.57, "faithfulness ≥ 0.70", ha="center", va="top",
         fontsize=7, color=C_SUB, fontstyle="italic")
 arr(ax, 5.15, 6.87, 5.75, 6.89)
 
@@ -195,7 +195,7 @@ for i, (ft, lbl, col) in enumerate([
     ax.text(6.0 + i*2.4, 2.68, f"  ({lbl})", ha="left", va="center",
             fontsize=7, color=col)
 ax.text(6.0, 2.42,
-        "퀴즈 통과율  ·  평균 충실도  ·  실행 품질: 성공 / 부분 / 실패  ·  실행 비용",
+        "퀴즈 통과율  ·  평균 faithfulness  ·  실행 품질: 성공 / 부분 / 실패  ·  실행 비용",
         ha="left", va="center", fontsize=7.5, color=C_SUB)
 arr(ax, 2.90, 4.15, 2.90, 3.50)
 ax.annotate("", xy=(1.5, 3.50), xytext=(3.2, 10.08),

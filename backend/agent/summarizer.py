@@ -63,7 +63,7 @@ JSON으로만 응답:
 
 
 def _cards_to_text(cards_data: dict) -> str:
-    """충실도 검증용: cards JSON → 평문 텍스트로 변환"""
+    """faithfulness 검증용: cards JSON → 평문 텍스트로 변환"""
     parts = []
     for card in cards_data.get("cards", []):
         parts.append(card.get("title", ""))

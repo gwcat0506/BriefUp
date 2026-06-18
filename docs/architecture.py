@@ -168,7 +168,7 @@ phase_bg(ax, 4.8, 1.2, 12.4, 13.8, C_PHASE2, GREEN, "Phase 2  ·  매일 자동 
 # ── Memory 박스 (상단) ─────────────────────────────────────────
 rbox(ax, 5.3, 13.75, 11.4, 0.88, C_MEMORY,
      "Cross-run Memory  —  이전 실행 기록",
-     sub="충실도 · 퀴즈통과율 · 비용 · 지난 반성 · 다음 제안",
+     sub="faithfulness · 퀴즈통과율 · 비용 · 지난 반성 · 다음 제안",
      fs=10.0, bc=PURPLE, lw=2.0)
 
 arr(ax, 11.0, 13.75, 11.0, 13.30, color=PURPLE, lw=1.8,
@@ -221,7 +221,7 @@ ax.text(11.3, 9.17, "Cross-Model Verification", ha="center", va="center",
 rbox(ax, 6.1, 8.60, 3.2, 0.58, C_GPT, "GPT-4o-mini: 요약 생성",
      sub="summarize_article()", fs=9.0, bc=GREEN, lw=1.5)
 arr(ax, 9.3, 8.89, 10.1, 8.89, color=C_TEXT, lw=1.4)
-rbox(ax, 10.1, 8.60, 3.6, 0.58, C_CLAUDE, "Claude: 충실도 검증",
+rbox(ax, 10.1, 8.60, 3.6, 0.58, C_CLAUDE, "Claude: faithfulness 검증",
      sub="faithfulness ≥ 0.70", fs=9.0, bc=BLUE, lw=1.5)
 arr(ax, 13.7, 8.89, 14.4, 9.15, color=GREEN, lw=1.3)
 rbox(ax, 14.4, 8.72, 1.9, 0.45, C_PASS, "✓ 통과", fs=8.5, bc=GREEN)

@@ -15,7 +15,7 @@ BriefUp은 Claude Haiku + GPT가 협력하는 멀티모델 파이프라인이다
 |----------------|------------|
 | 실패가 왜 났는지 | `status="failed"` 하나로만 기록 — API 오류인지, 품질 기준 미달인지 구분 불가 |
 | Claude가 무엇을 왜 건너뛰었는지 | Claude의 판단(스킵)이 로그에 전혀 남지 않음 — 블랙박스 |
-| 파이프라인이 "잘 됐는지" | 콘텐츠가 1개만 저장돼도 `success` — 퀴즈 통과율, 충실도 등 품질 지표 없음 |
+| 파이프라인이 "잘 됐는지" | 콘텐츠가 1개만 저장돼도 `success` — 퀴즈 통과율, faithfulness 등 품질 지표 없음 |
 
 ---
 
@@ -29,7 +29,7 @@ BriefUp은 Claude Haiku + GPT가 협력하는 멀티모델 파이프라인이다
 
 ```
 technical        → API 오류, 네트워크 실패 등 기술적 문제
-policy_rejected  → 검증 기준 미달 (충실도 < 0.7, 퀴즈 전량 탈락)
+policy_rejected  → 검증 기준 미달 (faithfulness < 0.7, 퀴즈 전량 탈락)
 quality_rejected → 수집 결과 0건 (검색어와 매칭되는 기사 없음)
 not_found        → article_id 참조 오류 (시스템 내부 일관성 문제)
 ```
@@ -41,7 +41,7 @@ not_found        → article_id 참조 오류 (시스템 내부 일관성 문제
 {
   "by_failure_type": {
     "technical": [{"tool_name": "collect", "error_message": "Tavily API timeout"}],
-    "policy_rejected": [{"tool_name": "summarize", "error_message": "충실도 미달 (score=0.52)"}],
+    "policy_rejected": [{"tool_name": "summarize", "error_message": "faithfulness 미달 (score=0.52)"}],
     "quality_rejected": [{"tool_name": "collect", "error_message": null}]
   }
 }
@@ -70,7 +70,7 @@ not_found        → article_id 참조 오류 (시스템 내부 일관성 문제
 {
   "skipped": {
     "by_agent": 3,           // Claude가 관련성 판단으로 스킵
-    "by_faithfulness": 1,    // 충실도 검증 탈락
+    "by_faithfulness": 1,    // faithfulness 검증 탈락
     "total_collected": 12,
     "total_summarized": 8,
     "total_saved": 5
@@ -113,7 +113,7 @@ collect(topic="철학")  [step_order=4]
 
 **추가 지표**:
 - `quiz_pass_rate`: 생성 퀴즈 대비 검증 통과 퀴즈 비율
-- `avg_faithfulness`: 아티클별 충실도 점수 평균 (Claude가 GPT 요약을 교차 검증)
+- `avg_faithfulness`: 아티클별 faithfulness 점수 평균 (Claude가 GPT 요약을 교차 검증)
 - `cost_usd`: Claude + GPT 토큰 합산 실행 비용
 
 ---
@@ -147,7 +147,7 @@ collect(topic="철학")  [step_order=4]
 |------|---------|---------|
 | 실패 로그 | `status: "failed"` (원인 불명) | `failure_type`: technical / policy_rejected / quality_rejected / not_found |
 | Claude 스킵 가시성 | 없음 (블랙박스) | `skipped.by_agent` 집계 (수집-처리 갭 추론) |
-| 충실도 검증 실패 | `failed`로 묻힘 | `by_faithfulness` 별도 집계 + `policy_rejected` 유형 |
+| faithfulness 검증 실패 | `failed`로 묻힘 | `by_faithfulness` 별도 집계 + `policy_rejected` 유형 |
 | 퀴즈 품질 | 검증 통과 수만 기록 | `quiz_pass_rate` (생성 대비 통과 비율) |
 | Run 판정 | 이분법 (success/failed) | 3단계 (success/partial/failed) + 수치 지표 |
 | 스텝 간 관계 | flat 순서 번호 | `parent_step_order`로 계층 연결 |
