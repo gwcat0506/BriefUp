@@ -44,15 +44,39 @@ CURRICULUM_PROMPT = """당신은 "{topic_name}"({category}) 분야의 전문 커
   - arxiv_query: 학술 논문이 있는 분야면 실제 논문/기법명 포함, 없으면 null
   - web_query: 챕터 핵심 기법을 설명하는 영문 웹 검색 쿼리
 
+## KDC 중분류 코드 선택 기준 (kdc_class)
+아래 코드 중 이 토픽에 가장 적합한 것 하나를 선택하세요:
+- "004": 컴퓨터·AI·소프트웨어·데이터과학
+- "110": 철학·논리학·윤리학
+- "150": 심리학·인지과학·신경과학
+- "320": 경제학·경영·투자·금융
+- "330": 사회학·사회문제·인류학
+- "340": 정치학·국제관계
+- "360": 법학
+- "370": 교육학·학습과학
+- "410": 수학·통계학
+- "420": 물리학·천문학
+- "430": 화학
+- "460": 생명과학·생물학·유전학
+- "510": 의학·건강·영양학
+- "550": 기계·전기·전자공학
+- "590": 생활과학·요리·가정
+- "650": 미술·디자인·건축
+- "670": 음악
+- "690": 스포츠·체육
+- "710": 언어학
+- "810": 문학
+- "910": 역사
+- "980": 지리·환경
+
 아래 JSON 형식으로만 응답하세요:
 {{
   "emoji": "분야를 잘 표현하는 이모지 1개",
   "color": "hex 색상코드 (예: #10B981)",
   "description": "이 분야를 한 문장으로 — 핵심 가치와 학습 범위를 담아서",
   "topic_aliases": ["동의어1", "동의어2"],
+  "kdc_class": "위 목록에서 선택한 3자리 코드 (예: 004, 320)",
   "collection_strategy": {{
-    "use_arxiv": true or false (학술 논문이 의미 있는 분야면 true, 실용/예술/생활/요리 등이면 false),
-    "include_domains": ["이 토픽의 고품질 영문 정보를 가장 잘 제공하는 신뢰도 높은 도메인 3~6개. 예: investopedia.com, bloomberg.com"],
     "rss_sources": [
       {{"url": "실제 동작하는 RSS/Atom 피드 URL", "name": "소스명"}}
     ]
@@ -118,7 +142,12 @@ def _slugify(name: str) -> str:
 
 def _validate_structure(curriculum: dict) -> list[str]:
     """필수 필드와 챕터 수 등 구조적 유효성 검사."""
+    from core.kdc_domains import KDC_MIDDLE_DOMAINS
     issues = []
+    if not curriculum.get("kdc_class"):
+        issues.append("kdc_class 없음 (필수)")
+    elif curriculum["kdc_class"] not in KDC_MIDDLE_DOMAINS:
+        issues.append(f"kdc_class '{curriculum['kdc_class']}' 미정의 코드")
     chapters = curriculum.get("chapters", [])
     if len(chapters) < 6:
         issues.append(f"챕터 수 부족: {len(chapters)}개 (최소 6개 필요)")
@@ -176,6 +205,8 @@ def _catalog_to_row(topic_key: str, track: dict, category: str) -> dict:
         "description":   track.get("description", ""),
         "chapters":      track["chapters"],
     }
+    if "kdc_class" in track:
+        row["kdc_class"] = track["kdc_class"]
     if "collection_strategy" in track:
         row["collection_strategy"] = track["collection_strategy"]
     return row
@@ -239,6 +270,8 @@ async def get_or_create_curriculum(topic_name: str, category: str) -> dict:
         "description":  curriculum.get("description", ""),
         "chapters":     curriculum["chapters"],
     }
+    if curriculum.get("kdc_class"):
+        row["kdc_class"] = curriculum["kdc_class"]
     if strategy:
         row["collection_strategy"] = strategy
 
@@ -247,7 +280,8 @@ async def get_or_create_curriculum(topic_name: str, category: str) -> dict:
             lambda: supabase.table("topic_curricula").insert(row).execute()
         )
     except Exception:
-        # collection_strategy 컬럼이 없으면 제외하고 재시도
+        # 컬럼 미존재 시 선택적 필드 제거 후 재시도
+        row.pop("kdc_class", None)
         row.pop("collection_strategy", None)
         saved = await asyncio.to_thread(
             lambda: supabase.table("topic_curricula").insert(row).execute()
@@ -306,9 +340,9 @@ async def _generate_and_validate_curriculum(topic_name: str, category: str, topi
             if curriculum is not None:
                 break
             if attempt == 0:
-                print(f"  [커리큘럼 생성 재시도] JSON 파싱 오류")
+                print("  [커리큘럼 생성 재시도] JSON 파싱 오류")
             else:
-                print(f"  [커리큘럼 생성 실패] JSON 파싱 불가 — 폴백 커리큘럼 사용")
+                print("  [커리큘럼 생성 실패] JSON 파싱 불가 — 폴백 커리큘럼 사용")
         except Exception as e:
             if attempt == 0:
                 print(f"  [커리큘럼 생성 재시도] 오류: {e}")

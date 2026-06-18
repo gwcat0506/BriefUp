@@ -1,6 +1,7 @@
 """
 웹 검색 + 신뢰도 필터
-Tavily API → 도메인/관련성 기반 필터 → collector.py 동일 형식 반환
+Tavily API → KDC 중분류 기반 include_domains 필터 → collector.py 동일 형식 반환
+include_domains는 get_collection_plan에서 KDC_MIDDLE_DOMAINS 기반으로 결정되어 전달됨.
 신뢰도 통과 결과는 이후 verifier.py에서 재검증
 """
 
@@ -14,76 +15,12 @@ TRUST_THRESHOLD = 0.65
 # 검색 쿼리 접미사 — topic_name 그대로 쓸 때만 붙임 (Claude가 작성한 web_query엔 붙이지 않음)
 _FALLBACK_SUFFIX = "explained guide"
 
-# 신뢰도 0으로 처리 — 약어 사전, 광고성 사이트
+# 스팸·광고성 도메인 차단 — 점수 0 처리
 DOMAIN_BLACKLIST: set[str] = {
     "acronymfinder.com", "abbreviations.com", "allacronyms.com",
     "acronymsandslang.com", "dictionary.com", "definitions.net",
     "yourdictionary.com", "thefreedictionary.com",
 }
-
-# 명시적 화이트리스트 점수 (없는 도메인은 TLD/키워드 로직으로 처리)
-DOMAIN_SCORES: dict[str, float] = {
-    # 학술/공식 연구기관
-    "arxiv.org": 1.0, "nature.com": 1.0, "science.org": 1.0,
-    "pnas.org": 1.0, "acm.org": 1.0, "ieee.org": 1.0,
-    "pubmed.ncbi.nlm.nih.gov": 1.0, "ncbi.nlm.nih.gov": 1.0,
-    # AI 연구소
-    "openai.com": 0.9, "anthropic.com": 0.9, "deepmind.google": 0.9,
-    "research.google": 0.9, "ai.meta.com": 0.9, "huggingface.co": 0.9,
-    "mistral.ai": 0.9,
-    # 교육 플랫폼
-    "khanacademy.org": 0.85, "coursera.org": 0.8, "edx.org": 0.8,
-    "brilliant.org": 0.8,
-    # 백과사전 / 레퍼런스
-    "wikipedia.org": 0.85, "britannica.com": 0.85, "scholarpedia.org": 0.85,
-    "plato.stanford.edu": 0.9,
-    # 금융 / 투자
-    "investopedia.com": 0.8, "wsj.com": 0.8, "ft.com": 0.8,
-    "bloomberg.com": 0.8, "marketwatch.com": 0.75, "seekingalpha.com": 0.7,
-    "morningstar.com": 0.75, "fool.com": 0.7,
-    # 역사 / 인문
-    "history.com": 0.75, "smithsonianmag.com": 0.8, "nationalgeographic.com": 0.8,
-    "historyhit.com": 0.7,
-    # 건강 / 의학
-    "healthline.com": 0.8, "webmd.com": 0.75, "mayoclinic.org": 0.9,
-    "nih.gov": 0.9, "who.int": 0.9, "medicalnewstoday.com": 0.75,
-    "menshealth.com": 0.7, "self.com": 0.7,
-    # 과학 / 기술 미디어
-    "techcrunch.com": 0.8, "wired.com": 0.8, "theverge.com": 0.8,
-    "arstechnica.com": 0.8, "technologyreview.com": 0.8,
-    "sciencedaily.com": 0.8, "newscientist.com": 0.8,
-    "quantamagazine.org": 0.85,
-    # 철학
-    "iep.utm.edu": 0.9, "philosophybasics.com": 0.75,
-    # 주요 언론
-    "reuters.com": 0.75, "apnews.com": 0.75, "bbc.com": 0.75,
-    "economist.com": 0.75, "nytimes.com": 0.75, "theguardian.com": 0.75,
-    # 스타트업 / 비즈니스
-    "hbr.org": 0.85, "mckinsey.com": 0.8, "a16z.com": 0.8,
-    "paulgraham.com": 0.8, "ycombinator.com": 0.8,
-    # UGC / 블로그
-    "medium.com": 0.5, "substack.com": 0.5, "dev.to": 0.5, "hashnode.com": 0.5,
-}
-
-# 도메인 키워드 → 점수 (화이트리스트에 없어도 이름으로 신뢰도 판단)
-_TRUSTED_KEYWORDS: dict[str, float] = {
-    "wikipedia": 0.85, "britannica": 0.85, "khan": 0.82,
-    "university": 0.8, "institute": 0.78, "hospital": 0.8,
-    "gov": 0.82, "edu": 0.8,
-    "investopedia": 0.8, "healthline": 0.78, "mayoclinic": 0.88,
-    "nature": 0.9, "science": 0.85, "research": 0.75,
-    "quanta": 0.85, "smithsonian": 0.82,
-}
-
-# TLD별 기본 점수 (화이트리스트·키워드 모두 미해당 시)
-_TLD_SCORES: dict[str, float] = {
-    ".edu": 0.80,
-    ".gov": 0.85,
-    ".org": 0.65,
-    ".ac.": 0.78,  # .ac.uk, .ac.jp 등 학술기관
-}
-
-DEFAULT_DOMAIN_SCORE = 0.5  # 화이트리스트 밖 일반 도메인 기본값 상향
 
 # 최소 본문 길이 (클리닝 후 기준)
 _MIN_CONTENT_LEN = 300
@@ -130,50 +67,19 @@ def _is_content_rich(text: str) -> bool:
     return alpha_num / len(text) >= _MIN_ALPHA_DENSITY
 
 
-def _get_domain_score(url: str) -> float:
-    """
-    URL → 도메인 신뢰도 점수.
-    우선순위: 화이트리스트 → 키워드 패턴 → TLD → 기본값
-    """
-    try:
-        host = urlparse(url).netloc.lower()
-        if host.startswith("www."):
-            host = host[4:]
-
-        if host in DOMAIN_BLACKLIST:
-            return 0.0
-
-        # 1. 명시적 화이트리스트
-        if host in DOMAIN_SCORES:
-            return DOMAIN_SCORES[host]
-
-        # 2. 서브도메인 → 루트 도메인 매칭 (blog.openai.com → openai.com)
-        for domain, score in DOMAIN_SCORES.items():
-            if host.endswith("." + domain):
-                return score
-
-        # 3. 도메인 이름에 신뢰 키워드 포함 여부
-        for keyword, score in _TRUSTED_KEYWORDS.items():
-            if keyword in host:
-                return score
-
-        # 4. TLD 기반 기본 점수
-        for tld, score in _TLD_SCORES.items():
-            if host.endswith(tld) or f".{tld}." in host:
-                return score
-
-        return DEFAULT_DOMAIN_SCORE
-    except Exception:
-        return DEFAULT_DOMAIN_SCORE
-
-
 def compute_trust_score(tavily_score: float, url: str) -> float:
     """
-    신뢰도 점수 = Tavily 관련성 70% + 도메인 점수 30%.
-    Tavily의 관련성 판단을 더 신뢰해 미등록 도메인도 유연하게 통과.
+    신뢰도 점수 = Tavily 점수 그대로 사용.
+    include_domains가 KDC 중분류 기반으로 이미 신뢰 도메인을 제한하므로
+    별도 도메인 점수 불필요. 블랙리스트만 0점 처리.
     """
-    domain_score = _get_domain_score(url)
-    return round(0.7 * tavily_score + 0.3 * domain_score, 3)
+    try:
+        host = urlparse(url).netloc.lower().lstrip("www.")
+        if host in DOMAIN_BLACKLIST:
+            return 0.0
+    except Exception:
+        pass
+    return round(tavily_score, 3)
 
 
 async def search_web(

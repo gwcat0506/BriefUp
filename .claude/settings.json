@@ -13,6 +13,22 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/gwcat/Desktop/BrefUp/.claude/hooks/lint_on_save.py",
+            "asyncRewake": true,
+            "rewakeMessage": "린터 오류 감지 — 아래 오류를 수정해주세요:",
+            "rewakeSummary": "린터 오류",
+            "timeout": 30,
+            "statusMessage": "린터 검사 중..."
+          }
+        ]
+      }
     ]
   }
 }

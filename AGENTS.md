@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 ## Commands
 
@@ -23,7 +23,7 @@ npm run lint
 ### Data Flow
 ```
 [파이프라인 실행 — POST /api/content/run-pipeline or python -m agent.scheduler]
-  agent_runner.py (Claude Haiku 4.5 + FastMCP Client 에이전트)
+  agent_runner.py (Codex Haiku 4.5 + FastMCP Client 에이전트)
     → mcp_server.py 도구들 (in-process 연결):
         get_active_topics()       ← DB 활성 토픽 조회
         get_collection_plan()     ← 커리큘럼 기반 오늘 챕터 + 검색 힌트
@@ -35,7 +35,7 @@ npm run lint
 
 [유저 관심사 추가]
   POST /api/user/topic → classifier.py (카테고리 분류)
-                       → curriculum_gen.py (Claude Haiku로 커리큘럼 자동 생성)
+                       → curriculum_gen.py (Codex Haiku로 커리큘럼 자동 생성)
                        → topic_curricula DB 캐시
 
 [유저 요청]
@@ -43,16 +43,16 @@ npm run lint
 ```
 
 ### 모델 역할 분리
-- **Claude Haiku 4.5** (`ANTHROPIC_API_KEY`): 파이프라인 오케스트레이션, 커리큘럼 설계, 퀴즈 검증
+- **Codex Haiku 4.5** (`ANTHROPIC_API_KEY`): 파이프라인 오케스트레이션, 커리큘럼 설계, 퀴즈 검증
 - **GPT-4o-mini** (`OPENAI_API_KEY`): 요약 생성, 퀴즈 생성
 
 ### 에이전트 핵심 설계 결정
-- **세션 스토어**: 원문 텍스트는 `_session["articles"]`에만 보관. Claude에는 `article_id` + 메타데이터만 노출 → 토큰 비용 절감, 할루시네이션 방지
-- **FastMCP 전환**: 도구를 `@mcp.tool()` 데코레이터로 선언적 관리. Claude Desktop 외부 연결도 지원
-- **병렬 실행**: Claude가 여러 tool_use를 한 응답에서 반환하면 `asyncio.gather`로 실제 병렬 처리
+- **세션 스토어**: 원문 텍스트는 `_session["articles"]`에만 보관. Codex에는 `article_id` + 메타데이터만 노출 → 토큰 비용 절감, 할루시네이션 방지
+- **FastMCP 전환**: 도구를 `@mcp.tool()` 데코레이터로 선언적 관리. Codex Desktop 외부 연결도 지원
+- **병렬 실행**: Codex가 여러 tool_use를 한 응답에서 반환하면 `asyncio.gather`로 실제 병렬 처리
 - **MAX_ITERATIONS = 50**: 토픽 수 × 아티클 수 × 7단계를 고려
-- **비용 추적**: Claude + GPT 토큰 모두 집계 → USD 계산 → pipeline_runs.stats에 저장
-- **Cross-Model Verification**: GPT가 생성한 요약·퀴즈를 Claude가 원문 기준 교차 검증. 불확실하면 탈락 (보수적 실패 원칙)
+- **비용 추적**: Codex + GPT 토큰 모두 집계 → USD 계산 → pipeline_runs.stats에 저장
+- **Cross-Model Verification**: GPT가 생성한 요약·퀴즈를 Codex가 원문 기준 교차 검증. 불확실하면 탈락 (보수적 실패 원칙)
 - **Cross-Run Memory**: save_reflection 결과가 다음 실행 SYSTEM_PROMPT에 주입 → 수집 전략 자동 조정
 
 ## Working Conventions
@@ -75,7 +75,7 @@ npm run lint
 
 **명시적 요청 없이 절대 바꾸지 않을 것**
 - `_session["articles"]` 패턴 — 원문을 에이전트 메시지에 직접 넣으면 안 됨 (토큰 폭증 + 할루시네이션)
-- 모델 역할 교체 — Claude(오케스트레이션·검증) ↔ GPT(생성) 역할 분리는 의도적 설계. 같은 모델이 생성·검증하면 blind spot이 겹침
+- 모델 역할 교체 — Codex(오케스트레이션·검증) ↔ GPT(생성) 역할 분리는 의도적 설계. 같은 모델이 생성·검증하면 blind spot이 겹침
 - `SYSTEM_PROMPT` in agent_runner.py — 전체 재작성 금지, 특정 단계만 수정
 - `TEMP_USER_ID` — MVP 결정. Auth 구현 요청 없이는 건드리지 않음
 - 퀴즈 검증 탈락 처리 — 통과율 30~40%는 버그가 아닌 의도적 엄격 기준

@@ -140,52 +140,66 @@ async def get_collection_plan(topic_name: str, category: str) -> dict:
         topic_name: 토픽명 (예: RAG, 심리학)
         category: 카테고리 (예: AI/ML, 심리학)
     """
-    # 1. 커리큘럼 조회 — DB 우선, 없으면 인메모리 카탈로그
+    # 1. 커리큘럼 조회 — 카탈로그 우선(항상 최신), 없으면 DB
     chapters: list[dict] = []
     collection_strategy: dict = {}
+    kdc_class: str | None = None
     topic_key = _slugify(topic_name)
 
+    # 카탈로그 토픽은 코드가 진실의 원천 — DB 구 데이터보다 항상 우선
     try:
-        # DB에서 topic_name 또는 topic_key로 조회
-        try:
-            db_res = await asyncio.to_thread(
-                lambda: supabase.table("topic_curricula")
-                    .select("chapters, collection_strategy")
-                    .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
-                    .limit(1)
-                    .execute()
-            )
-        except Exception:
-            # collection_strategy 컬럼이 아직 없으면 chapters만 조회
-            db_res = await asyncio.to_thread(
-                lambda: supabase.table("topic_curricula")
-                    .select("chapters")
-                    .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
-                    .limit(1)
-                    .execute()
-            )
-        if db_res.data:
-            chapters = db_res.data[0].get("chapters") or []
-            collection_strategy = db_res.data[0].get("collection_strategy") or {}
+        from agent.curriculum_catalog import CURRICULUM_CATALOG
+        catalog_entry = CURRICULUM_CATALOG.get(topic_key)
+        if not catalog_entry:
+            for v in CURRICULUM_CATALOG.values():
+                if topic_name in v.get("topic_names", []):
+                    catalog_entry = v
+                    break
+        if catalog_entry:
+            chapters = catalog_entry.get("chapters", [])
+            collection_strategy = catalog_entry.get("collection_strategy", {})
+            kdc_class = catalog_entry.get("kdc_class")
     except Exception as e:
-        print(f"  [get_collection_plan] DB 조회 오류: {e}")
+        print(f"  [get_collection_plan] 카탈로그 조회 오류: {e}")
 
-    # DB에 없으면 인메모리 카탈로그 시도
+    # 카탈로그에 없으면 DB 조회 (신규 토픽)
     if not chapters:
         try:
-            from agent.curriculum_catalog import CURRICULUM_CATALOG
-            catalog_entry = CURRICULUM_CATALOG.get(topic_key)
-            if not catalog_entry:
-                # alias 매칭
-                for v in CURRICULUM_CATALOG.values():
-                    if topic_name in v.get("topic_names", []):
-                        catalog_entry = v
-                        break
-            if catalog_entry:
-                chapters = catalog_entry.get("chapters", [])
-                collection_strategy = catalog_entry.get("collection_strategy", {})
+            try:
+                db_res = await asyncio.to_thread(
+                    lambda: supabase.table("topic_curricula")
+                        .select("chapters, collection_strategy, kdc_class")
+                        .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
+                        .limit(1)
+                        .execute()
+                )
+            except Exception:
+                db_res = await asyncio.to_thread(
+                    lambda: supabase.table("topic_curricula")
+                        .select("chapters")
+                        .or_(f"topic_name.eq.{topic_name},topic_key.eq.{topic_key}")
+                        .limit(1)
+                        .execute()
+                )
+            if db_res.data:
+                chapters = db_res.data[0].get("chapters") or []
+                collection_strategy = db_res.data[0].get("collection_strategy") or {}
+                kdc_class = db_res.data[0].get("kdc_class")
         except Exception as e:
-            print(f"  [get_collection_plan] 카탈로그 조회 오류: {e}")
+            print(f"  [get_collection_plan] DB 조회 오류: {e}")
+
+    # collection_strategy에 include_domains 없으면 KDC 중분류로 채움
+    if not collection_strategy.get("include_domains") and kdc_class:
+        try:
+            from core.kdc_domains import get_kdc_strategy
+            kdc = get_kdc_strategy(kdc_class)
+            if kdc:
+                collection_strategy["include_domains"] = kdc.get("domains", [])
+                if "use_arxiv" not in collection_strategy:
+                    collection_strategy["use_arxiv"] = kdc.get("use_arxiv", True)
+                print(f"  [get_collection_plan] KDC {kdc_class}({kdc.get('label','')}) 도메인 적용")
+        except Exception as e:
+            print(f"  [get_collection_plan] KDC 조회 오류: {e}")
 
     # 챕터가 없으면 기본 쿼리 반환
     if not chapters:

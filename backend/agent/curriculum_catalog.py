@@ -11,6 +11,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
         "color": "#10B981",
         "description": "AI가 외부 지식을 검색해서 답하는 기술 — Naive부터 Graph RAG까지",
         "topic_names": ["RAG", "검색 증강 생성", "Retrieval Augmented Generation"],
+        "kdc_class": "004",
         "collection_strategy": {
             "use_arxiv": True,
             "include_domains": ["arxiv.org", "huggingface.co", "langchain.com", "pinecone.io", "weaviate.io"],
@@ -138,6 +139,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
         "color": "#8B5CF6",
         "description": "스스로 계획하고, 도구를 쓰고, 협력하는 AI 에이전트 설계",
         "topic_names": ["Agentic AI", "AI Agent", "에이전트"],
+        "kdc_class": "004",
         "collection_strategy": {
             "use_arxiv": True,
             "include_domains": ["arxiv.org", "anthropic.com", "openai.com", "huggingface.co", "langchain.com"],
@@ -265,6 +267,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
         "color": "#F59E0B",
         "description": "Transformer 구조부터 RLHF·추론 최적화까지 — 대형 언어 모델의 모든 것",
         "topic_names": ["LLM 기초", "LLM", "Large Language Model", "언어 모델"],
+        "kdc_class": "004",
         "collection_strategy": {
             "use_arxiv": True,
             "include_domains": ["arxiv.org", "openai.com", "anthropic.com", "huggingface.co", "ai.google"],
@@ -392,6 +395,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
         "color": "#EF4444",
         "description": "재무제표부터 매크로 경제까지 — 돈이 일하게 만드는 투자의 원리",
         "topic_names": ["주식/투자", "주식", "투자", "재테크"],
+        "kdc_class": "320",
         "collection_strategy": {
             "use_arxiv": False,
             "include_domains": ["investopedia.com", "bloomberg.com", "ft.com", "morningstar.com", "wsj.com", "fool.com"],
@@ -518,6 +522,7 @@ CURRICULUM_CATALOG: dict[str, dict] = {
         "emoji": "🧬",
         "color": "#EC4899",
         "description": "인간의 마음과 행동을 과학으로 이해하기 — 인지 편향부터 뇌과학까지",
+        "kdc_class": "150",
         "topic_names": ["심리학", "Psychology"],
         "collection_strategy": {
             "use_arxiv": True,
