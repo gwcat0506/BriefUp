@@ -351,14 +351,14 @@ export default function MyPage() {
                     <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-2xl px-4 py-3 flex items-center gap-2">
                       <span className="text-base">✅</span>
                       <p className="text-[#10B981] text-xs font-medium flex-1">
-                        <span className="font-bold">'{pipelineStatus.topicName}'</span> 브리핑이 준비됐어요!
+                        <span className="font-bold">&apos;{pipelineStatus.topicName}&apos;</span> 브리핑이 준비됐어요!
                       </p>
                     </div>
                   ) : pipelineStatus.phase === "curriculum" ? (
                     <div className="bg-[#F0FDF4] border border-[#D1FAE5] rounded-2xl px-4 py-3 flex items-center gap-2">
                       <div className="w-3.5 h-3.5 rounded-full border-2 border-[#D1FAE5] border-t-[#10B981] animate-spin flex-shrink-0" />
                       <p className="text-[#10B981] text-xs">
-                        <span className="font-bold">'{pipelineStatus.topicName}'</span> 커리큘럼 구성 중...
+                        <span className="font-bold">&apos;{pipelineStatus.topicName}&apos;</span> 커리큘럼 구성 중...
                       </p>
                     </div>
                   ) : (
@@ -376,7 +376,7 @@ export default function MyPage() {
                       </div>
                       <ProgressBar pct={Math.min((pipelineStatus.elapsed / PIPELINE_ESTIMATE) * 100, 95)} height="sm" duration={1000} />
                       <p className="text-[#9CA3AF] text-[10px] mt-1.5">
-                        AI가 <span className="font-medium text-[#10B981]">'{pipelineStatus.topicName}'</span> 브리핑을 만들고 있어요
+                        AI가 <span className="font-medium text-[#10B981]">&apos;{pipelineStatus.topicName}&apos;</span> 브리핑을 만들고 있어요
                       </p>
                     </div>
                   )}
